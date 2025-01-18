@@ -1,6 +1,6 @@
-package org.example.repository;
+package ru.partyfinder.repository;
 
-import org.example.entity.Profile;
+import ru.partyfinder.entity.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

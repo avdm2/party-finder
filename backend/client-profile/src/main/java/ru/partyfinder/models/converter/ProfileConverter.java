@@ -1,8 +1,8 @@
-package org.example.models.converter;
+package ru.partyfinder.models.converter;
 
-import org.example.entity.Profile;
-import org.example.models.dto.ClientDTO;
-import org.example.models.dto.ProfileDTO;
+import ru.partyfinder.entity.Profile;
+import ru.partyfinder.models.dto.ClientDTO;
+import ru.partyfinder.models.dto.ProfileDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

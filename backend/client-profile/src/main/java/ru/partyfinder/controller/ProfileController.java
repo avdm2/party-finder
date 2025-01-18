@@ -1,9 +1,9 @@
-package org.example.controller;
+package ru.partyfinder.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.models.dto.ClientDTO;
-import org.example.models.dto.ProfileDTO;
-import org.example.service.ProfileService;
+import ru.partyfinder.models.dto.ClientDTO;
+import ru.partyfinder.models.dto.ProfileDTO;
+import ru.partyfinder.service.ProfileService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

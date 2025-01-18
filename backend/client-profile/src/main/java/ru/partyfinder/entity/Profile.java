@@ -1,4 +1,4 @@
-package org.example.entity;
+package ru.partyfinder.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,10 +1,10 @@
-package org.example.service;
+package ru.partyfinder.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.models.converter.ProfileConverter;
-import org.example.models.dto.ClientDTO;
-import org.example.models.dto.ProfileDTO;
-import org.example.repository.ProfileRepository;
+import ru.partyfinder.models.converter.ProfileConverter;
+import ru.partyfinder.models.dto.ClientDTO;
+import ru.partyfinder.models.dto.ProfileDTO;
+import ru.partyfinder.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
