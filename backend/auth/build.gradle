@@ -33,6 +33,8 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-impl:${jjwtVer}"
     implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVer}"
 
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
