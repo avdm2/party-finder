@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.partyfinder.auth.service.JwtService;
 import ru.partyfinder.auth.service.UserService;
-import ru.partyfinder.auth.service.implementation.JwtService;
 
 @Component
 @RequiredArgsConstructor

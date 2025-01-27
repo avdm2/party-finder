@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "71d8a495-0e50-44bb-bd6d-16aabb46a5dc",
+		"name": "Диплом - pfinder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27662426"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstname\": \"Alvarez\",\n    \"lastname\": \"Salamanco\",\n    \"username\": \"alvanco\",\n    \"password\": \"123\",\n    \"role\": \"ORGANIZER\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8721/api/v1/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8721",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"alvanco\",\n    \"password\": \"123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8721/api/v1/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8721",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ping",
+					"item": [
+						{
+							"name": "pingOrganizer",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJPUkdBTklaRVIiXSwic3ViIjoiYWx2YW5jbyIsImlhdCI6MTczODAwNTE5MSwiZXhwIjoxNzM4MDA2MzkxfQ.bMw0kMkrX8WvHTihLUMY3k0ZZKRSpuMQhjkVmzmEums",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8721/api/v1/auth/ping/organizer",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8721",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"ping",
+										"organizer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pingParticipant",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJPUkdBTklaRVIiXSwic3ViIjoiYWx2YW5jbyIsImlhdCI6MTczODAwNTE5MSwiZXhwIjoxNzM4MDA2MzkxfQ.bMw0kMkrX8WvHTihLUMY3k0ZZKRSpuMQhjkVmzmEums",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8721/api/v1/auth/ping/participant",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8721",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"ping",
+										"participant"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
