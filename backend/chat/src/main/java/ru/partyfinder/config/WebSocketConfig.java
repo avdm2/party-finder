@@ -1,5 +1,6 @@
 package ru.partyfinder.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -8,13 +9,10 @@ import ru.partyfinder.service.MessageHandler;
 
 @Configuration
 @EnableWebSocket
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final MessageHandler messageHandler;
-
-    public WebSocketConfig(MessageHandler messageHandler) {
-        this.messageHandler = messageHandler;
-    }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
