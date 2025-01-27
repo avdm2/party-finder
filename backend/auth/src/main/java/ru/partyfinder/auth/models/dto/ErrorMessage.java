@@ -1,4 +1,4 @@
-package ru.partyfinder.auth.models.dto.request;
+package ru.partyfinder.auth.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class ErrorMessage {
 
-    private String username;
-    private String password;
+    private String message;
 }

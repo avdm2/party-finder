@@ -30,16 +30,16 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/v1/auth/ping/organizer").hasRole(Role.ORGANIZER.getValue())
-                                .requestMatchers("/api/v1/auth/ping/participant").hasRole(Role.PARTICIPANT.getValue())
-                                .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
-                                .anyRequest().authenticated())
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/api/v1/auth/ping/organizer").hasAuthority(Role.ORGANIZER.getValue())
+                        .requestMatchers("/api/v1/auth/ping/participant").hasAuthority(Role.PARTICIPANT.getValue())
+                        .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
@@ -56,8 +56,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
