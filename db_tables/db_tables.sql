@@ -9,10 +9,10 @@ create table event.event_instance
 
 create table client.client
 (
-    id         uuid default gen_random_uuid() primary key,
-    name       varchar not null,
-    surname    varchar not null,
-    birth_date date    not null
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL
 );
 
 create table client.profile
@@ -39,4 +39,16 @@ create table auth.user_roles
     user_id uuid not null
         constraint fk55itppkw3i07do3h7qoclqd4k references "user",
     role    varchar(255)
+);
+
+CREATE TABLE organizer.channel (
+                         id BIGSERIAL PRIMARY KEY,
+                         uuid UUID,
+                         name VARCHAR(255)
+);
+
+CREATE TABLE organizer.channel_client (
+    channel_id BIGINT NOT NULL REFERENCES channel(id) ON DELETE CASCADE,
+    client_id UUID NOT NULL REFERENCES client.client(id) ON DELETE CASCADE,
+    PRIMARY KEY (channel_id, client_id)
 );

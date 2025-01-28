@@ -1,15 +1,14 @@
 package ru.partyfinder.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -29,5 +28,8 @@ public class Client {
     private String surname;
 
     @Column(name = "birth_date", nullable = false)
-    private LocalDate birth_date;
+    private LocalDate birthDate;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChannelClient> channels = new HashSet<>();
 }
