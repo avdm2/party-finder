@@ -34,10 +34,6 @@ public class Profile {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "media_id")
-    private Media media;
-
     @Column(name = "is_confirmed", nullable = false)
     private Boolean isConfirmed;
 

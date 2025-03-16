@@ -1,0 +1,1 @@
+include 'backend:auth', 'backend:client-profile', 'backend:chat', 'backend:event', 'backend:organizer-channel'

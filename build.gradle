@@ -1,0 +1,23 @@
+plugins {
+}
+allprojects {
+    group = 'ru.partyfinder'
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+subprojects {
+    apply plugin: 'java-library'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17) // Указываем версию Java
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8' // Кодировка для исходных файлов
+    }
+}

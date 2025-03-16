@@ -1,6 +1,7 @@
 package ru.partyfinder.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,9 @@ public class ClientDTO {
 
     private String surname;
 
-    private LocalDate birth_date;
+    private String username;
+
+    private String email;
+
+    private LocalDate birthDate;
 }

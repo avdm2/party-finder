@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/organizer-profile.main.iml" filepath="$PROJECT_DIR$/.idea/modules/organizer-profile.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/party-finder.iml" filepath="$PROJECT_DIR$/.idea/party-finder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/event.main.iml" filepath="$PROJECT_DIR$/.idea/modules/event.main.iml" />
     </modules>
   </component>
 </project>
