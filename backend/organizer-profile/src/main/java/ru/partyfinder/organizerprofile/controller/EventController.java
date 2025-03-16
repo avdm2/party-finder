@@ -35,4 +35,9 @@ public class EventController {
     public ResponseEntity<Integer> cancel(@PathVariable UUID uuid) {
         return ResponseEntity.ok(eventService.endEvent(uuid));
     }
+
+    @PatchMapping("/update/{eventId}")
+    public ResponseEntity<EventEntity> update(@PathVariable UUID eventId, @RequestBody EventEntity event) {
+        return ResponseEntity.ok(eventService.updateEvent(eventId, event));
+    }
 }

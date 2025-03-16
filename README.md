@@ -6,6 +6,7 @@
 - 8724 - client-profile
 - 8723 - event
 - 8722 - organizer-profile
+- 8711 - loyalty
 
 ## Создание нового сервиса:
 - Обязательно добавить `KafkaConfig`, `SecurityConfig` и `JwtAuthFilter` (файлы лежат в organizer-profile в config)

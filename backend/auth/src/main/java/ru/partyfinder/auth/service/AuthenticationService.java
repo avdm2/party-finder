@@ -30,9 +30,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public RegisterResponse register(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()
-                && userRepository.findByUsername(request.getUsername())
-                .get().getRoles().contains(request.getRole().getValue())) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException(USER_ALREADY_EXISTS);
         }
 

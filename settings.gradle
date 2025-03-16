@@ -1,4 +1,3 @@
-include 'backend:auth', 'backend:client-profile', 'backend:chat', 'backend:event', 'backend:organizer-channel', 'backend:organizer-profile', 'backend:rating-system'
+include 'backend:auth', 'backend:client-profile', 'backend:chat', 'backend:event', 'backend:organizer-channel'
+include 'backend:organizer-loyalty'
 include 'backend:rating-system'
-findProject(':backend:rating-system')?.name = 'rating-system'
-

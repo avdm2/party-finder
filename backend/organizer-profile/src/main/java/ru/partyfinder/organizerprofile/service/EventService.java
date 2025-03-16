@@ -25,4 +25,9 @@ public class EventService {
     public int endEvent(UUID id) {
         return eventRepository.endEvent(id, EventStatus.CANCELLED.getValue());
     }
+
+    public EventEntity updateEvent(UUID id, EventEntity event) {
+        eventRepository.updateEvent(id, event);
+        return getEvent(id);
+    }
 }
