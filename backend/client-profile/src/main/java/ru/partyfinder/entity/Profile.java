@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -38,6 +39,9 @@ public class Profile {
     @JoinColumn(name = "media_id")
     private Media media;
 
+    @Column(name = "rating", columnDefinition = "DECIMAL(3, 2) DEFAULT 0.00")
+    private BigDecimal rating;
+
     @Column(name = "is_confirmed", nullable = false)
     private Boolean isConfirmed;
 
@@ -54,5 +58,6 @@ public class Profile {
         createdTime = Instant.now();
         updatedTime = Instant.now();
         isConfirmed = false;
+        rating = BigDecimal.ZERO;
     }
 }

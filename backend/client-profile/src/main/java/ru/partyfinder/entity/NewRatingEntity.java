@@ -1,7 +1,8 @@
-package ru.partyfinder.organizerprofile.entity;
+package ru.partyfinder.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,8 +12,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "rating", schema = "source")
-public class RatingEntity {
+@Table(name = "new_ratings", schema = "source")
+public class NewRatingEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,8 +31,14 @@ public class RatingEntity {
     @Column(name = "created_time", nullable = false)
     private Instant createdTime;
 
+    @Column(name = "processed", nullable = false)
+    private Boolean processed;
+
     @PrePersist
     protected void onCreate() {
         this.createdTime = Instant.now();
+        if (this.processed == null) {
+            this.processed = false;
+        }
     }
 }

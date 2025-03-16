@@ -1,11 +1,3 @@
-create table client.client
-(
-    id         uuid default gen_random_uuid() primary key,
-    name       varchar not null,
-    surname    varchar not null,
-    birth_date date    not null
-);
-
 create table client.profile
 (
     id           uuid default gen_random_uuid() primary key,
@@ -15,9 +7,29 @@ create table client.profile
     email        varchar(255) not null,
     birth_date   date         not null,
     media_id   bigint references media(id),
+    rating     decimal(3, 2) not null default 0.00,
     is_confirmed boolean      not null,
     created_time timestamp    not null,
     updated_time timestamp    not null
+);
+
+create table source.new_ratings
+(
+    id            bigserial primary key,
+    entity_type   text not null check (entity_type in ('PROFILE', 'ORGANIZER', 'EVENT')),
+    entity_id     uuid not null,
+    score         decimal(3, 2) not null check (score between 0.00 and 5.00),
+    created_time    timestamp not null default current_timestamp,
+    processed     boolean not null default false
+);
+
+create table source.rating
+(
+    id            bigserial primary key,
+    entity_type   text not null check (entity_type in ('PROFILE', 'ORGANIZER', 'EVENT')),
+    entity_id     uuid not null,
+    score         decimal(3, 2) not null check (score between 0.00 and 5.00),
+    created_time    timestamp not null default current_timestamp,
 );
 
 create table client.media

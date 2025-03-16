@@ -17,7 +17,7 @@ public interface ProfileConverter {
     @Mapping(target = "birthDate", source = "birthDate")
     Profile toProfile(ClientDTO clientDTO);
 
-    @Mapping(target = "id")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "surname", source = "surname")
     @Mapping(target = "username", source = "username")
