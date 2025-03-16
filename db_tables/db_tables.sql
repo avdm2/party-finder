@@ -15,9 +15,19 @@ create table client.profile
     surname      varchar(255) not null,
     email        varchar(255) not null,
     birth_date   date         not null,
+    media_id   bigint references media(id),
     is_confirmed boolean      not null,
     created_time timestamp    not null,
     updated_time timestamp    not null
+);
+
+create table client.media
+(
+    id         bigserial primary key,
+    file_name  text      not null,
+    mime_type  text      not null,
+    file_data  bytea     not null,
+    created_time timestamp default current_timestamp
 );
 
 create table auth."user"
