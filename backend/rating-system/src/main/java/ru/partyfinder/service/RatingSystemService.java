@@ -3,12 +3,14 @@ package ru.partyfinder.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.partyfinder.entity.RatingEntity;
 import ru.partyfinder.model.dto.AverageScoresDTO;
 import ru.partyfinder.repository.NewRatingRepository;
 import ru.partyfinder.repository.RatingRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RatingSystemService {
 
     private final NewRatingRepository newRatingRepository;
@@ -25,6 +28,8 @@ public class RatingSystemService {
         log.info("Начинаем расчет средних значений...");
 
         List<AverageScoresDTO> averageScores = newRatingRepository.findAverageScores();
+
+        List<RatingEntity> ratingsToUpdateOrSave = new ArrayList<>();
 
         for (AverageScoresDTO result : averageScores) {
             String entityType = result.getEntityType();
@@ -41,24 +46,26 @@ public class RatingSystemService {
 
                 rating.setScore(updatedScore);
                 rating.setCreatedTime(java.time.Instant.now());
-                ratingRepository.save(rating);
 
-                log.info("Обновлен рейтинг для: " + entityType + ", " + entityId + ". Новое значение: " + updatedScore);
+                ratingsToUpdateOrSave.add(rating);
+                log.info("Добавлен на обновление: " + entityType + ", " + entityId + ". Новое значение: " + updatedScore);
             } else {
                 RatingEntity rating = new RatingEntity();
                 rating.setEntityType(entityType);
                 rating.setEntityId(entityId);
                 rating.setScore(newScore);
                 rating.setCreatedTime(java.time.Instant.now());
-                ratingRepository.save(rating);
 
-                log.info("Создан новый рейтинг для: " + entityType + ", " + entityId + ". Значение: " + newScore);
+                ratingsToUpdateOrSave.add(rating);
+                log.info("Добавлен на создание: " + entityType + ", " + entityId + ". Значение: " + newScore);
             }
 
             newRatingRepository.markAsProcessed(entityType, entityId);
         }
 
-        log.info("Расчет средних значений завершен.");
+        ratingRepository.saveAll(ratingsToUpdateOrSave);
+
+        log.info("Расчет средних значений завершен. Сохранено {} записей.", ratingsToUpdateOrSave.size());
         return "Подсчитаны рейтинги";
     }
 
