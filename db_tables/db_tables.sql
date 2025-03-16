@@ -29,7 +29,7 @@ create table source.rating
     entity_type   text not null check (entity_type in ('PROFILE', 'ORGANIZER', 'EVENT')),
     entity_id     uuid not null,
     score         decimal(3, 2) not null check (score between 0.00 and 5.00),
-    created_time    timestamp not null default current_timestamp,
+    created_time    timestamp not null default current_timestamp
 );
 
 create table client.media
