@@ -1,26 +1,21 @@
-package ru.partyfinder.auth.models.dto.request;
+package ru.partyfinder.organizerprofile.messaging.event;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.partyfinder.auth.models.enums.Role;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
-
-    private String firstname;
-    private String lastname;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CredentialsChangesEvent {
 
     private String username;
-    private String password;
-
     private String email;
-
-    private Role role;
+    private String password;
 }

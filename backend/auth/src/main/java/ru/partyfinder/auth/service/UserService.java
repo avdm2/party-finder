@@ -18,4 +18,8 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException(USER_NOT_EXISTS
                         .formatted(username)));
     }
+
+    public int updateUserCredentials(String username, String password, String email) {
+        return userRepository.updateUserCredentials(username, password, email);
+    }
 }

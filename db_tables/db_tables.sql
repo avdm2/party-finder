@@ -1,12 +1,3 @@
-create table event.event_instance
-(
-    id          uuid default gen_random_uuid() not null
-        primary key,
-    owner       uuid                           not null,
-    title       varchar                        not null,
-    description varchar                        not null
-);
-
 create table client.client
 (
     id         uuid default gen_random_uuid() primary key,
@@ -31,7 +22,8 @@ create table auth."user"
     lastname  varchar(255),
     password  varchar(255),
     username  varchar(255)
-        constraint uksb8bbouer5wak8vyiiy4pf2bx unique
+        constraint uksb8bbouer5wak8vyiiy4pf2bx unique,
+    email     varchar(255)
 );
 
 create table auth.user_roles
@@ -39,4 +31,37 @@ create table auth.user_roles
     user_id uuid not null
         constraint fk55itppkw3i07do3h7qoclqd4k references "user",
     role    varchar(255)
+);
+
+create table organizer.organizer
+(
+    id          uuid default gen_random_uuid() primary key,
+    name        varchar not null,
+    surname     varchar not null,
+    birth_date  date    not null,
+    username    varchar not null,
+    description varchar
+);
+
+create table organizer.event_instance
+(
+    id              uuid default gen_random_uuid() not null
+        primary key,
+    owner           uuid                           not null,
+    title           varchar                        not null,
+    description     varchar                        not null,
+    date            timestamp                      not null,
+    address         varchar                        not null,
+    status          varchar                        not null,
+    price           decimal(12, 2),
+    capacity        smallint,
+    age_restriction smallint
+);
+
+create table organizer.rating
+(
+    id           bigserial
+        primary key,
+    organizer_id uuid,
+    rating       smallint
 );

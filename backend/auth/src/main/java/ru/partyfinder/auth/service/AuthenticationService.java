@@ -1,6 +1,7 @@
 package ru.partyfinder.auth.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class AuthenticationService {
     private final static String REGISTRATION_COMPLETION_MESSAGE = "Регистрация завершена успешно.";
     private final static String USER_NOT_FOUND = "Пользователь с таким логином не найден.";
     private final static String USER_ALREADY_EXISTS = "Пользователь с таким логином уже существует.";
+    private final static String REQUIRED_FIELDS_ARE_EMPTY = "Проверьте заполненность всех полей";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -34,11 +36,13 @@ public class AuthenticationService {
             throw new IllegalArgumentException(USER_ALREADY_EXISTS);
         }
 
+        validateFields(request);
         User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
                 .roles(new HashSet<>())
                 .build();
         user.getRoles().add(request.getRole().getValue());
@@ -51,5 +55,18 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException(USER_NOT_FOUND));
         return LoginResponse.builder().token(jwtService.generateToken(user)).build();
+    }
+
+    private void validateFields(RegisterRequest request) {
+        if (ObjectUtils.anyNull(
+                request.getEmail(),
+                request.getPassword(),
+                request.getFirstname(),
+                request.getLastname(),
+                request.getUsername(),
+                request.getRole().getValue()
+        )) {
+            throw new IllegalArgumentException(REQUIRED_FIELDS_ARE_EMPTY);
+        }
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "${springBootVer}"
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version "3.3.6"
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'ru.partyfinder'
@@ -18,7 +18,7 @@ repositories {
 ext {
     lombokVersion = '1.18.34'
     mapstructVersion = '1.5.5.Final'
-    jjwtVer = '0.12.6'
+    springBootVer = '3.3.6'
 }
 
 dependencies {
@@ -29,12 +29,6 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka:3.3.3'
 
     implementation 'org.postgresql:postgresql:42.7.3'
-
-    implementation "io.jsonwebtoken:jjwt-api:${jjwtVer}"
-    implementation "io.jsonwebtoken:jjwt-impl:${jjwtVer}"
-    implementation "io.jsonwebtoken:jjwt-jackson:${jjwtVer}"
-
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

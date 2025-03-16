@@ -41,6 +41,8 @@ public class User implements UserDetails {
     private String username;
     private String password;
 
+    private String email;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", schema = "auth",
             joinColumns = @JoinColumn(name = "user_id"))

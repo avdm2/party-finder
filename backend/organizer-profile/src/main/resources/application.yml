@@ -1,17 +1,19 @@
 server:
-  port: 8721
+  port: 8722
 
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/diploma
     username: artem
     password: postgres
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -23,10 +25,6 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-token:
-  jwt:
-    signing-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA53VzmIVVZZWyNm266l82
-    duration-minutes: 20
-
-kafka-topics:
-  credentials-changes: credentials-changes
+kafka:
+  topics:
+    credentials-changes: credentials-changes
