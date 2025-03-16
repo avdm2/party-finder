@@ -10,17 +10,21 @@ import org.mapstruct.Mapping;
 public interface ProfileConverter {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "client.name", source = "name")
-    @Mapping(target = "client.surname", source = "surname")
-    @Mapping(target = "client.birth_date", source = "birth_date")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "surname", source = "surname")
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "birthDate", source = "birthDate")
     Profile toProfile(ClientDTO clientDTO);
 
     @Mapping(target = "id")
-    @Mapping(target = "name", source = "client.name")
-    @Mapping(target = "surname", source = "client.surname")
-    @Mapping(target = "birth_date", source = "client.birth_date")
-    @Mapping(target = "is_confirmed", source = "is_confirmed")
-    @Mapping(target = "created_time", source = "created_time")
-    @Mapping(target = "updated_time", source = "updated_time")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "surname", source = "surname")
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "birthDate", source = "birthDate")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "isConfirmed", source = "isConfirmed")
+    @Mapping(target = "createdTime", source = "createdTime")
+    @Mapping(target = "updatedTime", source = "updatedTime")
     ProfileDTO toProfileDTO(Profile profile);
 }

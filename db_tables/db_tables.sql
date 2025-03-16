@@ -7,21 +7,17 @@ create table event.event_instance
     description varchar                        not null
 );
 
-create table client.client
-(
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    surname VARCHAR(255) NOT NULL,
-    birth_date DATE NOT NULL
-);
-
 create table client.profile
 (
     id           uuid default gen_random_uuid() primary key,
-    client_id    uuid      not null unique references client.client (id) on delete cascade,
-    is_confirmed boolean   not null,
-    created_time timestamp not null,
-    updated_time timestamp not null
+    username     varchar(255) unique,
+    name         varchar(255) not null,
+    surname      varchar(255) not null,
+    email        varchar(255) not null,
+    birth_date   date         not null,
+    is_confirmed boolean      not null,
+    created_time timestamp    not null,
+    updated_time timestamp    not null
 );
 
 create table auth."user"
@@ -42,13 +38,13 @@ create table auth.user_roles
 );
 
 CREATE TABLE organizer.channel (
-                         id BIGSERIAL PRIMARY KEY,
-                         uuid UUID,
-                         name VARCHAR(255)
+       id     bigserial primary key,
+       uuid   uuid not null,
+       name   varchar(255) not null
 );
 
-CREATE TABLE organizer.channel_client (
-    channel_id BIGINT NOT NULL REFERENCES channel(id) ON DELETE CASCADE,
-    client_id UUID NOT NULL REFERENCES client.client(id) ON DELETE CASCADE,
-    PRIMARY KEY (channel_id, client_id)
+CREATE TABLE organizer.channel_profile (
+       id         bigserial primary key,
+       channel_id bigint not null references channel (id) on delete cascade,
+       client_id  uuid   not null references client.profile (id)
 );

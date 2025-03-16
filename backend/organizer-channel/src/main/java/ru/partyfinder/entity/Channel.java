@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "channel")
+@Table(name = "channel", schema = "organizer")
 public class Channel {
 
     @Id
@@ -23,6 +23,5 @@ public class Channel {
     private String name;
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChannelClient> members = new HashSet<>();
-
+    private Set<ChannelProfile> members = new HashSet<>();
 }

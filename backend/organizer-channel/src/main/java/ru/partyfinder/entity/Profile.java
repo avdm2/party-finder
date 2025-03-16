@@ -7,7 +7,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.UUID;
 
 @Getter

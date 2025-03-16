@@ -3,6 +3,7 @@ package ru.partyfinder.auth.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import ru.partyfinder.auth.entity.User;
 import ru.partyfinder.auth.repository.UserRepository;
 
 @Service
@@ -18,4 +19,11 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException(USER_NOT_EXISTS
                         .formatted(username)));
     }
+
+
+    public User getUserByNameAndSurname(String firstName, String lastName) {
+        return userRepository.findByFirstnameAndLastname(firstName, lastName).orElseThrow(()
+                -> new IllegalArgumentException(USER_NOT_EXISTS));
+    }
+
 }

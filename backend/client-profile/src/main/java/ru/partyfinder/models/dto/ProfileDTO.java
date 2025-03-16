@@ -16,16 +16,20 @@ public class ProfileDTO {
 
     private UUID id;
 
+    private String username;
+
     private String name;
 
     private String surname;
 
-    private LocalDate birth_date;
+    private String email;
 
-    private Boolean is_confirmed;
+    private LocalDate birthDate;
 
-    private Instant created_time;
+    private Boolean isConfirmed;
 
-    private Instant updated_time;
+    private Instant createdTime;
+
+    private Instant updatedTime;
 
 }
