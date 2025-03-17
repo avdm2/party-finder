@@ -1,11 +1,11 @@
-package ru.partyfinder.event.service;
+package ru.partyfinder.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.partyfinder.event.entity.EventClientEntity;
-import ru.partyfinder.event.model.dto.SubscribeEventDTO;
-import ru.partyfinder.event.repository.EventClientRepository;
-import ru.partyfinder.event.repository.EventRepository;
+import ru.partyfinder.entity.EventClientEntity;
+import ru.partyfinder.models.dto.SubscribeEventDTO;
+import ru.partyfinder.repository.EventClientRepository;
+import ru.partyfinder.repository.EventRepository;
 
 import java.util.List;
 import java.util.UUID;

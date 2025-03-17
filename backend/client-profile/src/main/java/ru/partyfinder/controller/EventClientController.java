@@ -1,13 +1,11 @@
-package ru.partyfinder.event.controller;
+package ru.partyfinder.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.partyfinder.event.entity.EventClientEntity;
-import ru.partyfinder.event.entity.EventEntity;
-import ru.partyfinder.event.model.dto.SubscribeEventDTO;
-import ru.partyfinder.event.service.EventClientService;
-import ru.partyfinder.event.service.EventOrganizerService;
+import ru.partyfinder.entity.EventClientEntity;
+import ru.partyfinder.models.dto.SubscribeEventDTO;
+import ru.partyfinder.service.EventClientService;
 
 import java.util.List;
 import java.util.UUID;

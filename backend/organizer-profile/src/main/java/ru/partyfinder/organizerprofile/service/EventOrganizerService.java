@@ -1,10 +1,10 @@
-package ru.partyfinder.event.service;
+package ru.partyfinder.organizerprofile.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.partyfinder.event.entity.EventEntity;
-import ru.partyfinder.event.model.enums.EventStatus;
-import ru.partyfinder.event.repository.EventRepository;
+import ru.partyfinder.organizerprofile.entity.EventEntity;
+import ru.partyfinder.organizerprofile.model.enums.EventStatus;
+import ru.partyfinder.organizerprofile.repository.EventRepository;
 
 import java.util.UUID;
 

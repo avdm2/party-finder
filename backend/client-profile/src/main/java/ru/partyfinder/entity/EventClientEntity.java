@@ -1,4 +1,4 @@
-package ru.partyfinder.event.entity;
+package ru.partyfinder.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

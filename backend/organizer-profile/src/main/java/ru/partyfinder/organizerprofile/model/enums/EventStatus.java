@@ -1,4 +1,4 @@
-package ru.partyfinder.event.model.enums;
+package ru.partyfinder.organizerprofile.model.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

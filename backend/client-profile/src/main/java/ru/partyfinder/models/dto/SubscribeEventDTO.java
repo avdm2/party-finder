@@ -1,4 +1,4 @@
-package ru.partyfinder.event.model.dto;
+package ru.partyfinder.models.dto;
 
 import lombok.Getter;
 import lombok.Setter;
