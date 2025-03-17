@@ -19,9 +19,9 @@ public class EventClientService {
     private final EventClientRepository eventClientRepository;
 
 
-    public List<EventClientEntity> getEventsSubscribeByClientId(UUID id) {
+    /*public List<EventClientEntity> getEventsSubscribeByClientId(UUID id) {
         return eventClientRepository.getAllByClientId(id);
-    }
+    }*/
 
     public void deleteEventSubscribeByClientIdSndEventId(UUID clientId, UUID eventId) {
         EventClientEntity eventClientEntity = getEventSubscribeByClientIdSndEventId(clientId, eventId);

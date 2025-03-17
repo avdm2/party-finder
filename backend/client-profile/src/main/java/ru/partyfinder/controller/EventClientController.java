@@ -22,7 +22,7 @@ public class EventClientController {
         return ResponseEntity.ok(eventClientService.subscribeEvent(subscribeEventDTO));
     }
 
-    @GetMapping("/getEvent")
+    /*@GetMapping("/getEvent")
     public ResponseEntity<EventClientEntity> getSubscribeEventByProfileIdAndEventId(@RequestParam UUID clientId,
                                                                                     @RequestParam UUID eventId) {
         return ResponseEntity.ok(eventClientService.getEventSubscribeByClientIdSndEventId(clientId, eventId));
@@ -31,7 +31,7 @@ public class EventClientController {
     @GetMapping("/getEvents/{id}")
     public ResponseEntity<List<EventClientEntity>> getUserSubscribes(@PathVariable UUID id) {
         return ResponseEntity.ok(eventClientService.getEventsSubscribeByClientId(id));
-    }
+    }*/
 
     @PatchMapping("/cancelEvent")
     public void deleteUserSubscribe(@RequestParam UUID clientId,
