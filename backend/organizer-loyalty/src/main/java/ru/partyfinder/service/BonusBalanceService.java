@@ -44,4 +44,13 @@ public class BonusBalanceService {
         bonusBalanceRepository.removeBonuses(username, organizerUUID, amount);
         return bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID).get();
     }
+
+    public BonusBalanceEntity getBonusBalance(String username, UUID organizerUUID) {
+        return bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID)
+                .orElse(createBonusBalance(BonusBalanceEntity.builder()
+                        .participantUsername(username)
+                        .organizerUUID(organizerUUID)
+                        .bonusAmount(0)
+                        .build()));
+    }
 }

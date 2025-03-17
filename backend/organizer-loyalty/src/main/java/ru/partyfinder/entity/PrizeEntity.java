@@ -5,8 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.UUID;
@@ -14,6 +17,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@With
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "prize", schema = "loyalty")
 public class PrizeEntity {
 

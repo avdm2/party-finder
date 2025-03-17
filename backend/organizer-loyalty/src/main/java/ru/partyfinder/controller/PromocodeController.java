@@ -20,13 +20,15 @@ public class PromocodeController {
 
     private final PromocodeService promocodeService;
 
+    // Добавить промокод (для организатора)
     @PostMapping("/add")
     public ResponseEntity<PromocodeEntity> addPromocode(@RequestBody PromocodeEntity promocodeEntity) {
         return ResponseEntity.ok(promocodeService.addPromocode(promocodeEntity));
     }
 
+    // Применить промокод (для клиента)
     @GetMapping("/redeem/{promocode}")
-    public ResponseEntity<BonusBalanceEntity> redeemPromocode(@RequestParam("username") String username, @PathVariable String promocode) {
+    public ResponseEntity<BonusBalanceEntity> redeemPromocode(@RequestParam String username, @PathVariable String promocode) {
         return ResponseEntity.ok(promocodeService.redeemPromocode(username, promocode));
     }
 }

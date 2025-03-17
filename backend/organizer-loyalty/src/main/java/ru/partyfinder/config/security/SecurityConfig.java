@@ -17,14 +17,22 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
-                                        "api/v1/loyalty/prize/add",
-                                        "api/v1/loyalty/promocode/add")
+                                        "/api/v1/loyalty/prize/add",
+                                        "/api/v1/loyalty/prize/modify",
+                                        "/api/v1/loyalty/promocode/add",
+                                        "/api/v1/loyalty/prize/history/**"
+                                )
                                 .hasRole("ORGANIZER")
                                 .requestMatchers(
-                                        "api/v1/loyalty/prize/get/**",
-                                        "/api/v1/loyalty/promocode/redeem/**",
-                                        "/api/v1/loyalty/balance/**")
-                                .hasRole("PARTICIPANT"))
+                                        "/api/v1/loyalty/balance",
+                                        "/api/v1/loyalty/prize/order/**",
+                                        "/api/v1/loyalty/promocode/redeem/**"
+                                )
+                                .hasRole("PARTICIPANT")
+                                .requestMatchers(
+                                        "/api/v1/loyalty/prize/items/**"
+                                )
+                                .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
