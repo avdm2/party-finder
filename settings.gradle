@@ -1,3 +1,5 @@
 include 'backend:auth', 'backend:client-profile', 'backend:chat', 'backend:organizer-channel'
 include 'backend:organizer-loyalty'
 include 'backend:rating-system'
+include 'backend:event'
+
