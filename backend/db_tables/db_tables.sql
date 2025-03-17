@@ -74,7 +74,7 @@ create table organizer.event_instance
 (
     id              uuid default gen_random_uuid() not null
         primary key,
-    owner           uuid                           not null,
+    organizer_id           uuid                           not null,
     title           varchar                        not null,
     description     varchar                        not null,
     date            timestamp                      not null,
@@ -84,6 +84,17 @@ create table organizer.event_instance
     capacity        smallint,
     age_restriction smallint
 );
+
+create table organizer.event_client
+(
+    id              uuid default gen_random_uuid() not null
+        primary key,
+    eventId           uuid                           not null,
+    clientId           uuid                        not null,
+    createdTime     timestamp default current_timestamp
+);
+
+
 
 create table organizer.rating
 (

@@ -1,0 +1,57 @@
+package ru.partyfinder.event.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.partyfinder.event.entity.EventClientEntity;
+import ru.partyfinder.event.model.dto.SubscribeEventDTO;
+import ru.partyfinder.event.repository.EventClientRepository;
+import ru.partyfinder.event.repository.EventRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EventClientService {
+
+    private final EventRepository eventRepository;
+
+    private final EventClientRepository eventClientRepository;
+
+
+    public List<EventClientEntity> getEventsSubscribeByClientId(UUID id) {
+        return eventClientRepository.getAllByClientId(id);
+    }
+
+    public void deleteEventSubscribeByClientIdSndEventId(UUID clientId, UUID eventId) {
+        EventClientEntity eventClientEntity = getEventSubscribeByClientIdSndEventId(clientId, eventId);
+        eventClientRepository.delete(eventClientEntity);
+    }
+
+    public EventClientEntity getEventSubscribeByClientIdSndEventId(UUID clientId, UUID eventId) {
+        return eventClientRepository.findByClientIdAndEventId(clientId, eventId).orElseThrow(
+                () -> new IllegalArgumentException("Такой подписки не существует")
+        );
+    }
+
+    public UUID subscribeEvent(SubscribeEventDTO subscribeEventDTO) {
+        UUID newUUID = null;
+        if (checkEventForExist(subscribeEventDTO.getEventId())) {       // TODO  + запрос к другому модулю для узнавания есть ли профиль клиента
+            EventClientEntity eventClientEntity = new EventClientEntity();
+            eventClientEntity.setEventId(subscribeEventDTO.getEventId());
+            eventClientEntity.setClientId(subscribeEventDTO.getClientId());
+            newUUID = eventClientRepository.save(eventClientEntity).getId();
+        }
+        if (newUUID == null) {
+            throw new IllegalArgumentException("Ошибка во время подписки на мероприятие");
+        }
+        return newUUID;
+    }
+
+
+    private boolean checkEventForExist(UUID eventId) {
+        return eventRepository.existsById(eventId);
+    }
+
+
+}
