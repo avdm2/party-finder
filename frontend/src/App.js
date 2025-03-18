@@ -4,7 +4,8 @@ import CreateProfile from "./components/CreateProfile";
 import UserProfile from "./components/UserProfile";
 import Register from "./services/auth/Register";
 import Login from "./services/auth/Login";
-import Homepage from "./services/Homepage";
+import Homepage from "./components/Homepage";
+import OrganizerProfile from "./services/organizer-profile/OrganizerProfile";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/homepage" element={<Homepage />} />
+                    <Route path="/organizer-profile" element={<OrganizerProfile />} />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "./AuthService";
-import "../../styles/MainStyle.css"; // Импортируем стили
+import "../../styles/MainStyle.css";
 
 function Login() {
     const [formData, setFormData] = useState({ username: "", password: "" });
@@ -13,8 +13,22 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (await loginUser(formData)) navigate("/homepage");
+        const token = await loginUser(formData);
+
+        if (!token) {
+            console.error("Ошибка аутентификации");
+            return;
+        }
+
+        const payload = JSON.parse(atob(token.split(".")[1]));
+
+        if (payload.roles.includes("ORGANIZER")) {
+            navigate("/organizer-profile");
+        } else {
+            navigate("/homepage");
+        }
     };
+
 
     return (
         <div className="create-profile-container">

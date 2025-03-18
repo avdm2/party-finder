@@ -34,6 +34,8 @@ public class OrganizerController {
 
     @GetMapping("/username/{username}")
     public ResponseEntity<OrganizerEntity> getOrganizerByUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(organizerService.findOrganizerByUsername(username));
+        var org = organizerService.findOrganizerByUsername(username);
+
+        return org == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(org);
     }
 }
