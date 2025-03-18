@@ -21,8 +21,8 @@ public class EventClientEntity {
     @Column(name = "event_id", nullable = false)
     private UUID eventId;
 
-    @Column(name = "client_id", nullable = false)
-    private UUID clientId;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "created_time")
     private Instant createdTime;

@@ -18,6 +18,8 @@ public class EventClientService {
 
     private final EventClientRepository eventClientRepository;
 
+    private final ProfileService profileService;
+
 
     /*public List<EventClientEntity> getEventsSubscribeByClientId(UUID id) {
         return eventClientRepository.getAllByClientId(id);
@@ -36,10 +38,10 @@ public class EventClientService {
 
     public UUID subscribeEvent(SubscribeEventDTO subscribeEventDTO) {
         UUID newUUID = null;
-        if (checkEventForExist(subscribeEventDTO.getEventId())) {       // TODO  + запрос к другому модулю для узнавания есть ли профиль клиента
+        if (checkEventForExist(subscribeEventDTO.getEventId()) && checkProfileFotExist(subscribeEventDTO.getUsername())) {       // TODO  + запрос к другому модулю для узнавания есть ли профиль клиента
             EventClientEntity eventClientEntity = new EventClientEntity();
             eventClientEntity.setEventId(subscribeEventDTO.getEventId());
-            eventClientEntity.setClientId(subscribeEventDTO.getClientId());
+            eventClientEntity.setUsername(subscribeEventDTO.getUsername());
             newUUID = eventClientRepository.save(eventClientEntity).getId();
         }
         if (newUUID == null) {
@@ -53,5 +55,8 @@ public class EventClientService {
         return eventRepository.existsById(eventId);
     }
 
+    private boolean checkProfileFotExist(String username) {
+        return profileService.existByUsername(username);
+    }
 
 }

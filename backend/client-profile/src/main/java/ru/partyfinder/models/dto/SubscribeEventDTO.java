@@ -9,5 +9,5 @@ import java.util.UUID;
 @Setter
 public class SubscribeEventDTO {
     UUID eventId;
-    UUID clientId;
+    String username;
 }

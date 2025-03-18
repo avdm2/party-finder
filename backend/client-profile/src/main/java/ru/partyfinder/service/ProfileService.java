@@ -37,5 +37,9 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
+    public boolean existByUsername(String username) {
+        return profileRepository.existsByUsername(username);
+    }
+
 
 }

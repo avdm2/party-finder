@@ -90,7 +90,7 @@ create table organizer.event_client
     id              uuid default gen_random_uuid() not null
         primary key,
     eventId           uuid                           not null,
-    clientId           uuid                        not null,
+    username          varchar                        not null,
     createdTime     timestamp default current_timestamp
 );
 
