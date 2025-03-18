@@ -27,7 +27,7 @@ public class EventOrganizerService {
     }
 
     public EventEntity updateEvent(UUID id, EventEntity event) {
-        eventRepository.updateEvent(id, event);
+        eventRepository.updateEvent(id, event.getAddress(), event.getAge(), event.getCapacity(), event.getDateOfEvent(), event.getDescription(), event.getPrice(), event.getStatus(), event.getTitle());
         return getEvent(id);
     }
 }

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "./AuthService";
-import "../../styles/CreateProfile.css"; // Импортируем стили
+import "../../styles/MainStyle.css"; // Импортируем стили
 
 function Register() {
     const [formData, setFormData] = useState({

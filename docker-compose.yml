@@ -27,6 +27,11 @@ services:
     container_name: auth
     ports:
       - "8721:8721"
+  organizer-profile-service:
+    image: partyfinder/organizer-profile:latest
+    container_name: organizer-profile
+    ports:
+      - "8722:8722"
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
