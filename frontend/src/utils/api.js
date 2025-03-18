@@ -13,11 +13,18 @@ export const createProfile = async (clientDTO) => {
 };
 
 export const getProfile = async (username) => {
-    try {
-        const response = await axios.get(`${API_URL}/${username}`);
-        return response.data; 
-    } catch (error) {
-        console.error("Ошибка при получении профиля:", error.response?.data || error.message);
-        throw error;
+    const response = await axios.get(`/api/profile/${username}`);
+    const data = response.data;
+
+    if (data.media && data.media.fileData) {
+        const base64String = btoa(
+            new Uint8Array(data.media.fileData).reduce(
+                (acc, byte) => acc + String.fromCharCode(byte),
+                ""
+            )
+        );
+        data.media.fileUrl = `data:${data.media.mimeType};base64,${base64String}`;
     }
+
+    return data;
 };

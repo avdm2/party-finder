@@ -17,14 +17,15 @@ import java.util.UUID;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+
     private final ProfileConverter profileConverter;
-    public String createProfile(ClientDTO clientDTO) {
+    public UUID createProfile(ClientDTO clientDTO) {
         // TODO заолнить username в clientDTO из токена
-        return profileRepository.save(profileConverter.toProfile(clientDTO)).getUsername();
+        return profileRepository.save(profileConverter.toProfile(clientDTO)).getId();
     }
 
-    public ProfileDTO getProfile(String username) {
-        return profileConverter.toProfileDTO(profileRepository.findByUsername(username).orElseThrow());
+    public ProfileDTO getProfile(UUID id) {
+        return profileConverter.toProfileDTO(profileRepository.findById(id).orElseThrow());
     }
 
     public Profile getProfileByUsername(String username) {

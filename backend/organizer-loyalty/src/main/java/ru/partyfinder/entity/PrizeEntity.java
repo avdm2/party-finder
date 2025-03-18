@@ -38,7 +38,7 @@ public class PrizeEntity {
     private Integer bonusCost;
 
     @Lob
-    @Column(name = "file_data", nullable = false)
+    @Column(name = "file_data", nullable = false, columnDefinition = "bytea")
     private byte[] fileData;
 
     @Column(name = "amount")

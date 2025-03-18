@@ -25,13 +25,13 @@ public class EventClientService {
         return eventClientRepository.getAllByClientId(id);
     }*/
 
-    public void deleteEventSubscribeByClientIdSndEventId(UUID clientId, UUID eventId) {
-        EventClientEntity eventClientEntity = getEventSubscribeByClientIdSndEventId(clientId, eventId);
+    public void deleteEventSubscribeByClientIdSndEventId(String username, UUID eventId) {
+        EventClientEntity eventClientEntity = getEventSubscribeByClientIdSndEventId(username, eventId);
         eventClientRepository.delete(eventClientEntity);
     }
 
-    public EventClientEntity getEventSubscribeByClientIdSndEventId(UUID clientId, UUID eventId) {
-        return eventClientRepository.findByClientIdAndEventId(clientId, eventId).orElseThrow(
+    public EventClientEntity getEventSubscribeByClientIdSndEventId(String username, UUID eventId) {
+        return eventClientRepository.findByUsernameAndEventId(username, eventId).orElseThrow(
                 () -> new IllegalArgumentException("Такой подписки не существует")
         );
     }

@@ -9,6 +9,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class NewRatingRequest {
-    String username;
+    UUID entityId;
     BigDecimal score;
 }

@@ -24,7 +24,7 @@ public class NewRatingEntity {
     @Column(name = "entity_id", nullable = false)
     private UUID entityId;
 
-    @Column(name = "score", nullable = false, columnDefinition = "DECIMAL(3, 2) CHECK (score BETWEEN 0.00 AND 5.00)")
+    @Column(name = "score", nullable = false)
     private BigDecimal score;
 
     @Column(name = "created_time", nullable = false)

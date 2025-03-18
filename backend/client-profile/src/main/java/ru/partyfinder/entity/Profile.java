@@ -39,7 +39,7 @@ public class Profile {
     @JoinColumn(name = "media_id")
     private Media media;
 
-    @Column(name = "rating", columnDefinition = "DECIMAL(3, 2) DEFAULT 0.00")
+    @Column(name = "rating")
     private BigDecimal rating;
 
     @Column(name = "is_confirmed", nullable = false)

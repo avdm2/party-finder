@@ -6,6 +6,8 @@ import Register from "./services/auth/Register";
 import Login from "./services/auth/Login";
 import Homepage from "./components/Homepage";
 import OrganizerProfile from "./services/organizer-profile/OrganizerProfile";
+import FindEvent from "./components/FindEvent";
+
 
 function App() {
     return (
@@ -19,6 +21,7 @@ function App() {
                     <Route path="/homepage" element={<Homepage />} />
                     <Route path="/organizer-profile" element={<OrganizerProfile />} />
                     <Route path="*" element={<Navigate to="/login" />} />
+                    <Route path="/find-event" element={<FindEvent />} />
                 </Routes>
             </div>
         </Router>

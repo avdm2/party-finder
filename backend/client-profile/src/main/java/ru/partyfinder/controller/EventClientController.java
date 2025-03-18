@@ -34,8 +34,8 @@ public class EventClientController {
     }*/
 
     @PatchMapping("/cancelEvent")
-    public void deleteUserSubscribe(@RequestParam UUID clientId,
+    public void deleteUserSubscribe(@RequestParam String username,
                                                  @RequestParam UUID eventId) {
-        eventClientService.deleteEventSubscribeByClientIdSndEventId(clientId, eventId);
+        eventClientService.deleteEventSubscribeByClientIdSndEventId(username, eventId);
     }
 }
