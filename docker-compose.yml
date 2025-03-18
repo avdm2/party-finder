@@ -63,39 +63,3 @@ services:
 
 volumes:
   postgres_data:
-
-  postgres:
-    image: postgres:13-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_DB: diploma
-      POSTGRES_USER: artem
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data # Для сохранения данных между перезапусками
-
-  app:
-    image: your-spring-boot-app-image:latest # Замените на имя вашего Docker-образа
-    container_name: app
-    build:
-      context: . # Указывает путь к Dockerfile, если вы собираете образ локально
-      dockerfile: Dockerfile
-    depends_on:
-      - kafka
-      - redis
-      - postgres
-    ports:
-      - "8721:8721" # Порт вашего приложения
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/diploma
-      SPRING_DATASOURCE_USERNAME: artem
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      TOKEN_JWT_SIGNING_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA53VzmIVVZZWyNm266l82
-      TOKEN_JWT_DURATION_MINUTES: 20
-      KAFKA_TOPICS_CREDENTIALS_CHANGES: credentials-changes
-
-volumes:
-  postgres_data: # Объем для хранения данных PostgreSQL
