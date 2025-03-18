@@ -14,12 +14,12 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = await loginUser(formData);
-
         if (!token) {
             console.error("Ошибка аутентификации");
             return;
         }
 
+        localStorage.setItem("token", token);
         const payload = JSON.parse(atob(token.split(".")[1]));
 
         if (payload.roles.includes("ORGANIZER")) {
@@ -28,7 +28,6 @@ function Login() {
             navigate("/homepage");
         }
     };
-
 
     return (
         <div className="create-profile-container">

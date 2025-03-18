@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrganizerProfile } from "./CreateOrganizerProfile";
 import { getOrganizerProfile } from "./GetOrganizerProfile";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Avatar, Box, Typography, IconButton } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 function OrganizerProfile() {
     const [profile, setProfile] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: "", surname: "", birthday: "", username: "" });
+    const [avatarFile, setAvatarFile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,22 +46,86 @@ function OrganizerProfile() {
         }
     };
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setAvatarFile(file);
+            uploadAvatar(file);
+        }
+    };
+
+    const uploadAvatar = async (file) => {
+        if (!profile?.username) {
+            console.error("Ошибка: profile.username отсутствует");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("Ошибка: отсутствует токен авторизации");
+            alert("Вы не авторизованы!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(`http://localhost:8722/api/v1/organizer/media/uploadPhoto?username=${profile.username}`, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Ошибка загрузки:", errorText);
+                alert(`Ошибка загрузки: ${errorText}`);
+                return;
+            }
+
+            console.log("Фото успешно загружено!");
+
+            // Принудительно обновляем аватар после загрузки
+            const updatedProfile = await getOrganizerProfile(profile.username);
+            if (updatedProfile.media) {
+                setProfile(prevProfile => ({
+                    ...prevProfile,
+                    media: updatedProfile.media
+                }));
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке фото:", error);
+            alert("Ошибка при загрузке фото: " + error.message);
+        }
+    };
+
 
     return (
-        <div>
+        <Box sx={{ maxWidth: 400, margin: "auto", textAlign: "center", p: 3, bgcolor: "background.paper", borderRadius: 2, boxShadow: 3 }}>
             {profile ? (
-                <div>
-                    <h2>Профиль организатора</h2>
-                    <p>Имя: {profile.name}</p>
-                    <p>Фамилия: {profile.surname}</p>
-                    <p>Дата рождения: {profile.birthday}</p>
-                    {profile.media && (
-                        <img src={`data:image/jpeg;base64,${profile.media.fileData}`} alt="Avatar" />
-                    )}
-                </div>
+                <>
+                    <Avatar
+                        src={profile.media ? `data:image/jpeg;base64,${profile.media.fileData}` : ""}
+                        sx={{ width: 120, height: 120, margin: "auto", bgcolor: "grey.300" }}
+                    >
+                        {!profile.media && <PhotoCamera fontSize="large" />}
+                    </Avatar>
+                    <IconButton component="label">
+                        <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
+                        <PhotoCamera />
+                    </IconButton>
+                    <Typography variant="h5">{profile.name} {profile.surname}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
+                    </Typography>
+                </>
             ) : (
-                <p>Загрузка...</p>
+                <Typography variant="body1">Загрузка...</Typography>
             )}
+
             <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
                 <DialogTitle>Заполните профиль</DialogTitle>
                 <DialogContent>
@@ -73,7 +139,8 @@ function OrganizerProfile() {
                     <Button onClick={() => setModalOpen(false)} variant="outlined" color="secondary">Отмена</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 }
+
 export default OrganizerProfile;

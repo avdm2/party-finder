@@ -1,6 +1,5 @@
 export async function getOrganizerProfile(username) {
     const token = localStorage.getItem("token");
-    console.log("TOKENTOKEN::::: " + token);
     if (!token) {
         console.error("Токен отсутствует в localStorage");
         return null;
