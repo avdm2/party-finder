@@ -17,7 +17,7 @@ create table source.new_ratings
 (
     id           bigserial primary key,
     entity_type  text          not null check (entity_type in ('PROFILE', 'ORGANIZER', 'EVENT')),
-    entity_id    uuid          not null,
+    entity_username    varchar          not null,
     score        decimal(3, 2) not null check (score between 0.00 and 5.00),
     created_time timestamp     not null default current_timestamp,
     processed    boolean       not null default false

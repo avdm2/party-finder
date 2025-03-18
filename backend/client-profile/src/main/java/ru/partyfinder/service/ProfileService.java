@@ -18,13 +18,13 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final ProfileConverter profileConverter;
-    public UUID createProfile(ClientDTO clientDTO) {
+    public String createProfile(ClientDTO clientDTO) {
         // TODO заолнить username в clientDTO из токена
-        return profileRepository.save(profileConverter.toProfile(clientDTO)).getId();
+        return profileRepository.save(profileConverter.toProfile(clientDTO)).getUsername();
     }
 
-    public ProfileDTO getProfile(UUID id) {
-        return profileConverter.toProfileDTO(profileRepository.findById(id).orElseThrow());
+    public ProfileDTO getProfile(String username) {
+        return profileConverter.toProfileDTO(profileRepository.findByUsername(username).orElseThrow());
     }
 
     public Profile getProfileByUsername(String username) {

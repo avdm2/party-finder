@@ -15,13 +15,13 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping
-    public UUID createProfile(@RequestBody ClientDTO clientDTO) {
+    @PostMapping("/create")
+    public String createProfile(@RequestBody ClientDTO clientDTO) {
         return profileService.createProfile(clientDTO);
     }
 
-    @GetMapping("/{id}")
-    public ProfileDTO getEvent(@PathVariable UUID id) {
-        return profileService.getProfile(id);
+    @GetMapping("/{username}")
+    public ProfileDTO getProfile(@PathVariable String username) {
+        return profileService.getProfile(username);
     }
 }

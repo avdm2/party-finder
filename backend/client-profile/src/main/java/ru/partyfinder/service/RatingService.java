@@ -31,7 +31,7 @@ public class RatingService {
         NewRatingEntity newRatingEntity = new NewRatingEntity();
         if (checkNewRatingRequest(newRatingRequest)) {
             newRatingEntity.setEntityType(entityType);
-            newRatingEntity.setEntityId(newRatingRequest.getEntityId());
+            newRatingEntity.setUsername(newRatingRequest.getUsername());
             newRatingEntity.setScore(newRatingRequest.getScore());
             return newRatingRepository.save(newRatingEntity).getId();
         } else {
@@ -40,6 +40,6 @@ public class RatingService {
     }
 
     private boolean checkNewRatingRequest(NewRatingRequest newRatingRequest) {
-        return profileService.getProfile(newRatingRequest.getEntityId()).getId() != null;
+        return profileService.getProfile(newRatingRequest.getUsername()).getId() != null;
     }
 }
