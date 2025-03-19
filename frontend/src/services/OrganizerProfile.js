@@ -98,7 +98,7 @@ function OrganizerProfile() {
         formData.append("file", file);
 
         try {
-            const response = await fetch(`http://localhost:8722/api/v1/organizer/media/uploadPhoto?username=${profile.username}`, {
+            const response = await fetch(`http://localhost:8722/api/organizers/media/uploadPhoto?username=${profile.username}`, {
                 method: "POST",
                 body: formData,
                 headers: {Authorization: `Bearer ${token}`},
@@ -140,6 +140,50 @@ function OrganizerProfile() {
         navigate("/login");
     };
 
+    const handleCloseEventModal = () => {
+        setEventModalOpen(false);
+    };
+
+    const handleChangeEvent = (e) => {
+        setFormDataEvent(prev => ({
+            ...prev,
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSaveEvent = async () => {
+        const token = localStorage.getItem("token");
+        const method = formDataEvent.id ? "PUT" : "POST";
+        const url = formDataEvent.id
+            ? `http://localhost:8722/api/organizers/event/update/${formDataEvent.id}`
+            : "http://localhost:8722/api/organizers/event";
+
+        // Преобразуем дату к формату yyyy-MM-dd'T'HH:mm:ss
+        const formattedEventData = {
+            ...formDataEvent,
+            organizerId: profile.id,
+            dateOfEvent: new Date(formDataEvent.dateOfEvent).toISOString().slice(0, 19).replace("T", "T"),
+            status: "UPCOMING"
+        };
+
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formattedEventData),
+        });
+
+        if (response.ok) {
+            fetchEvents(profile.id);
+            setEventModalOpen(false);
+        } else {
+            console.error("Ошибка сохранения мероприятия");
+        }
+    };
+
+
     const fetchEvents = async (organizerId) => {
         const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8722/api/organizers/event/list/${organizerId}`, {
@@ -161,8 +205,8 @@ function OrganizerProfile() {
 
     const handleCancelEvent = async (eventId) => {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/v1/organizer/event/cancel/${eventId}`, {
-            method: "POST",
+        const response = await fetch(`http://localhost:8722/api/organizers/event/cancel/${eventId}`, {
+            method: "PUT",
             headers: {Authorization: `Bearer ${token}`},
         });
 
@@ -243,12 +287,21 @@ function OrganizerProfile() {
                     </Typography>
 
                     <Box sx={{ display: "flex", gap: 4, justifyContent: "center" }}>
-                        <Button variant="contained" color="secondary" onClick={() => handleOpenEventModal()} sx={{ mt: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleOpenEventModal()}
+                            sx={{ mt: 2 }}
+                        >
                             Создать мероприятие
-
                         </Button>
 
-                        <Button variant="contained" color="secondary" onClick={handleLogout} sx={{ mt: 2 }}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleLogout}
+                            sx={{ mt: 2 }}
+                        >
                             Выйти
                         </Button>
                     </Box>
@@ -259,6 +312,7 @@ function OrganizerProfile() {
                 <Typography variant="body1">Загрузка...</Typography>
             )}
 
+            {/* Диалог для заполнения профиля */}
             <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
                 <DialogTitle>Заполните профиль</DialogTitle>
                 <DialogContent>
@@ -274,8 +328,44 @@ function OrganizerProfile() {
                     <Button onClick={() => setModalOpen(false)} variant="outlined" color="secondary">Отмена</Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Диалог для создания/редактирования мероприятия */}
+            <Dialog open={eventModalOpen} onClose={handleCloseEventModal}>
+                <DialogTitle>{formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}</DialogTitle>
+                <DialogContent>
+                    <TextField fullWidth margin="dense" label="UUID создателя" name="owner_uuid" value={profile.id}
+                               InputProps={{readOnly: true}}/>
+                    <TextField fullWidth margin="dense" label="Название" name="title" value={formDataEvent.title}
+                               onChange={handleChangeEvent}/>
+                    <TextField fullWidth margin="dense" label="Описание" name="description" value={formDataEvent.description}
+                               onChange={handleChangeEvent}/>
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        type="datetime-local"
+                        name="dateOfEvent"
+                        value={formDataEvent.dateOfEvent}
+                        onChange={handleChangeEvent}
+                        InputLabelProps={{ shrink: true }}
+                    />
+
+                    <TextField fullWidth margin="dense" label="Адрес" name="address" value={formDataEvent.address}
+                               onChange={handleChangeEvent}/>
+                    <TextField fullWidth margin="dense" label="Цена" type="number" name="price" value={formDataEvent.price}
+                               onChange={handleChangeEvent}/>
+                    <TextField fullWidth margin="dense" label="Вместимость" type="number" name="capacity"
+                               value={formDataEvent.capacity} onChange={handleChangeEvent}/>
+                    <TextField fullWidth margin="dense" label="Возраст" type="number" name="age" value={formDataEvent.age}
+                               onChange={handleChangeEvent}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSaveEvent} variant="contained" color="primary">Сохранить</Button>
+                    <Button onClick={handleCloseEventModal} variant="outlined" color="secondary">Отмена</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
+
 }
 
 export async function createOrganizerProfile(profileData) {
