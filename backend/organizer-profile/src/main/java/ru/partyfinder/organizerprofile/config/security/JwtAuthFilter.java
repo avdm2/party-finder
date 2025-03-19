@@ -16,13 +16,18 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
+
+    Logger log = Logger.getLogger(JwtAuthFilter.class.getName());
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
+
+        log.info("Handling request: " + request.getRequestURI());
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing or invalid Authorization header");

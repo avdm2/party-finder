@@ -1,5 +1,6 @@
 package ru.partyfinder.organizerprofile.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,7 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<EventEntity, UUID> {
 
     @Modifying
+    @Transactional
     @Query("""
         update EventEntity e
         set e.status = :status
