@@ -333,7 +333,7 @@ function OrganizerProfile() {
             <Dialog open={eventModalOpen} onClose={handleCloseEventModal}>
                 <DialogTitle>{formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}</DialogTitle>
                 <DialogContent>
-                    <TextField fullWidth margin="dense" label="UUID создателя" name="owner_uuid" value={profile.id}
+                    <TextField fullWidth margin="dense" label="UUID создателя" name="owner_uuid" value={profile ? profile.id : "empty"}
                                InputProps={{readOnly: true}}/>
                     <TextField fullWidth margin="dense" label="Название" name="title" value={formDataEvent.title}
                                onChange={handleChangeEvent}/>
