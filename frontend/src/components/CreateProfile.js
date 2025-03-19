@@ -1,31 +1,31 @@
 import React, { useState } from "react";
 import { useProfileService } from "../services/ProfileService";
-import "../styles/MainStyle.css"; // Импортируем стили
+import "../styles/MainStyle.css";
 
 const CreateProfile = () => {
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("");
+    const [phone, setPhone] = useState("");
     const [birthDate, setBirthDate] = useState("");
+    const [aboutMe, setAboutMe] = useState("");
 
     const { handleCreateProfile } = useProfileService();
 
-    // Обработка отправки формы
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Отменяем стандартное действие формы
+        event.preventDefault();
 
-        if (!name || !surname || !birthDate) {
-            alert("Заполните все поля!");
+        if (!birthDate || !phone) {
+            alert("Заполните все обязательные поля!");
             return;
         }
 
         const clientDTO = {
-            name,
-            surname,
-            birthDate: new Date(birthDate),
+            phone,
+            birthDate,
+            aboutMe,
         };
 
         try {
             await handleCreateProfile(clientDTO);
+            alert("Профиль успешно создан!");
         } catch (error) {
             console.error("Ошибка:", error);
         }
@@ -36,25 +36,13 @@ const CreateProfile = () => {
             <h2>Создание профиля</h2>
             <form onSubmit={handleSubmit} className="create-profile-form">
                 <div className="form-group">
-                    <label>Имя:</label>
+                    <label>Телефон:</label>
                     <input
-                        type="text"
-                        name="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Введите имя"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Фамилия:</label>
-                    <input
-                        type="text"
-                        name="surname"
-                        value={surname}
-                        onChange={(e) => setSurname(e.target.value)}
-                        placeholder="Введите фамилию"
+                        type="tel"
+                        name="phone"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Введите номер телефона"
                         required
                     />
                 </div>
@@ -67,6 +55,16 @@ const CreateProfile = () => {
                         value={birthDate}
                         onChange={(e) => setBirthDate(e.target.value)}
                         required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>О себе:</label>
+                    <textarea
+                        name="aboutMe"
+                        value={aboutMe}
+                        onChange={(e) => setAboutMe(e.target.value)}
+                        placeholder="Расскажите немного о себе"
                     />
                 </div>
 

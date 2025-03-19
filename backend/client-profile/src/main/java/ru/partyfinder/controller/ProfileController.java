@@ -1,6 +1,8 @@
 package ru.partyfinder.controller;
 
 import lombok.RequiredArgsConstructor;
+import ru.partyfinder.config.UserContextHolder;
+import ru.partyfinder.entity.Profile;
 import ru.partyfinder.models.dto.ClientDTO;
 import ru.partyfinder.models.dto.ProfileDTO;
 import ru.partyfinder.service.ProfileService;
@@ -16,12 +18,18 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/create")
-    public UUID createProfile(@RequestBody ClientDTO clientDTO) {
-        return profileService.createProfile(clientDTO);
+    public void createProfile(@RequestBody ClientDTO clientDTO) {
+        profileService.createProfile(clientDTO);
     }
 
-    @GetMapping("/{id}")
-    public ProfileDTO getEvent(@PathVariable UUID id) {
-        return profileService.getProfile(id);
+    @GetMapping("/me")
+    public ProfileDTO getProfileMe() {
+        String username = UserContextHolder.getContext().getUsername();
+        return profileService.getProfile(username);
+    }
+
+    @GetMapping("/{username}")
+    public ProfileDTO getProfile(@PathVariable String username) {
+        return profileService.getProfile(username);
     }
 }

@@ -20,9 +20,39 @@ export const createProfile = async (clientDTO, token) => {
     }
 };
 
-export const getProfile = async (username) => {
-    const response = await axios.get(`/api/profile/${username}`);
-    const data = response.data;
+export const getProfileMe = async () => {
+    const token = localStorage.getItem("token"); // Берем токен из localStorage
+    const response = await fetch(`${API_URL}/me`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Ошибка сервера: ${response.status}`);
+    }
+
+    return await response.json();
+};
+
+export const getProfileByUsername = async (username) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    const response = await fetch(`${API_URL}/${username}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Ошибка сервера: ${response.status}`);
+    }
+
+    const data = await response.json();
 
     if (data.media && data.media.fileData) {
         const base64String = btoa(

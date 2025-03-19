@@ -6,9 +6,10 @@ spring:
     url: jdbc:postgresql://postgres:5432/diploma
     username: artem
     password: postgres
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

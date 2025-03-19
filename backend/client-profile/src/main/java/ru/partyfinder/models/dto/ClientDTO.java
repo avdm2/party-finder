@@ -21,5 +21,22 @@ public class ClientDTO {
 
     private String email;
 
+    private String aboutMe;
+
+    private String phone;
+
     private LocalDate birthDate;
+
+    @Override
+    public String toString() {
+        return "ClientDTO{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", aboutMe='" + aboutMe + '\'' +
+                ", phone='" + phone + '\'' +
+                ", birthDate=" + birthDate +
+                '}';
+    }
 }

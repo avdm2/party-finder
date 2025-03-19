@@ -1,41 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfile } from "../utils/api";
+import { getProfileMe, getProfileByUsername } from "../utils/api";
 import "../styles/UserProfile.css";
 import createDefaultProfile from '../utils/Base64Util'; // Импортируем функцию
 
 let defaultProfileCache = null; // Кэш для defaultProfile
 
 const UserProfile = () => {
-    const { username } = useParams();
-    const [profile, setProfile] = useState(null); // Используем null вместо defaultProfile
-    const [loading, setLoading] = useState(true);
+    const { username } = useParams(); // Получаем username из URL-параметров
+    const [profile, setProfile] = useState(null); // Состояние для профиля
+    const [loading, setLoading] = useState(true); // Состояние для загрузки
     const navigate = useNavigate(); // Хук для навигации
 
     useEffect(() => {
-        // Если кэш еще не создан, создаем defaultProfile
-        if (!defaultProfileCache) {
-            createDefaultProfile().then(profile => {
-                defaultProfileCache = profile; // Сохраняем в кэше
-                if (!username) {
-                    setProfile(defaultProfileCache); // Если нет username, используем defaultProfile
-                    setLoading(false);
-                }
-            });
-        }
-
         const fetchProfile = async () => {
             try {
-                const data = await getProfile(username);
-                setProfile(data); // Устанавливаем полученные данные
+                let data;
+
+                if (username === "me") {
+                    data = await getProfileMe();
+                } else {
+                    data = await getProfileByUsername(username);
+                }
+
+                setProfile(data);
             } catch (err) {
                 console.error("Ошибка при загрузке профиля:", err);
-                // Если произошла ошибка, используем defaultProfile из кэша
                 setProfile(defaultProfileCache || (await createDefaultProfile()));
             } finally {
                 setLoading(false);
             }
         };
+
+        if (!defaultProfileCache) {
+            createDefaultProfile().then(profile => {
+                defaultProfileCache = profile;
+            });
+        }
 
         if (username) {
             fetchProfile();
@@ -47,7 +48,7 @@ const UserProfile = () => {
     }
 
     const handleFindEvent = () => {
-        navigate("/find-event"); // Переход на страницу поиска мероприятий
+        navigate("/find-event");
     };
 
     return (
@@ -75,10 +76,8 @@ const UserProfile = () => {
             <div className="profile-content">
                 <div className="profile-stats">
                     <div className="stat-item">
-                        <strong>Рейтинг:</strong>{" "}
-                        {profile.rating !== null
-                            ? profile.rating.toFixed(2)
-                            : "Нет рейтинга"}
+                        <strong>Телефон:</strong>{" "}
+                        {profile.phone || "Не указан"}
                     </div>
                     <div className="stat-item">
                         <strong>Подтвержден:</strong>{" "}
@@ -104,6 +103,10 @@ const UserProfile = () => {
                             ? new Date(profile.updatedTime).toLocaleString()
                             : "Неизвестно"}
                     </div>
+                    <div className="detail-item">
+                        <strong>О себе:</strong>{" "}
+                        {profile.aboutMe || "Не указано"}
+                    </div>
                 </div>
                 <button onClick={handleFindEvent} className="find-event-button">
                     Найти мероприятие
@@ -114,3 +117,4 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+

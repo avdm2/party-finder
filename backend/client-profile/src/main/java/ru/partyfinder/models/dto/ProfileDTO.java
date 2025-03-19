@@ -24,6 +24,10 @@ public class ProfileDTO {
 
     private String email;
 
+    private String phone;
+
+    private String aboutMe;
+
     private LocalDate birthDate;
 
     private Boolean isConfirmed;

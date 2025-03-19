@@ -15,8 +15,9 @@ public interface ProfileConverter {
     @Mapping(target = "username", source = "username")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "birthDate", source = "birthDate")
-    Profile
-    toProfile(ClientDTO clientDTO);
+    @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "aboutMe", source = "aboutMe")
+    Profile toProfile(ClientDTO clientDTO);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
@@ -24,6 +25,8 @@ public interface ProfileConverter {
     @Mapping(target = "username", source = "username")
     @Mapping(target = "birthDate", source = "birthDate")
     @Mapping(target = "email", source = "email")
+    @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "aboutMe", source = "aboutMe")
     @Mapping(target = "isConfirmed", source = "isConfirmed")
     @Mapping(target = "createdTime", source = "createdTime")
     @Mapping(target = "updatedTime", source = "updatedTime")

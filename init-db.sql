@@ -22,6 +22,8 @@ create table client.profile
     name         varchar(255)  not null,
     surname      varchar(255)  not null,
     email        varchar(255)  not null,
+    phone        varchar(255) not null,
+    about_me     varchar(255) not null,
     birth_date   date          not null,
     media_id     bigint references client.media (id),
     rating       decimal(3, 2) not null ,

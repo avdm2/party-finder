@@ -24,16 +24,21 @@ public class ProfileService {
     private final ProfileConverter profileConverter;
 
     private final UserRepository userRepository;
-    public UUID createProfile(ClientDTO clientDTO) {
+    public void createProfile(ClientDTO clientDTO) {
         String username = UserContextHolder.getContext().getUsername();
-        log.info("USERNAME IN SERVICE-> " + username);
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("Нет такого зарегистрирвоанного пользователя")
         );
         clientDTO.setUsername(user.getUsername());
-        log.info("EMAIL -> " + user.getEmail());
         clientDTO.setEmail(user.getEmail());
-        return profileRepository.save(profileConverter.toProfile(clientDTO)).getId();
+        clientDTO.setName(user.getFirstname());
+        clientDTO.setSurname(user.getLastname());
+        log.info(clientDTO.toString());
+        profileRepository.save(profileConverter.toProfile(clientDTO));
+    }
+
+    public ProfileDTO getProfile(String username) {
+        return profileConverter.toProfileDTO(profileRepository.findByUsername(username).orElseThrow());
     }
 
     public ProfileDTO getProfile(UUID id) {

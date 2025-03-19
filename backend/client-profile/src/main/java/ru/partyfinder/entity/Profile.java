@@ -35,8 +35,14 @@ public class Profile {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
+
+    @Column(name = "about_me")
+    private String aboutMe;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "media_id")
