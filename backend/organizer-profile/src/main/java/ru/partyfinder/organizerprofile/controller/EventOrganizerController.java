@@ -26,12 +26,12 @@ public class EventOrganizerController {
         return ResponseEntity.ok(eventOrganizerService.getEvent(id));
     }
 
-    @PatchMapping("/cancel/{uuid}")
+    @PutMapping("/cancel/{uuid}")
     public ResponseEntity<Integer> cancel(@PathVariable UUID uuid) {
         return ResponseEntity.ok(eventOrganizerService.endEvent(uuid));
     }
 
-    @PatchMapping("/update/{eventId}")
+    @PutMapping("/update/{eventId}")
     public ResponseEntity<EventEntity> update(@PathVariable UUID eventId, @RequestBody EventEntity event) {
         return ResponseEntity.ok(eventOrganizerService.updateEvent(eventId, event));
     }
