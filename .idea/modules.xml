@@ -5,7 +5,14 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/event.main.iml" filepath="$PROJECT_DIR$/.idea/modules/event.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/organizer-profile.main.iml" filepath="$PROJECT_DIR$/.idea/modules/organizer-profile.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/auth/party-finder.backend.auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/auth/party-finder.backend.auth.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/chat/party-finder.backend.chat.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/chat/party-finder.backend.chat.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/client-profile/party-finder.backend.client-profile.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/client-profile/party-finder.backend.client-profile.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/event/party-finder.backend.event.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/event/party-finder.backend.event.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/organizer-channel/party-finder.backend.organizer-channel.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/organizer-channel/party-finder.backend.organizer-channel.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/organizer-loyalty/party-finder.backend.organizer-loyalty.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/organizer-loyalty/party-finder.backend.organizer-loyalty.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/organizer-profile/party-finder.backend.organizer-profile.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/organizer-profile/party-finder.backend.organizer-profile.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend/rating-system/party-finder.backend.rating-system.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend/rating-system/party-finder.backend.rating-system.main.iml" />
     </modules>
   </component>
 </project>

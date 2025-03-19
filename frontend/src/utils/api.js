@@ -2,9 +2,17 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8724/api/v1/client-service/profile";
 
-export const createProfile = async (clientDTO) => {
+export const createProfile = async (clientDTO, token) => {
     try {
-        const response = await axios.post(`${API_URL}/create`, clientDTO);
+        console.log(token);
+        const response = await fetch(`${API_URL}/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(clientDTO)
+        });
         return response.data;
     } catch (error) {
         console.error("Ошибка при создании профиля:", error.response?.data || error.message);

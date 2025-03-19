@@ -15,7 +15,7 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping
+    @PostMapping("/create")
     public UUID createProfile(@RequestBody ClientDTO clientDTO) {
         return profileService.createProfile(clientDTO);
     }

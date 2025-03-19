@@ -5,8 +5,6 @@ import "../styles/MainStyle.css"; // Импортируем стили
 const CreateProfile = () => {
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
     const [birthDate, setBirthDate] = useState("");
 
     const { handleCreateProfile } = useProfileService();
@@ -15,17 +13,14 @@ const CreateProfile = () => {
     const handleSubmit = async (event) => {
         event.preventDefault(); // Отменяем стандартное действие формы
 
-        if (!name || !surname || !username || !email || !birthDate) {
+        if (!name || !surname || !birthDate) {
             alert("Заполните все поля!");
-            console.log("ХУЙ");
             return;
         }
 
         const clientDTO = {
             name,
             surname,
-            username,
-            email,
             birthDate: new Date(birthDate),
         };
 
@@ -60,30 +55,6 @@ const CreateProfile = () => {
                         value={surname}
                         onChange={(e) => setSurname(e.target.value)}
                         placeholder="Введите фамилию"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Введите username"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Введите email"
                         required
                     />
                 </div>
