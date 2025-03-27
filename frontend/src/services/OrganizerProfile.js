@@ -137,7 +137,7 @@ function OrganizerProfile() {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        navigate("/login");
+        navigate("/homepage");
     };
 
     const handleCloseEventModal = () => {
@@ -296,14 +296,7 @@ function OrganizerProfile() {
                             Создать мероприятие
                         </Button>
 
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={handleLogout}
-                            sx={{ mt: 2 }}
-                        >
-                            Выйти
-                        </Button>
+
                     </Box>
 
                     {["COMPLETED", "CANCELLED", "ONGOING", "UPCOMING"].map(status => renderEventsByStatus(status))}

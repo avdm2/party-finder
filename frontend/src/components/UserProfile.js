@@ -1,3 +1,4 @@
+// src/components/UserProfile.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProfileMe, getProfileByUsername } from "../utils/api";
@@ -10,6 +11,7 @@ const UserProfile = () => {
     const { username } = useParams(); // Получаем username из URL-параметров
     const [profile, setProfile] = useState(null); // Состояние для профиля
     const [loading, setLoading] = useState(true); // Состояние для загрузки
+    const [error, setError] = useState(null); // Состояние для ошибки
     const navigate = useNavigate(); // Хук для навигации
 
     useEffect(() => {
@@ -24,8 +26,10 @@ const UserProfile = () => {
                 }
 
                 setProfile(data);
+                setError(null); // Сбрасываем ошибку, если профиль успешно загружен
             } catch (err) {
                 console.error("Ошибка при загрузке профиля:", err);
+                setError("Профиль не найден");
                 setProfile(defaultProfileCache || (await createDefaultProfile()));
             } finally {
                 setLoading(false);
@@ -45,6 +49,17 @@ const UserProfile = () => {
 
     if (loading) {
         return <div className="profile-loading">Загрузка профиля...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="profile-error">
+                <h2>{error}</h2>
+                <button className="back-button" onClick={() => navigate(-1)}>
+                    Назад
+                </button>
+            </div>
+        );
     }
 
     const handleFindEvent = () => {
@@ -117,4 +132,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-

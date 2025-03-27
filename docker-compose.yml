@@ -42,6 +42,26 @@ services:
     ports:
       - "8722:8722"
 
+  client-profile-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/client-profile:latest
+    container_name: client-profile
+    ports:
+      - "8724:8724"
+
+  event-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/event:latest
+    container_name: event
+    ports:
+      - "8723:8723"
+
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop

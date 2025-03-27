@@ -1,0 +1,42 @@
+/* src/components/HomePage.css */
+.home-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.home-main-content {
+    max-width: 800px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.home-main-content h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.home-main-content p {
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+.home-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.home-button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.home-button:hover {
+    background-color: #555;
+}

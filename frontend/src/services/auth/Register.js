@@ -1,8 +1,8 @@
-// Register.js
+// src/services/auth/Register.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/MainStyle.css";
-import {registerUser} from "./Auth"; // Импортируем стили
+import { registerUser } from "./Auth";
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -26,7 +26,7 @@ function Register() {
                 {Object.keys(formData).map((key) => (
                     key !== "role" && (
                         <div className="form-group" key={key}>
-                            <label>{key}</label>
+                            <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
                             <input name={key} type="text" value={formData[key]} onChange={handleChange} required />
                         </div>
                     )
