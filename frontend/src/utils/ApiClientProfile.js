@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const API_URL = "http://localhost:8724/api/v1/client-service/profile";
 
 export const createProfile = async (clientDTO, token) => {

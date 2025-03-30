@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios"; // Для запросов к API
 import "../styles/FindEvent.css";
+import { fetchEventsRequest } from "../utils/ApiFindEvents";
 
 const FindEvent = () => {
     const [filters, setFilters] = useState({
@@ -22,20 +23,20 @@ const FindEvent = () => {
     const [pagination, setPagination] = useState({ page: 0, size: 10 }); // Параметры пагинации
     const [totalPages, setTotalPages] = useState(0); // Общее количество страниц
 
-    // Функция для выполнения запроса к API
+    useEffect(() => {
+        fetchEvents(filters, pagination);
+    }, [filters, pagination]);
+
     const fetchEvents = async (filters, pagination) => {
         try {
-            const response = await axios.get("/api/events/filter/", {
-                params: { ...filters, ...pagination },
-            });
-            setEvents(response.data.content); // Список мероприятий
-            setTotalPages(response.data.totalPages); // Общее количество страниц
+            const response = await fetchEventsRequest(filters, pagination);
+            setEvents(response.content);
+            setTotalPages(response.totalPages);
         } catch (error) {
             console.error("Ошибка при загрузке мероприятий:", error);
         }
     };
 
-    // Обработка изменения фильтров
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilters((prevFilters) => ({
@@ -44,27 +45,24 @@ const FindEvent = () => {
         }));
     };
 
-    // Функция для поиска мероприятий
     const handleSearch = (e) => {
-        e.preventDefault(); // Отменяем стандартное поведение формы
-        // Сбрасываем страницу на 0 при новом поиске
+        e.preventDefault();
         setPagination({ page: 0, size: 10 });
-        fetchEvents(filters, { page: 0, size: 10 });
     };
 
-    // Функция для пагинации
     const handlePageChange = (newPage) => {
-        setPagination((prevPagination) => ({
-            ...prevPagination,
-            page: newPage,
-        }));
-        fetchEvents(filters, { ...pagination, page: newPage });
+        if (newPage >= 0 && newPage < totalPages) {
+            setPagination((prevPagination) => ({
+                ...prevPagination,
+                page: newPage,
+            }));
+        }
     };
 
     return (
         <div className="find-event-container">
             <h2>Поиск мероприятий</h2>
-            <form onSubmit={handleSearch}> {/* Добавляем onSubmit */}
+            <form onSubmit={handleSearch}>
                 <label>
                     Название:
                     <input
@@ -203,6 +201,12 @@ const FindEvent = () => {
 
             {/* Пагинация */}
             <div className="pagination">
+                <button
+                    onClick={() => handlePageChange(pagination.page - 1)}
+                    disabled={pagination.page === 0}
+                >
+                    Назад
+                </button>
                 {Array.from({ length: totalPages }, (_, i) => i).map((page) => (
                     <button
                         key={page}
@@ -212,6 +216,12 @@ const FindEvent = () => {
                         {page + 1}
                     </button>
                 ))}
+                <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === totalPages - 1}
+                >
+                    Вперед
+                </button>
             </div>
         </div>
     );

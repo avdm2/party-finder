@@ -21,4 +21,22 @@ public class EventFilterDTO {
     private Integer maxCapacity;
     private Integer minAge;
     private Integer maxAge;
+
+    @Override
+    public String toString() {
+        return "EventFilterDTO{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", address='" + address + '\'' +
+                ", status='" + status + '\'' +
+                ", minPrice=" + minPrice +
+                ", maxPrice=" + maxPrice +
+                ", minCapacity=" + minCapacity +
+                ", maxCapacity=" + maxCapacity +
+                ", minAge=" + minAge +
+                ", maxAge=" + maxAge +
+                '}';
+    }
 }

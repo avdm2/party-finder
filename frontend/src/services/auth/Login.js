@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/MainStyle.css";
 import { loginUser } from "./Auth";
-import { getProfileByUsername } from "../../utils/api"
+import { getProfileByUsername } from "../../utils/ApiClientProfile"
 import { useAuth } from './AuthContext';
 
 function Login() {

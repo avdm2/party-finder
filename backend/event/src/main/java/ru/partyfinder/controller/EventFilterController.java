@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 
 @RestController
 @AllArgsConstructor
-@RequiredArgsConstructor
 @RequestMapping("/api/events/filter")
 public class EventFilterController {
 
@@ -31,9 +30,9 @@ public class EventFilterController {
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate,
             @RequestParam(required = false) String address,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String status,                  // TODO поиск по статусу должен
+            @RequestParam(required = false) BigDecimal minPrice,            // TODO быть на фронете списком вариантов
+            @RequestParam(required = false) BigDecimal maxPrice,            // TODO а на бэке переводится в код в enum
             @RequestParam(required = false) Integer minCapacity,
             @RequestParam(required = false) Integer maxCapacity,
             @RequestParam(required = false) Integer minAge,

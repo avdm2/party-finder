@@ -1,7 +1,7 @@
 // src/components/UserProfile.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername } from "../utils/api";
+import { getProfileMe, getProfileByUsername } from "../utils/ApiClientProfile";
 import "../styles/UserProfile.css";
 import createDefaultProfile from '../utils/Base64Util'; // Импортируем функцию
 

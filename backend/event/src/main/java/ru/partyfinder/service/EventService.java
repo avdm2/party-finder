@@ -2,6 +2,7 @@ package ru.partyfinder.service;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,15 +14,17 @@ import ru.partyfinder.repository.EventRepository;
 import ru.partyfinder.specification.EventSpecification;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class EventService {
 
     private EventRepository eventRepository;
 
     public Page<EventEntity> filterEvents(EventFilterDTO filterDTO, Pageable pageable) {
+        log.info("Service -> filterDTO -> " + filterDTO.toString());
         Specification<EventEntity> spec = Specification.where(null);
 
         spec = addOptional(spec, filterDTO.getTitle(), EventSpecification::byTitleContains);
@@ -33,15 +36,20 @@ public class EventService {
         spec = addOptional(spec, filterDTO.getMinCapacity(), filterDTO.getMaxCapacity(), EventSpecification::byCapacityRange);
         spec = addOptional(spec, filterDTO.getMinAge(), filterDTO.getMaxAge(), EventSpecification::byAgeRestrictionRange);
 
-        return eventRepository.findAll(spec, pageable);
+        Page<EventEntity> page = eventRepository.findAll(spec, pageable);
+        log.info("Service -> ListDTOs -> " + page.get().toList());
+        log.info("Service ->  getTotalElements -> " + page.getTotalElements());
+        log.info("Service -> getTotalPages -> " + page.getTotalPages());
+
+        return page;
     }
 
     private <T> Specification<EventEntity> addOptional(Specification<EventEntity> spec, T value, java.util.function.Function<T, Specification<EventEntity>> func) {
-        return Optional.ofNullable(value).isPresent() ? spec.and(func.apply(value)) : spec;
+        return Optional.ofNullable(value).filter(v -> !v.toString().isEmpty()).map(func).orElse(spec);
     }
 
     private <T1, T2> Specification<EventEntity> addOptional(Specification<EventEntity> spec, T1 value1, T2 value2, java.util.function.BiFunction<T1, T2, Specification<EventEntity>> func) {
-        if (value1 != null || value2 != null) {
+        if ((value1 != null && !value1.toString().isEmpty()) || (value2 != null && !value2.toString().isEmpty())) {
             return spec.and(func.apply(value1, value2));
         }
         return spec;
