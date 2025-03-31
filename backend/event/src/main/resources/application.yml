@@ -15,7 +15,10 @@ spring:
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
 
 
 
@@ -28,3 +31,8 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+scheduler:
+  cron:
+    rating:
+      0 0 * * * ?

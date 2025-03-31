@@ -115,12 +115,17 @@ const FindEvent = () => {
                 <br />
                 <label>
                     Статус:
-                    <input
-                        type="text"
+                    <select
                         name="status"
                         value={filters.status}
                         onChange={handleFilterChange}
-                    />
+                    >
+                        <option value="">Все статусы</option>
+                        <option value="COMPLETED">Прошедшие мероприятия</option>
+                        <option value="CANCELLED">Отмененные мероприятия</option>
+                        <option value="ONGOING">Мероприятия идут сейчас</option>
+                        <option value="UPCOMING">Будущие мероприятия</option>
+                    </select>
                 </label>
                 <br />
                 <label>

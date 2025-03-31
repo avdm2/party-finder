@@ -38,7 +38,7 @@ public class EventSpecification {
 
     public static Specification<EventEntity> byStatusEquals(String status) {
         return (root, query, criteriaBuilder) ->
-                status == null ? null : criteriaBuilder.equal(root.get("status"), status);
+                (status == null || status.isEmpty()) ? null : criteriaBuilder.equal(root.get("status"), status);
     }
 
     public static Specification<EventEntity> byPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
