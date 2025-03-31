@@ -2,6 +2,8 @@ package ru.partyfinder.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.partyfinder.config.UserContextHolder;
 import ru.partyfinder.entity.User;
 import ru.partyfinder.entity.Profile;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import ru.partyfinder.repository.UserRepository;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +44,13 @@ public class ProfileService {
         return profileConverter.toProfileDTO(profileRepository.findByUsername(username).orElseThrow());
     }
 
+    public Page<ProfileDTO> findProfilesByUsername(String username, Pageable pageable) {
+        Page<Profile> profiles = profileRepository.findByUsernameContainingIgnoreCase(addProcents(username), pageable);
+        log.info("Service -> getTotalPages -> " + profiles.getTotalPages());
+        log.info("Service -> getTotalElements -> " + profiles.getTotalElements());
+        return profiles.map(profileConverter::toProfileDTO);
+    }
+
     public ProfileDTO getProfile(UUID id) {
         return profileConverter.toProfileDTO(profileRepository.findById(id).orElseThrow());
     }
@@ -59,5 +69,8 @@ public class ProfileService {
         return profileRepository.existsByUsername(username);
     }
 
+    private String addProcents(String username) {
+        return "%" + username + "%";
+    }
 
 }
