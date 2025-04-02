@@ -140,10 +140,6 @@ function OrganizerProfile() {
         navigate("/homepage");
     };
 
-    const handleCloseEventModal = () => {
-        setEventModalOpen(false);
-    };
-
     const handleChangeEvent = (e) => {
         setFormDataEvent(prev => ({
             ...prev,
@@ -323,7 +319,7 @@ function OrganizerProfile() {
             </Dialog>
 
             {/* Диалог для создания/редактирования мероприятия */}
-            <Dialog open={eventModalOpen} onClose={handleCloseEventModal}>
+            <Dialog open={eventModalOpen}>
                 <DialogTitle>{formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}</DialogTitle>
                 <DialogContent>
                     <TextField fullWidth margin="dense" label="UUID создателя" name="owner_uuid" value={profile ? profile.id : "empty"}
@@ -353,7 +349,6 @@ function OrganizerProfile() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleSaveEvent} variant="contained" color="primary">Сохранить</Button>
-                    <Button onClick={handleCloseEventModal} variant="outlined" color="secondary">Отмена</Button>
                 </DialogActions>
             </Dialog>
         </Box>

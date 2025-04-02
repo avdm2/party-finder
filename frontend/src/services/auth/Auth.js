@@ -6,11 +6,21 @@ export async function registerUser(formData) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
     });
-    return response.ok;
+
+    if (response.ok) {
+        return { success: true };
+    }
+
+    if (response.status === 400) {
+        const errorData = await response.json();
+        return { success: false, message: errorData.message || "Пользователь с таким именем уже зарегистрирован" };
+    }
+
+    return { success: false, message: "Ошибка регистрации. Попробуйте позже." };
 }
 
 export async function loginUser(formData) {
-    console.log("LOGIN FORM DATA = " + formData.username + ":::" + formData.password);
+
     const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -20,7 +30,13 @@ export async function loginUser(formData) {
     if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        return data.token; // Вернем сам токен, а не true
+        return { success: true, token: data.token };
     }
-    return null; // В случае ошибки вернем null
+
+    if (response.status === 400) {
+        const errorData = await response.json();
+        return { success: false, message: errorData.message || "Неправильный логин или пароль" };
+    }
+
+    return { success: false, message: "Ошибка сервера. Попробуйте позже." };
 }

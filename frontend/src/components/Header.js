@@ -15,12 +15,11 @@ const Header = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/homepage');
+        navigate('');
     };
 
     const profilePath = role === 'ORGANIZER' ? '/organizer-profile' : '/profile/me';
-    const eventsHandle = role === 'ORGANIZER' ? '/' : '/find-event'; //TODO для организатора здесь ссылка на создание мероприятий или куда хочешь
-    // можешь добавить, чтобы он куда-то еще шел или боавить сои кнопки или создать вообще свою шапку, чтобы не было тут разделений условно.
+    const eventsHandle = role === 'ORGANIZER' ? '/organizer-profile' : '/find-event';
 
     const handleSearchChange = (e) => {
         const term = e.target.value;
@@ -126,15 +125,27 @@ const Header = () => {
                 <ul>
                     {!isAuthenticated ? (
                         <>
-                            <li><Link to="/register">Регистрация</Link></li>
-                            <li><Link to="/login">Вход</Link></li>
+                            <li>
+                                <Link to="/register" className="button-link">
+                                    Регистрация
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/login" className="button-link">
+                                    Вход
+                                </Link>
+                            </li>
                         </>
                     ) : (
                         <>
                             <li><Link to="/homepage">Главная</Link></li>
                             <li><Link to={profilePath}>Мой профиль</Link></li>
                             <li><Link to={eventsHandle}>Мероприятия</Link></li>
-                            <li><button onClick={handleLogout}>Выход</button></li>
+                            <li>
+                                <button onClick={handleLogout} className="button-link">
+                                    Выход
+                                </button>
+                            </li>
                         </>
                     )}
                 </ul>

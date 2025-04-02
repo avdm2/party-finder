@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Для запросов к API
-import "../styles/FindEvent.css";
-import { fetchEventsRequest } from "../utils/ApiFindEvents";
+import "../../styles/FindEvent.css";
+import { fetchEventsRequest } from "../../utils/ApiFindEvents";
 
 const FindEvent = () => {
     const [filters, setFilters] = useState({

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useProfileService } from "../services/ProfileService";
-import "../styles/MainStyle.css";
+import { useProfileService } from "../../services/participant/ProfileService";
+import "../../styles/MainStyle.css";
 
 const CreateProfile = () => {
     const [phone, setPhone] = useState("");
