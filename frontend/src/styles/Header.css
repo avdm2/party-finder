@@ -1,31 +1,36 @@
-/* Глобальное применение шрифта Montserrat */
-body {
-    font-family: 'Montserrat', sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 /* Стиль шапки */
 .site-header {
+    position: relative; /* Для абсолютного позиционирования .site-nav */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Логотип слева, поиск справа */
     align-items: center;
-    background: #ffffff; /* Белый фон */
+    background-color: #ffffff;
     color: #333;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
-    font-family: 'Montserrat', sans-serif; /* Убедимся, что шрифт применяется */
+    font-family: 'Montserrat', sans-serif;
 }
 
+/* Логотип */
 .logo h1 {
     font-size: 22px;
     margin: 0;
     color: #333;
     font-weight: 600;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Навигация */
+.site-nav {
+    position: absolute; /* Абсолютное позиционирование */
+    left: 50%; /* Перемещаем в центр по горизонтали */
+    transform: translateX(-50%); /* Корректируем смещение */
+    display: flex;
+    gap: 15px; /* Расстояние между кнопками */
+    margin: 0; /* Убираем отступы */
+    z-index: 1; /* Убедимся, что навигация выше других элементов */
 }
 
 .site-nav ul {
@@ -33,43 +38,43 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
+    gap: 15px;
 }
 
 .site-nav li {
-    margin-left: 20px;
+    margin: 0; /* Убираем отступы */
 }
 
-.site-nav a {
-    font-size: 15px;
-    font-weight: 600;
-    color: #007bff;
-    text-decoration: none;
-    transition: 0.3s ease-in-out;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
-}
-
-.site-nav a:hover {
-    color: #0056b3;
-}
-
-.site-nav button {
-    width: auto;
-    padding: 8px 12px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
+.site-nav a.button-link,
+.site-nav button.button-link {
+    display: inline-block;
+    padding: 8px 16px; /* Восстанавливаем padding */
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Градиент */
     color: white;
     font-size: 14px;
     font-weight: 600;
+    text-decoration: none;
     border: none;
-    border-radius: 6px;
+    border-radius: 6px; /* Восстанавливаем скругленные углы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Мягкая тень */
+    transition: all 0.3s ease-in-out; /* Плавные переходы */
     cursor: pointer;
-    transition: 0.3s ease-in-out;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
 }
 
-.site-nav button:hover {
-    background: linear-gradient(135deg, #0056b3, #003c7e);
+.site-nav a.button-link:hover,
+.site-nav button.button-link:hover {
+    background: linear-gradient(135deg, #0056b3, #003c7e); /* Темнее при наведении */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
+    transform: translateY(-2px); /* Легкий эффект подъема */
 }
 
+.site-nav a.button-link:active,
+.site-nav button.button-link:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Возвращаем тень */
+}
+
+/* Поле поиска */
 .search-bar {
     position: relative;
     margin-left: 20px;
@@ -83,119 +88,10 @@ body {
     font-size: 14px;
     box-sizing: border-box;
     transition: all 0.3s ease;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
+    font-family: 'Montserrat', sans-serif;
 }
 
 .search-bar input:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
-}
-
-.search-results-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
-    overflow: hidden;
-    z-index: 1000;
-}
-
-.search-results {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: calc(100% - 40px);
-    overflow-y: auto;
-}
-
-.search-results li {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #555;
-    transition: background-color 0.3s ease;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
-}
-
-.search-results li:hover {
-    background: #f8f9fa;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 8px;
-    padding: 8px;
-    background: #ffffff;
-    border-top: 1px solid #ccc;
-}
-
-.pagination button {
-    width: 40px;
-    height: 30px;
-    text-align: center;
-    line-height: 30px;
-    padding: 0;
-    margin: 0 2px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #ffffff;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    font-family: 'Montserrat', sans-serif; /* Применяем шрифт */
-}
-
-.pagination button:hover {
-    background: #f8f9fa;
-}
-
-.pagination button.active {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    border-color: #007bff;
-}
-
-.pagination button:disabled {
-    background: #ccc;
-    color: #666;
-    cursor: not-allowed;
-}
-
-.pagination button:first-child,
-.pagination button:last-child {
-    width: 60px;
-    font-size: 16px;
-}
-
-/* Стиль для кнопок регистрации и входа */
-.site-nav a.button-link {
-    display: inline-block;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    border: none;
-    border-radius: 25px; /* Округлые углы */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Мягкая тень */
-    transition: all 0.3s ease-in-out;
-}
-
-.site-nav a.button-link:hover {
-    background: linear-gradient(135deg, #0056b3, #003c7e);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличенная тень при наведении */
-    transform: translateY(-2px); /* Легкий эффект подъема */
-}
-
-.site-nav a.button-link:active {
-    transform: translateY(0); /* Возвращение в исходное положение при клике */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

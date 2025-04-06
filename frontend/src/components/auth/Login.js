@@ -38,7 +38,7 @@ function Login() {
                 navigate("/create-profile");
             }
         } else {
-            navigate("/homepage");
+            navigate("/home");
         }
     };
 

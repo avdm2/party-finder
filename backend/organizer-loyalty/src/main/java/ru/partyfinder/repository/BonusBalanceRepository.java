@@ -1,5 +1,6 @@
 package ru.partyfinder.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import java.util.UUID;
 public interface BonusBalanceRepository extends JpaRepository<BonusBalanceEntity, Long> {
 
     @Modifying
+    @Transactional
     @Query("""
             update BonusBalanceEntity bonusBalanceEntity
             set bonusBalanceEntity.bonusAmount = bonusBalanceEntity.bonusAmount + :amount

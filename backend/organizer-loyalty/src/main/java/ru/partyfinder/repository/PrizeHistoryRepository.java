@@ -1,5 +1,6 @@
 package ru.partyfinder.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,7 @@ public interface PrizeHistoryRepository extends JpaRepository<PrizeHistoryEntity
     List<PrizeHistoryEntity> findAllUndeliveredByOrganizerUuid(UUID ownerUUID);
 
     @Modifying
+    @Transactional
     @Query("""
             update PrizeHistoryEntity p
             set p.delivered = true

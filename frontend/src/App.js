@@ -11,6 +11,7 @@ import { useAuth } from './services/auth/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePageParticipant from "./components/homepage/HomePageParticipant";
 import HomePageOrganizer from "./components/homepage/HomePageOrganizer";
+import EventsPage from "./components/organizer/Events";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
@@ -25,13 +26,15 @@ const App = () => {
             {shouldShowHeader && <Header />}
             <Routes>
                 <Route
-                    path="/homepage"
+                    path="/home"
                     element={
                         role === 'ORGANIZER'
                             ? <ProtectedRoute><HomePageOrganizer /></ProtectedRoute>
                             : <ProtectedRoute><HomePageParticipant /></ProtectedRoute>
                     }
                 />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/" element={<Navigate to="/home" />} />
                 <Route path="/create-profile" element={<ProtectedRoute><CreateProfile /></ProtectedRoute>} />
                 <Route path="/profile/:username" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                 <Route path="/register" element={<Register />} />
