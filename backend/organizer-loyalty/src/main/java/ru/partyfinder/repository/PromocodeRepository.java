@@ -1,5 +1,6 @@
 package ru.partyfinder.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,7 @@ public interface PromocodeRepository extends JpaRepository<PromocodeEntity, Long
     Optional<PromocodeEntity> findByValue(String value);
 
     @Modifying
+    @Transactional
     @Query("""
             update PromocodeEntity promocodeEntity
             set promocodeEntity.numberOfUsage = promocodeEntity.numberOfUsage - 1

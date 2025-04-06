@@ -1,15 +1,36 @@
+/* Стиль шапки */
 .site-header {
+    position: relative; /* Для абсолютного позиционирования .site-nav */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Логотип слева, поиск справа */
     align-items: center;
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #333;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    font-family: 'Montserrat', sans-serif;
 }
 
+/* Логотип */
 .logo h1 {
+    font-size: 22px;
     margin: 0;
-    font-size: 24px;
+    color: #333;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Навигация */
+.site-nav {
+    position: absolute; /* Абсолютное позиционирование */
+    left: 50%; /* Перемещаем в центр по горизонтали */
+    transform: translateX(-50%); /* Корректируем смещение */
+    display: flex;
+    gap: 15px; /* Расстояние между кнопками */
+    margin: 0; /* Убираем отступы */
+    z-index: 1; /* Убедимся, что навигация выше других элементов */
 }
 
 .site-nav ul {
@@ -17,124 +38,60 @@
     margin: 0;
     padding: 0;
     display: flex;
+    gap: 15px;
 }
 
 .site-nav li {
-    margin-left: 20px;
+    margin: 0; /* Убираем отступы */
 }
 
-.site-nav a {
-    color: #fff;
+.site-nav a.button-link,
+.site-nav button.button-link {
+    display: inline-block;
+    padding: 8px 16px; /* Восстанавливаем padding */
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Градиент */
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: bold;
+    border: none;
+    border-radius: 6px; /* Восстанавливаем скругленные углы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Мягкая тень */
+    transition: all 0.3s ease-in-out; /* Плавные переходы */
+    cursor: pointer;
 }
 
-.site-nav a:hover {
-    text-decoration: underline;
+.site-nav a.button-link:hover,
+.site-nav button.button-link:hover {
+    background: linear-gradient(135deg, #0056b3, #003c7e); /* Темнее при наведении */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличенная тень */
+    transform: translateY(-2px); /* Легкий эффект подъема */
 }
 
+.site-nav a.button-link:active,
+.site-nav button.button-link:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Возвращаем тень */
+}
+
+/* Поле поиска */
 .search-bar {
     position: relative;
     margin-left: 20px;
 }
 
 .search-bar input {
-    padding: 8px;
     width: 250px;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 14px;
+    box-sizing: border-box;
     transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .search-bar input:focus {
+    border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
-    border-color: #007bff;
-}
-
-.search-results-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 300px; /* Ограничиваем максимальную высоту */
-    overflow: hidden; /* Отключаем все скроллы */
-}
-
-.search-results {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: calc(100% - 40px); /* Учитываем высоту пагинации */
-    overflow-y: auto; /* Добавляем вертикальный скролл только внутри списка */
-}
-
-.search-results li {
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-    transition: background-color 0.3s ease;
-}
-
-.search-results li:hover {
-    background-color: #f0f0f0;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 8px;
-    padding: 0 8px; /* Добавляем отступы для пагинации */
-    background-color: white; /* Убедимся, что пагинация имеет белый фон */
-    border-top: 1px solid #ccc; /* Добавляем верхнюю границу для пагинации */
-}
-
-.pagination button {
-    width: 40px; /* Фиксированная ширина кнопок */
-    height: 30px; /* Фиксированная высота кнопок */
-    text-align: center; /* Выравнивание текста по центру */
-    line-height: 30px; /* Выравнивание текста по вертикали */
-    padding: 0; /* Убираем внутренние отступы */
-    margin: 0 2px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    cursor: pointer;
-    font-size: 14px; /* Начальный размер шрифта */
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.pagination button:hover {
-    background-color: #f0f0f0;
-}
-
-.pagination button.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.pagination button:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-}
-
-/* Увеличиваем размер кнопки "Назад" */
-.pagination button:first-child {
-    width: 60px; /* Увеличенная ширина */
-    font-size: 16px; /* Увеличенный размер шрифта */
-}
-
-/* Увеличиваем размер кнопки "Вперед" */
-.pagination button:last-child {
-    width: 60px; /* Увеличенная ширина */
-    font-size: 16px; /* Увеличенный размер шрифта */
 }

@@ -45,7 +45,7 @@ public class EventEntity {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "price")
+    @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(name = "capacity")

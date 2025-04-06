@@ -1,37 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../services/auth/AuthContext';
+import React, {useState, useEffect} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {useAuth} from '../services/auth/AuthContext';
 import '../styles/Header.css';
-import { getProfileByUsernamePagination } from "../utils/ApiClientProfile";
+import {getProfileByUsernamePagination} from "../utils/ApiClientProfile";
 
 const Header = () => {
-    const { isAuthenticated, role, logout } = useAuth();
+    const {isAuthenticated, role, logout} = useAuth();
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
-    const [pagination, setPagination] = useState({ page: 0, size: 5 });
+    const [pagination, setPagination] = useState({page: 0, size: 5});
     const [totalPages, setTotalPages] = useState(0);
 
     const handleLogout = () => {
         logout();
-        navigate('/homepage');
+        navigate('');
     };
 
     const profilePath = role === 'ORGANIZER' ? '/organizer-profile' : '/profile/me';
-    const eventsHandle = role === 'ORGANIZER' ? '/' : '/find-event'; //TODO для организатора здесь ссылка на создание мероприятий или куда хочешь
-    // можешь добавить, чтобы он куда-то еще шел или боавить сои кнопки или создать вообще свою шапку, чтобы не было тут разделений условно.
+    const eventsHandle = role === 'ORGANIZER' ? '/events' : '/find-event';
 
     const handleSearchChange = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
         if (term.length >= 3) {
-            setPagination({ page: 0, size: 5 });
+            setPagination({page: 0, size: 5});
             fetchSearchResults(term, 0, 5);
         } else {
             setSearchResults([]);
             setShowResults(false);
-            setPagination({ page: 0, size: 5 });
+            setPagination({page: 0, size: 5});
             setTotalPages(0);
         }
     };
@@ -73,7 +72,7 @@ const Header = () => {
     }, [pagination.page, pagination.size]);
 
     const renderPaginationButtons = () => {
-        const { page } = pagination;
+        const {page} = pagination;
         const pagesToShow = 3;
         let startPage = Math.max(0, page - Math.floor(pagesToShow / 2));
         let endPage = Math.min(totalPages - 1, startPage + pagesToShow - 1);
@@ -126,15 +125,39 @@ const Header = () => {
                 <ul>
                     {!isAuthenticated ? (
                         <>
-                            <li><Link to="/register">Регистрация</Link></li>
-                            <li><Link to="/login">Вход</Link></li>
+                            <li>
+                                <Link to="/register" className="button-link">
+                                    Регистрация
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/login" className="button-link">
+                                    Вход
+                                </Link>
+                            </li>
                         </>
                     ) : (
                         <>
-                            <li><Link to="/homepage">Главная</Link></li>
-                            <li><Link to={profilePath}>Мой профиль</Link></li>
-                            <li><Link to={eventsHandle}>Мероприятия</Link></li>
-                            <li><button onClick={handleLogout}>Выход</button></li>
+                            <li>
+                                <Link to="/home" className="button-link">
+                                    Главная
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to={profilePath} className="button-link">
+                                    Мой профиль
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to={eventsHandle} className="button-link">
+                                    Мероприятия
+                                </Link>
+                            </li>
+                            <li>
+                                <button onClick={handleLogout} className="button-link">
+                                    Выход
+                                </button>
+                            </li>
                         </>
                     )}
                 </ul>
@@ -149,7 +172,7 @@ const Header = () => {
                 {showResults && searchResults.length > 0 && (
                     <div className="search-results-container">
                         <ul className="search-results">
-                            {searchResults.map(user => (
+                            {searchResults.map((user) => (
                                 <li key={user.username} onClick={() => handleResultClick(user.username)}>
                                     {user.username}
                                 </li>

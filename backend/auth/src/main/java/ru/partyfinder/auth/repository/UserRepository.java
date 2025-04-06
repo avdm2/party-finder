@@ -1,5 +1,6 @@
 package ru.partyfinder.auth.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByFirstnameAndLastname(String firstName, String lastName);
 
     @Modifying
+    @Transactional
     @Query("""
             update User u set
             u.password = CASE WHEN :password IS NOT NULL THEN :password ELSE u.password END,

@@ -1,4 +1,4 @@
-import { createProfile } from "../utils/ApiClientProfile";
+import { createProfile } from "../../utils/ApiClientProfile";
 
 export const useProfileService = () => {
     const handleCreateProfile = async (clientDTO) => {

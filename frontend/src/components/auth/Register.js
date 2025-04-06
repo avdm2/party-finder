@@ -1,8 +1,7 @@
-// src/services/auth/Register.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/MainStyle.css";
-import { registerUser } from "./Auth";
+import { registerUser } from "../../services/auth/Auth";
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -27,7 +26,13 @@ function Register() {
                     key !== "role" && (
                         <div className="form-group" key={key}>
                             <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
-                            <input name={key} type="text" value={formData[key]} onChange={handleChange} required />
+                            <input
+                                name={key}
+                                type={key === "password" ? "password" : "text"} // Добавляем проверку для типа поля
+                                value={formData[key]}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                     )
                 ))}
