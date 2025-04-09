@@ -1,7 +1,7 @@
 package ru.partyfinder.model.enums;
 
 public enum EntityTypes {
-    PROFILE("PROFILE"),
+    PARTICIPANT("PARTICIPANT"),
     ORGANIZER("ORGANIZER"),
     EVENT("EVENT");
 

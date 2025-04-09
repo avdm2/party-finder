@@ -3,16 +3,16 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProfileMe, getProfileByUsername } from "../../utils/ApiClientProfile";
 import "../../styles/UserProfile.css";
-import createDefaultProfile from '../../utils/Base64Util'; // Импортируем функцию
+import createDefaultProfile from '../../utils/Base64Util';
 
-let defaultProfileCache = null; // Кэш для defaultProfile
+let defaultProfileCache = null;
 
 const UserProfile = () => {
-    const { username } = useParams(); // Получаем username из URL-параметров
-    const [profile, setProfile] = useState(null); // Состояние для профиля
-    const [loading, setLoading] = useState(true); // Состояние для загрузки
-    const [error, setError] = useState(null); // Состояние для ошибки
-    const navigate = useNavigate(); // Хук для навигации
+    const { username } = useParams();
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -26,7 +26,7 @@ const UserProfile = () => {
                 }
 
                 setProfile(data);
-                setError(null); // Сбрасываем ошибку, если профиль успешно загружен
+                setError(null);
             } catch (err) {
                 console.error("Ошибка при загрузке профиля:", err);
                 setError("Профиль не найден");
@@ -61,10 +61,6 @@ const UserProfile = () => {
             </div>
         );
     }
-
-    const handleFindEvent = () => {
-        navigate("/find-event");
-    };
 
     return (
         <div className="user-profile-container">
@@ -123,9 +119,6 @@ const UserProfile = () => {
                         {profile.aboutMe || "Не указано"}
                     </div>
                 </div>
-                <button onClick={handleFindEvent} className="find-event-button">
-                    Найти мероприятие
-                </button>
             </div>
         </div>
     );

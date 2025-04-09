@@ -49,4 +49,6 @@ public class EventEntity {
     @Column(name = "age_restriction")
     private Integer age;
 
+    @Column(name = "rating")
+    private BigDecimal rating;
 }

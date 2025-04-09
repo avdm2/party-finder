@@ -4,8 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.partyfinder.config.UserContextHolder;
+import ru.partyfinder.config.UserRequest;
+import ru.partyfinder.entity.NewRatingEntity;
 import ru.partyfinder.entity.RatingEntity;
 import ru.partyfinder.model.dto.AverageScoresDTO;
+import ru.partyfinder.model.dto.NewRatingRequest;
+import ru.partyfinder.model.dto.ProfileDTO;
+import ru.partyfinder.model.enums.EntityTypes;
 import ru.partyfinder.repository.NewRatingRepository;
 import ru.partyfinder.repository.RatingRepository;
 
@@ -23,6 +29,8 @@ public class RatingSystemService {
 
     private final NewRatingRepository newRatingRepository;
     private final RatingRepository ratingRepository;
+    private final RatingSenderHttpService ratingSenderHttpService;
+
 
     public String countRatings() {
         log.info("Начинаем расчет средних значений...");
@@ -78,5 +86,41 @@ public class RatingSystemService {
      */
     private BigDecimal calculateUpdatedAverage(BigDecimal currentScore, BigDecimal newScore) {
         return currentScore.add(newScore).divide(BigDecimal.valueOf(2));
+    }
+
+
+    public BigDecimal getRating(UUID id, EntityTypes entityType) {
+        return ratingSenderHttpService.getRating(id, entityType);
+    }
+
+    public Long setNewRatingForCalc(NewRatingRequest newRatingRequest) {
+        UserRequest userContext = UserContextHolder.getContext();
+        if (userContext != null) {
+            String username = userContext.getUsername();
+            UUID senderEntityId = getEntityId(username, newRatingRequest.getSenderEntityType());
+            NewRatingEntity newRatingEntity = new NewRatingEntity();
+            if (checkNewRatingRequest(newRatingRequest)) {
+                newRatingEntity.setSenderEntityId(senderEntityId);
+                newRatingEntity.setSenderEntityType(newRatingRequest.getSenderEntityType());
+                newRatingEntity.setEntityType(newRatingRequest.getReceiveEntityType());
+                newRatingEntity.setEntityId(newRatingRequest.getReceiveEntityId());
+                newRatingEntity.setScore(newRatingRequest.getScore());
+                newRatingEntity.setComment(newRatingRequest.getComment());
+                return newRatingRepository.save(newRatingEntity).getId();
+            } else {
+                throw new IllegalArgumentException("Нет такой сущности для оценки");
+            }
+        } else {
+            throw new RuntimeException("Не произошла авторизация! (User context = null)");
+        }
+
+    }
+
+    private boolean checkNewRatingRequest(NewRatingRequest newRatingRequest) {
+        return ratingSenderHttpService.isEntityExist(newRatingRequest.getReceiveEntityId(), newRatingRequest.getReceiveEntityType());
+    }
+
+    private UUID getEntityId(String username, String entityType) {
+        return ratingSenderHttpService.getEntityIdRequest(username, entityType);
     }
 }

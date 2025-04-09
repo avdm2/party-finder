@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import ru.partyfinder.repository.UserRepository;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,8 +50,8 @@ public class ProfileService {
         return profiles.map(profileConverter::toProfileDTO);
     }
 
-    public ProfileDTO getProfile(UUID id) {
-        return profileConverter.toProfileDTO(profileRepository.findById(id).orElseThrow());
+    public ProfileDTO getProfileId(UUID id) {
+        return profileConverter.toProfileDTO(profileRepository.findById(id).orElse(null));
     }
 
     public Profile getProfileByUsername(String username) {
