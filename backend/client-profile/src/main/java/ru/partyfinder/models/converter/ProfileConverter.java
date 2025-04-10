@@ -27,6 +27,7 @@ public interface ProfileConverter {
     @Mapping(target = "email", source = "email")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "aboutMe", source = "aboutMe")
+    @Mapping(target = "media", source = "media")
     @Mapping(target = "isConfirmed", source = "isConfirmed")
     @Mapping(target = "createdTime", source = "createdTime")
     @Mapping(target = "updatedTime", source = "updatedTime")

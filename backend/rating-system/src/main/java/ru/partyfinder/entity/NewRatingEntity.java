@@ -8,9 +8,32 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+
+
+
 @Getter
 @Setter
 @Entity
+@NamedNativeQuery(name = "findAverageScores", query = "SELECT " +
+        "            nr.entity_type AS entityType," +
+        "            nr.entity_id AS entityId," +
+        "            AVG(nr.score) AS avgScore" +
+        "        FROM " +
+        "            source.new_ratings nr " +
+        "        GROUP BY " +
+        "            nr.entity_type," +
+        "            nr.entity_id ", resultSetMapping = "findAverageScores")
+@SqlResultSetMapping(
+        name = "findAverageScores",
+        classes = @ConstructorResult(
+                targetClass = ru.partyfinder.model.dto.AverageScoresDTO.class,
+                columns = {
+                        @ColumnResult(name = "entityType", type = String.class),
+                        @ColumnResult(name = "entityId", type = UUID.class),
+                        @ColumnResult(name = "avgScore", type = BigDecimal.class)
+                }
+        )
+)
 @Table(name = "new_ratings", schema = "source")
 public class NewRatingEntity {
 

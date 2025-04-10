@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.organizerprofile.entity.OrganizerEntity;
+import ru.partyfinder.organizerprofile.model.dto.request.PutNewRatingDto;
 import ru.partyfinder.organizerprofile.repository.OrganizerRepository;
 
 import java.util.UUID;
@@ -32,8 +33,13 @@ public class OrganizerService {
         return organizerRepository.findById(id).orElse(null);
     }
 
-
     public void saveOrganizerWithMedia(OrganizerEntity profile) {
         organizerRepository.save(profile);
+    }
+
+    public void putNewRating(PutNewRatingDto putNewRatingDto) {
+        OrganizerEntity organizer = organizerRepository.findById(putNewRatingDto.getEntityId()).orElseThrow(RuntimeException::new);
+        organizer.setRating(putNewRatingDto.getRating());
+        organizerRepository.save(organizer);
     }
 }

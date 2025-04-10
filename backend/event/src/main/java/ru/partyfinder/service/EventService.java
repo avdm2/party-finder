@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.partyfinder.model.dto.EventFilterDTO;
 import ru.partyfinder.entity.EventEntity;
+import ru.partyfinder.model.dto.PutNewRatingDto;
 import ru.partyfinder.repository.EventRepository;
 import ru.partyfinder.specification.EventSpecification;
 
@@ -56,5 +57,11 @@ public class EventService {
 
     public EventEntity getEvent(@PathVariable UUID eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Нет такого ивента"));
+    }
+
+    public void putNewRating(PutNewRatingDto putNewRatingDto) {
+        EventEntity event = eventRepository.findById(putNewRatingDto.getEntityId()).orElseThrow(RuntimeException::new);
+        event.setRating(putNewRatingDto.getRating());
+        eventRepository.save(event);
     }
 }

@@ -12,7 +12,7 @@ public class WebClientConfig {
     @Bean
     public WebClient clientWebClient() {
         return WebClient.builder()
-                .baseUrl("https://localhost:8724/api/v1/client-service/profile")
+                .baseUrl("http://client-profile:8724/api/v1/client-service/profile")
                 .build();
     }
 
@@ -20,7 +20,7 @@ public class WebClientConfig {
     @Bean
     public WebClient organizerWebClient() {
         return WebClient.builder()
-                .baseUrl("https://localhost:8722/api/v1/organizer")
+                .baseUrl("http://organizer-profile:8722/api/v1/organizer")
                 .build();
     }
 
@@ -28,7 +28,7 @@ public class WebClientConfig {
     @Bean
     public WebClient eventWebClient() {
         return WebClient.builder()
-                .baseUrl("https://localhost:8723/api/v1/event")
+                .baseUrl("http://event:8723/api/v1/event")
                 .build();
     }
 }

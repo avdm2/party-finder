@@ -1,6 +1,7 @@
 package ru.partyfinder.model.dto;
 
 import lombok.Data;
+import ru.partyfinder.entity.Media;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,4 +21,6 @@ public class OrganizerDTO {
     private String username;
 
     private BigDecimal rating;
+
+    private Media media;
 }

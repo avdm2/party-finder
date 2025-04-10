@@ -2,11 +2,9 @@ package ru.partyfinder.controller;
 
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.partyfinder.entity.EventEntity;
+import ru.partyfinder.model.dto.PutNewRatingDto;
 import ru.partyfinder.service.EventService;
 
 import java.util.UUID;
@@ -20,5 +18,10 @@ public class EventController {
     @GetMapping("id/{eventId}")
     public EventEntity getEvent(@PathVariable UUID eventId) {
         return eventService.getEvent(eventId);
+    }
+
+    @PostMapping("/putNewRating")
+    public void putNewRating(@RequestBody PutNewRatingDto putNewRatingDto) {
+        eventService.putNewRating(putNewRatingDto);
     }
 }

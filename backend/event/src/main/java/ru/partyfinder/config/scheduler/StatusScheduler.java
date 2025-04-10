@@ -13,7 +13,7 @@ public class StatusScheduler {
     /**
      * Задача, выполняющаяся раз в час.
      */
-    @Scheduled(fixedRateString = "${scheduler.cron.rating}")
+    @Scheduled(cron = "${scheduler.cron.rating}")
     public void calculateRatingsProcedure() {
         System.out.println("Расчет статусов ивентов: " + java.time.LocalDateTime.now());
         calculateStatuses();

@@ -4,7 +4,9 @@ package ru.partyfinder.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.partyfinder.entity.Media;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -29,6 +31,10 @@ public class ProfileDTO {
     private String aboutMe;
 
     private LocalDate birthDate;
+
+    private Media media;
+
+    private BigDecimal rating;
 
     private Boolean isConfirmed;
 

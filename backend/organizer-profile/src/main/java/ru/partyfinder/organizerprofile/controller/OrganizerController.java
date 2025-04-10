@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.partyfinder.organizerprofile.entity.OrganizerEntity;
 import ru.partyfinder.organizerprofile.messaging.event.CredentialsChangesEvent;
 import ru.partyfinder.organizerprofile.messaging.producer.CredentialsChangesEventProducer;
+import ru.partyfinder.organizerprofile.model.dto.request.PutNewRatingDto;
 import ru.partyfinder.organizerprofile.service.OrganizerService;
 
 import java.util.UUID;
@@ -45,5 +46,10 @@ public class OrganizerController {
     public ResponseEntity<OrganizerEntity> getOrganizerByUsername(@PathVariable("id") UUID id) {
         var org = organizerService.findOrganizerById(id);
         return org == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(org);
+    }
+
+    @PostMapping("/putNewRating")
+    public void putNewRating(@RequestBody PutNewRatingDto putNewRatingDto) {
+        organizerService.putNewRating(putNewRatingDto);
     }
 }

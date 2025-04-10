@@ -10,6 +10,7 @@ import ru.partyfinder.entity.Profile;
 import ru.partyfinder.models.converter.ProfileConverter;
 import ru.partyfinder.models.dto.ClientDTO;
 import ru.partyfinder.models.dto.ProfileDTO;
+import ru.partyfinder.models.dto.request.PutNewRatingDto;
 import ru.partyfinder.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.repository.UserRepository;
@@ -58,6 +59,12 @@ public class ProfileService {
         return profileRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("Нет такого профиля человека")
         );
+    }
+
+    public void putNewRating(PutNewRatingDto putNewRatingDto) {
+        Profile profile = profileRepository.findById(putNewRatingDto.getEntityId()).orElseThrow(RuntimeException::new);
+        profile.setRating(putNewRatingDto.getRating());
+        profileRepository.save(profile);
     }
 
     public void saveProfileWithMedia(Profile profile) {

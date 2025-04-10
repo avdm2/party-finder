@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import ru.partyfinder.config.UserContextHolder;
 import ru.partyfinder.models.dto.ClientDTO;
 import ru.partyfinder.models.dto.ProfileDTO;
+import ru.partyfinder.models.dto.request.PutNewRatingDto;
 import ru.partyfinder.service.ProfileService;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +54,10 @@ public class ProfileController {
         Pageable pageable = PageRequest.of(page, size);
 
         return profileService.findProfilesByUsername(username, pageable);
+    }
+
+    @PostMapping("/putNewRating")
+    public void putNewRating(@RequestBody PutNewRatingDto putNewRatingDto) {
+        profileService.putNewRating(putNewRatingDto);
     }
 }

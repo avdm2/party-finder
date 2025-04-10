@@ -10,16 +10,13 @@ import ru.partyfinder.entity.NewRatingEntity;
 import ru.partyfinder.entity.RatingEntity;
 import ru.partyfinder.model.dto.AverageScoresDTO;
 import ru.partyfinder.model.dto.NewRatingRequest;
-import ru.partyfinder.model.dto.ProfileDTO;
+import ru.partyfinder.model.dto.PutNewRatingDto;
 import ru.partyfinder.model.enums.EntityTypes;
 import ru.partyfinder.repository.NewRatingRepository;
 import ru.partyfinder.repository.RatingRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,18 +42,14 @@ public class RatingSystemService {
             BigDecimal newScore = result.getAvgScore();
 
             Optional<RatingEntity> existingRating = ratingRepository.findByEntityTypeAndEntityId(entityType, entityId);
-
             if (existingRating.isPresent()) {
                 RatingEntity rating = existingRating.get();
-                BigDecimal currentScore = rating.getScore();
-
-                BigDecimal updatedScore = calculateUpdatedAverage(currentScore, newScore);
-
-                rating.setScore(updatedScore);
+                rating.setScore(newScore);
                 rating.setCreatedTime(java.time.Instant.now());
 
                 ratingsToUpdateOrSave.add(rating);
-                log.info("Добавлен на обновление: " + entityType + ", " + entityId + ". Новое значение: " + updatedScore);
+                log.info("Добавлен на обновление: " + entityType + ", " + entityId + ". Новое значение: " + newScore);
+
             } else {
                 RatingEntity rating = new RatingEntity();
                 rating.setEntityType(entityType);
@@ -73,24 +66,24 @@ public class RatingSystemService {
 
         ratingRepository.saveAll(ratingsToUpdateOrSave);
 
+        for (RatingEntity rating : ratingsToUpdateOrSave) {
+            PutNewRatingDto putNewRatingDto = new PutNewRatingDto();
+            putNewRatingDto.setEntityId(rating.getEntityId());
+            putNewRatingDto.setEntityType(rating.getEntityType());
+            putNewRatingDto.setRating(rating.getScore());
+            putNewRating(putNewRatingDto);
+        }
+
         log.info("Расчет средних значений завершен. Сохранено {} записей.", ratingsToUpdateOrSave.size());
         return "Подсчитаны рейтинги";
     }
 
-    /**
-     * Рассчитывает новое среднее значение между текущим и новым значением.
-     *
-     * @param currentScore Текущее значение рейтинга
-     * @param newScore     Новое значение рейтинга
-     * @return Новое среднее значение
-     */
-    private BigDecimal calculateUpdatedAverage(BigDecimal currentScore, BigDecimal newScore) {
-        return currentScore.add(newScore).divide(BigDecimal.valueOf(2));
-    }
-
-
     public BigDecimal getRating(UUID id, EntityTypes entityType) {
         return ratingSenderHttpService.getRating(id, entityType);
+    }
+
+    private void putNewRating(PutNewRatingDto putNewRatingDto) {
+        ratingSenderHttpService.putRating(putNewRatingDto);
     }
 
     public Long setNewRatingForCalc(NewRatingRequest newRatingRequest) {

@@ -14,10 +14,7 @@ import java.util.UUID;
 @Repository
 public interface NewRatingRepository extends JpaRepository<NewRatingEntity, Long> {
 
-    @Query("SELECT nr.entityType, nr.entityId, AVG(nr.score) as avgScore " +
-            "FROM NewRatingEntity nr " +
-            "WHERE nr.processed = false " +
-            "GROUP BY nr.entityType, nr.entityId")
+    @Query(nativeQuery = true, name = "findAverageScores")
     List<AverageScoresDTO> findAverageScores();
 
     @Transactional
