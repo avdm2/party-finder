@@ -16,10 +16,7 @@ public class RatingService {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public BigDecimal getRating(UUID organizerId, String entityType) {
         return ratingRepository.findByEntityIdAndEntityType(organizerId, entityType)
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Ничего не найдено")
-
-                ).getScore();
+                .orElseThrow(() -> new IllegalArgumentException("Ничего не найдено")).getScore();
     }
 
 }

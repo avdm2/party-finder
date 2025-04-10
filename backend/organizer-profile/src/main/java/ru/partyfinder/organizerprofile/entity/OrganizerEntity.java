@@ -1,5 +1,6 @@
 package ru.partyfinder.organizerprofile.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,7 +41,7 @@ public class OrganizerEntity {
     @Column(name = "username")
     private String username;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "media_id")
     private MediaEntity media;
 }
