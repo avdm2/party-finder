@@ -1,11 +1,9 @@
 package ru.partyfinder.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
-@Getter
-@Setter
-public class Message {
-    private String content;
-    private String sender;
-}
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Builder
+public record Message(UUID id, UUID channelId, String content, LocalDateTime createdAt) {}
