@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.partyfinder.config.UserContextHolder;
-import ru.partyfinder.entity.Profile;
 import ru.partyfinder.models.dto.ClientDTO;
 import ru.partyfinder.models.dto.ProfileDTO;
 import ru.partyfinder.service.ProfileService;
@@ -36,6 +35,11 @@ public class ProfileController {
     @GetMapping("/by-username/{username}")
     public ProfileDTO getProfile(@PathVariable String username) {
         return profileService.getProfile(username);
+    }
+
+    @GetMapping("/by-id/{id}")
+    public ProfileDTO getProfile(@PathVariable UUID id) {
+        return profileService.getProfileId(id);
     }
 
     @GetMapping("/search")

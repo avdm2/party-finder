@@ -5,10 +5,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -16,12 +19,13 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    Logger log = Logger.getLogger(JwtAuthFilter.class.getName());
-
+    private final UserContextFillingService userContextFillingService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -39,7 +43,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing or invalid Authorization header");
             return;
         }
-
         try {
             String token = authHeader.substring(7);
             String[] parts = token.split("\\.");
@@ -54,12 +57,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
 
+            log.info("USERNAME -> " + payload.get("sub"));
+
             User user = new User(
                     (String) payload.get("sub"), "",
                     roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()
             );
-
-            PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(user, token, user.getAuthorities());
+            UserRequest userRequest = userContextFillingService.fillUserRequest((String) payload.get("sub"));
+            UserContextHolder.setContext(userRequest);
+            PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             // Передаем запрос дальше по цепочке фильтров

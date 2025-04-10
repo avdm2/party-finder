@@ -37,6 +37,9 @@ create table source.new_ratings
     id           bigserial primary key,
     entity_type  text          not null,
     entity_id    uuid          not null,
+    sender_entity_type  text          not null,
+    sender_entity_id uuid      not null,
+    comment      text,
     score        decimal(3, 2) not null,
     created_time timestamp     not null,
     processed    boolean       not null
@@ -88,7 +91,8 @@ create table organizer.organizer
     birth_date  date    not null,
     username    varchar not null,
     media_id    bigint references organizer.media (id),
-    description varchar
+    description varchar,
+    rating       decimal(3, 2) not null
 );
 
 create table organizer.event_instance
@@ -103,7 +107,8 @@ create table organizer.event_instance
     status          varchar                        not null,
     price           decimal(12, 2),
     capacity        smallint,
-    age_restriction smallint
+    age_restriction smallint,
+    rating       decimal(3, 2) not null
 );
 
 create table organizer.event_client
@@ -117,13 +122,13 @@ create table organizer.event_client
 
 
 
-create table organizer.rating
+/*create table organizer.rating
 (
     id           bigserial
         primary key,
     organizer_id uuid,
     rating       smallint
-);
+);*/
 
 CREATE TABLE organizer.channel
 (

@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -44,4 +45,7 @@ public class OrganizerEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "media_id")
     private MediaEntity media;
+
+    @Column(name = "rating")
+    private BigDecimal rating;
 }

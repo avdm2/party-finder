@@ -1,4 +1,4 @@
-package ru.partyfinder.models.dto.request;
+package ru.partyfinder.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class NewRatingRequest {
-    UUID entityId;
+    UUID receiveEntityId;
+    String receiveEntityType;
+    String senderEntityType;
     BigDecimal score;
+    String comment;
 }
+

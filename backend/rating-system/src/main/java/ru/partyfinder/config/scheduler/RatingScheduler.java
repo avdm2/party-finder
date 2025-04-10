@@ -1,4 +1,4 @@
-package ru.partyfinder.config;
+package ru.partyfinder.config.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

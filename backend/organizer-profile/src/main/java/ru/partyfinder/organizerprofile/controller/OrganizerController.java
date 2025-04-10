@@ -13,6 +13,8 @@ import ru.partyfinder.organizerprofile.messaging.event.CredentialsChangesEvent;
 import ru.partyfinder.organizerprofile.messaging.producer.CredentialsChangesEventProducer;
 import ru.partyfinder.organizerprofile.service.OrganizerService;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/organizer")
 @RequiredArgsConstructor
@@ -36,6 +38,12 @@ public class OrganizerController {
     public ResponseEntity<OrganizerEntity> getOrganizerByUsername(@PathVariable("username") String username) {
         var org = organizerService.findOrganizerByUsername(username);
 
+        return org == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(org);
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<OrganizerEntity> getOrganizerByUsername(@PathVariable("id") UUID id) {
+        var org = organizerService.findOrganizerById(id);
         return org == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(org);
     }
 }

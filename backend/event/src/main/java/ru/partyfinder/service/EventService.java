@@ -1,20 +1,19 @@
 package ru.partyfinder.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.partyfinder.model.dto.EventFilterDTO;
 import ru.partyfinder.entity.EventEntity;
 import ru.partyfinder.repository.EventRepository;
 import ru.partyfinder.specification.EventSpecification;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -53,5 +52,9 @@ public class EventService {
             return spec.and(func.apply(value1, value2));
         }
         return spec;
+    }
+
+    public EventEntity getEvent(@PathVariable UUID eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Нет такого ивента"));
     }
 }
