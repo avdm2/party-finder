@@ -58,38 +58,24 @@ function OrganizerProfile() {
     };
 
     const uploadAvatar = async (file) => {
-        if (!profile?.username) {
-            console.error("Ошибка: profile.username отсутствует");
-            return;
-        }
-
         const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("Ошибка: отсутствует токен авторизации");
-            alert("Вы не авторизованы!");
-            return;
-        }
-
         const formData = new FormData();
         formData.append("file", file);
-
         try {
             const response = await fetch(
-                `http://localhost:8722/api/organizers/media/uploadPhoto?username=${profile.username}`,
+                `http://localhost:8722/api/v1/organizer/media/uploadPhoto?username=${profile.username}`,
                 {
                     method: "POST",
                     body: formData,
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: { Authorization: `Bearer ${token}` }, // Убираем Content-Type
                 }
             );
-
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Ошибка загрузки:", errorText);
                 alert(`Ошибка загрузки: ${errorText}`);
                 return;
             }
-
             console.log("Фото успешно загружено!");
             const updatedProfile = await getOrganizerProfile(profile.username);
             if (updatedProfile.media) {

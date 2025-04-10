@@ -4,7 +4,7 @@ create schema client;
 create schema organizer;
 create schema source;
 create schema loyalty;
-
+create schema channels;
 
 create table client.media
 (
@@ -179,4 +179,23 @@ create table loyalty.prize_history
     organizer_uuid       uuid,
     prize_uuid           uuid,
     delivered            boolean
-)
+);
+
+CREATE TABLE channels.channels (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    owner_username varchar(255) not null
+);
+
+CREATE TABLE channels.subscribers (
+    id UUID PRIMARY KEY,
+    channel_id UUID REFERENCES channels(id),
+    subscriber_id UUID NOT NULL
+);
+
+CREATE TABLE channels.messages (
+    id UUID PRIMARY KEY,
+    channel_id UUID REFERENCES channels(id),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

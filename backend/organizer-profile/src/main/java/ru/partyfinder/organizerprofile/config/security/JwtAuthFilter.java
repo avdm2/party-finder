@@ -34,35 +34,47 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("Handling request: " + request.getRequestURI());
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Разрешаем запросы OPTIONS без токена
+            if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing or invalid Authorization header");
             return;
         }
+        try {
+            String token = authHeader.substring(7);
+            String[] parts = token.split("\\.");
 
-        String token = authHeader.substring(7);
-        String[] parts = token.split("\\.");
+            if (parts.length != 3) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT format");
+                return;
+            }
 
-        if (parts.length != 3) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT format");
-            return;
+            String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
+            Map<String, Object> payload = new ObjectMapper().readValue(payloadJson, Map.class);
+
+            List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
+
+            log.info("USERNAME -> " + payload.get("sub"));
+
+            User user = new User(
+                    (String) payload.get("sub"), "",
+                    roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()
+            );
+            UserRequest userRequest = userContextFillingService.fillUserRequest((String) payload.get("sub"));
+            UserContextHolder.setContext(userRequest);
+            PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // Передаем запрос дальше по цепочке фильтров
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            // Логируем ошибку, но не отправляем 401, если запрос уже начал обрабатываться
+            log.severe("Ошибка при проверке токена: " + e.getMessage());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Ошибка аутентификации");
         }
-
-        String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
-        Map<String, Object> payload = new ObjectMapper().readValue(payloadJson, Map.class);
-
-        List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
-
-        log.info("USERNAME -> " + payload.get("sub"));
-
-        User user = new User(
-                (String) payload.get("sub"), "",
-                roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()
-        );
-        UserRequest userRequest = userContextFillingService.fillUserRequest((String) payload.get("sub"));
-        UserContextHolder.setContext(userRequest);
-        PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        filterChain.doFilter(request, response);
     }
 }
 
