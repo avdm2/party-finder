@@ -30,7 +30,7 @@ public class MediaEntity {
     private String mimeType;
 
     @Lob
-    @Column(name = "file_data", nullable = false, columnDefinition = "bytea")
+    @Column(name = "file_data", nullable = false, columnDefinition = "BYTEA")
     private byte[] fileData;
 
     @Column(name = "created_time", nullable = false)
