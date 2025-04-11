@@ -3,6 +3,9 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-header {
@@ -20,6 +23,7 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
+    background-color: #f0f0f0; /* Цвет фона для дефолтного изображения */
 }
 
 .default-avatar {
@@ -37,6 +41,7 @@
 .profile-info h1 {
     margin: 0;
     font-size: 24px;
+    color: #333;
 }
 
 .username {
@@ -65,11 +70,14 @@
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .detail-item {
     margin-bottom: 10px;
     font-size: 14px;
+    color: #333;
 }
 
 .profile-loading {
@@ -84,22 +92,107 @@
     color: red;
 }
 
-.avatar-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    background-color: #f0f0f0; /* Цвет фона для дефолтного изображения */
+.rate-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.default-avatar {
-    width: 100px;
-    height: 100px;
-    background-color: #ccc;
-    color: white;
-    font-size: 30px;
+.rate-button:hover {
+    background-color: #0056b3;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.rating-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.rating-label {
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+}
+
+.rating-label.selected {
+    color: #ffcc00;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 14px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+    background-color: #c82333;
 }

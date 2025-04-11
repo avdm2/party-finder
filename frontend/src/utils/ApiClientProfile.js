@@ -1,4 +1,9 @@
+import { jwtDecode } from "jwt-decode";
+
+
 const API_URL = "http://localhost:8724/api/v1/client-service/profile";
+
+const API_RATING_URL = "http://localhost:8725/api/v1/ratingSystem"
 
 export const createProfile = async (clientDTO, token) => {
     try {
@@ -82,6 +87,40 @@ export const getProfileByUsernamePagination = async (username, page, size, token
         return await response.json();
     } catch (error) {
         console.error("Ошибка при получении профиля по username:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const sendRating = async (receiveEntityId, score, comment, token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        const senderEntityType = decodedToken.roles[0];
+
+        const requestDTO = {
+            receiveEntityId,
+            receiveEntityType: "PARTICIPANT",
+            senderEntityType,
+            score: Number(score),
+            comment
+        };
+        console.log(requestDTO)
+
+        const response = await fetch(`${API_RATING_URL}/putRating`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(requestDTO)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Ошибка при отправке оценки:", error.response?.data || error.message);
         throw error;
     }
 };

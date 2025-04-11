@@ -72,7 +72,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             // Логируем ошибку, но не отправляем 401, если запрос уже начал обрабатываться
-            log.severe("Ошибка при проверке токена: " + e.getMessage());
+            log.error("Ошибка при проверке токена: " + e.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Ошибка аутентификации");
         }
     }

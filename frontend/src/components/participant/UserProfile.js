@@ -1,7 +1,6 @@
-// src/components/UserProfile.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername } from "../../utils/ApiClientProfile";
+import { getProfileMe, getProfileByUsername, sendRating } from "../../utils/ApiClientProfile";
 import "../../styles/UserProfile.css";
 import createDefaultProfile from '../../utils/Base64Util';
 
@@ -12,6 +11,10 @@ const UserProfile = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [rating, setRating] = useState(1);
+    const [comment, setComment] = useState("");
+    const [receiveEntityId, setReceiveEntityId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +26,7 @@ const UserProfile = () => {
                     data = await getProfileMe();
                 } else {
                     data = await getProfileByUsername(username);
+                    setReceiveEntityId(data.id);
                 }
 
                 setProfile(data);
@@ -61,6 +65,36 @@ const UserProfile = () => {
             </div>
         );
     }
+
+    const handleRateClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setRating(1);
+        setComment("");
+    };
+
+    const handleRatingChange = (event) => {
+        setRating(Number(event.target.value));
+    };
+
+    const handleCommentChange = (event) => {
+        setComment(event.target.value);
+    };
+
+    const handleSubmitRating = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await sendRating(receiveEntityId, rating, comment, token);
+            alert("Оценка успешно отправлена!");
+            handleCloseModal();
+        } catch (error) {
+            console.error("Ошибка при отправке оценки:", error);
+            alert("Произошла ошибка при отправке оценки.");
+        }
+    };
 
     return (
         <div className="user-profile-container">
@@ -108,6 +142,10 @@ const UserProfile = () => {
                             ? new Date(profile.createdTime).toLocaleString()
                             : "Неизвестно"}
                     </div>
+                    <div className="rating-item">
+                        <strong>Рейтинг:</strong>{" "}
+                        {profile.rating ?? "Неизвестно"}
+                    </div>
                     <div className="detail-item">
                         <strong>Последнее обновление:</strong>{" "}
                         {profile.updatedTime
@@ -119,7 +157,46 @@ const UserProfile = () => {
                         {profile.aboutMe || "Не указано"}
                     </div>
                 </div>
+                {username !== "me" && (
+                    <button className="rate-button" onClick={handleRateClick}>
+                        Оценить
+                    </button>
+                )}
             </div>
+            {isModalOpen && (
+                <div className="modal-overlay" onClick={handleCloseModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Оцените профиль</h2>
+                        <div className="rating-selector">
+                            {[1, 2, 3, 4, 5].map((num) => (
+                                <label key={num} className={`rating-label ${rating === num ? 'selected' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        value={num}
+                                        checked={rating === num}
+                                        onChange={handleRatingChange}
+                                    />
+                                    {num}
+                                </label>
+                            ))}
+                        </div>
+                        <textarea
+                            className="comment-input"
+                            placeholder="Введите ваш комментарий"
+                            value={comment}
+                            onChange={handleCommentChange}
+                        />
+                        <div className="modal-buttons">
+                            <button className="submit-button" onClick={handleSubmitRating}>
+                                Отправить
+                            </button>
+                            <button className="cancel-button" onClick={handleCloseModal}>
+                                Закрыть
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
