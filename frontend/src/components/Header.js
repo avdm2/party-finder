@@ -1,36 +1,39 @@
-import React, {useState, useEffect} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {useAuth} from '../services/auth/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Добавляем useLocation
+import { useAuth } from '../services/auth/AuthContext';
 import '../styles/Header.css';
-import {getProfileByUsernamePagination} from "../utils/ApiClientProfile";
+import { getProfileByUsernamePaginationClients } from "../utils/ApiClientProfile";
+import { getProfileByUsernamePaginationOrganizers } from "../utils/ApiOrganizerProfile";
 
 const Header = () => {
-    const {isAuthenticated, role, logout} = useAuth();
+    const { isAuthenticated, role, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation(); // Получаем текущий путь
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
-    const [pagination, setPagination] = useState({page: 0, size: 5});
+    const [pagination, setPagination] = useState({ page: 0, size: 5 });
     const [totalPages, setTotalPages] = useState(0);
+    const [tokenUsername, setTokenUsername] = useState('');
 
     const handleLogout = () => {
         logout();
         navigate('');
     };
 
-    const profilePath = role === 'ORGANIZER' ? '/organizer-profile' : '/profile/me';
+    const profilePath = role === 'ORGANIZER' ? '/organizer-profile/me' : '/profile/me';
     const eventsHandle = role === 'ORGANIZER' ? '/events' : '/find-event';
 
     const handleSearchChange = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
         if (term.length >= 3) {
-            setPagination({page: 0, size: 5});
+            setPagination({ page: 0, size: 5 });
             fetchSearchResults(term, 0, 5);
         } else {
             setSearchResults([]);
             setShowResults(false);
-            setPagination({page: 0, size: 5});
+            setPagination({ page: 0, size: 5 });
             setTotalPages(0);
         }
     };
@@ -38,19 +41,44 @@ const Header = () => {
     const fetchSearchResults = async (term, page, size) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await getProfileByUsernamePagination(term, page, size, token);
-            setSearchResults(response.content);
-            setTotalPages(response.page.totalPages);
+
+            const [clientsResponse, organizersResponse] = await Promise.all([
+                getProfileByUsernamePaginationClients(term, page, size, token),
+                getProfileByUsernamePaginationOrganizers(term, page, size, token)
+            ]);
+
+            const combinedResults = [
+                ...(clientsResponse.content || []).map(client => ({ ...client, type: 'client' })),
+                ...(organizersResponse.content || []).map(organizer => ({ ...organizer, type: 'organizer' }))
+            ];
+
+            setSearchResults(combinedResults);
+            setTotalPages(Math.max(clientsResponse.page.totalPages, organizersResponse.page.totalPages));
             setShowResults(true);
         } catch (error) {
-            console.error("Ошибка при поиске пользователей:", error.response?.data || error.message);
+            console.error("Ошибка при поиске пользователей и организаторов:", error.response?.data || error.message);
             setSearchResults([]);
             setShowResults(false);
         }
     };
 
-    const handleResultClick = (username) => {
-        navigate(`/profile/${username}`);
+    const handleResultClick = (username, type) => {
+        const token = localStorage.getItem("token");
+        console.log(username)
+        if (token) {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            if (username === payload.sub) {
+                navigate(role === 'ORGANIZER' ? '/organizer-profile/me' : '/profile/me');
+            } else {
+                if (type === 'client') {
+                    navigate(`/profile/${username}`)
+                } else {
+                    navigate(`/organizer-profile/${username}`)
+                }
+            }
+        } else {
+            navigate(`/profile/${username}`);
+        }
         setSearchTerm('');
         setSearchResults([]);
         setShowResults(false);
@@ -66,13 +94,21 @@ const Header = () => {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            setTokenUsername(payload.sub);
+        }
+    }, []);
+
+    useEffect(() => {
         if (searchTerm.length > 3) {
             fetchSearchResults(searchTerm, pagination.page, pagination.size);
         }
-    }, [pagination.page, pagination.size]);
+    }, [pagination.page, pagination.size, searchTerm]);
 
     const renderPaginationButtons = () => {
-        const {page} = pagination;
+        const { page } = pagination;
         const pagesToShow = 3;
         let startPage = Math.max(0, page - Math.floor(pagesToShow / 2));
         let endPage = Math.min(totalPages - 1, startPage + pagesToShow - 1);
@@ -123,7 +159,13 @@ const Header = () => {
             </div>
             <nav className="site-nav">
                 <ul>
-                    {!isAuthenticated ? (
+                    {location.pathname === '/create-profile' ? (
+                        <li>
+                            <button onClick={handleLogout} className="button-link">
+                                Выход
+                            </button>
+                        </li>
+                    ) : !isAuthenticated ? (
                         <>
                             <li>
                                 <Link to="/register" className="button-link">
@@ -162,26 +204,28 @@ const Header = () => {
                     )}
                 </ul>
             </nav>
-            <div className="search-bar">
-                <input
-                    type="text"
-                    placeholder="Поиск пользователей..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                {showResults && searchResults.length > 0 && (
-                    <div className="search-results-container">
-                        <ul className="search-results">
-                            {searchResults.map((user) => (
-                                <li key={user.username} onClick={() => handleResultClick(user.username)}>
-                                    {user.username}
-                                </li>
-                            ))}
-                        </ul>
-                        {totalPages > 1 && renderPaginationButtons()}
-                    </div>
-                )}
-            </div>
+            {location.pathname !== '/create-profile' && (
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="Поиск пользователей..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    {showResults && searchResults.length > 0 && (
+                        <div className="search-results-container">
+                            <ul className="search-results">
+                                {searchResults.map((user) => (
+                                    <li key={user.username} onClick={() => handleResultClick(user.username, user.type)}>
+                                        {user.username} {user.type === 'client' ? '(Пользователь)' : '(Организатор)'}
+                                    </li>
+                                ))}
+                            </ul>
+                            {totalPages > 1 && renderPaginationButtons()}
+                        </div>
+                    )}
+                </div>
+            )}
         </header>
     );
 };

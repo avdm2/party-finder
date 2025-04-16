@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Разрешаем OPTIONS
-                        .anyRequest().hasRole("ORGANIZER") // Остальные запросы требуют роль
+                        .anyRequest().hasAnyRole("ORGANIZER", "PARTICIPANT") // Остальные запросы требуют роль
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthFilter(userContextFillingService), UsernamePasswordAuthenticationFilter.class);

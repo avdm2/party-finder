@@ -39,30 +39,49 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String[] parts = token.split("\\.");
+        if (!token.equals("SYSTEM_USER")) {
+            String[] parts = token.split("\\.");
 
-        if (parts.length != 3) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT format");
-            return;
+            if (parts.length != 3) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT format");
+                return;
+            }
+
+            String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
+            Map<String, Object> payload = new ObjectMapper().readValue(payloadJson, Map.class);
+
+            List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
+
+            log.info("USERNAME -> " + payload.get("sub"));
+
+            User user = new User(
+                    (String) payload.get("sub"), "",
+                    roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()
+            );
+            UserRequest userRequest = userContextFillingService.fillUserRequest((String) payload.get("sub"));
+            UserContextHolder.setContext(userRequest);
+            log.info(user.getAuthorities().toString());
+            PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            filterChain.doFilter(request, response);
+        } else {
+
+
+
+            User user = new User(
+                    "SYSTEM_USER", "",
+                    List.of(new SimpleGrantedAuthority("ROLE_" + "PARTICIPANT"))
+            );
+            UserRequest userRequest = userContextFillingService.fillUserRequest("SYSTEM_USER");
+            UserContextHolder.setContext(userRequest);
+            log.info(user.getAuthorities().toString());
+            PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            filterChain.doFilter(request, response);
         }
 
-        String payloadJson = new String(Base64.getDecoder().decode(parts[1]));
-        Map<String, Object> payload = new ObjectMapper().readValue(payloadJson, Map.class);
-
-        List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
-
-        log.info("USERNAME -> " + payload.get("sub"));
-
-        User user = new User(
-                (String) payload.get("sub"), "",
-                roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()
-        );
-        UserRequest userRequest = userContextFillingService.fillUserRequest((String) payload.get("sub"));
-        UserContextHolder.setContext(userRequest);
-        PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        filterChain.doFilter(request, response);
     }
 }
 

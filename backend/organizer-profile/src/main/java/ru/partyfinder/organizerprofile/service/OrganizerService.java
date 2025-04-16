@@ -2,6 +2,8 @@ package ru.partyfinder.organizerprofile.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.organizerprofile.entity.OrganizerEntity;
 import ru.partyfinder.organizerprofile.model.dto.request.PutNewRatingDto;
@@ -27,6 +29,13 @@ public class OrganizerService {
         return organizerRepository.findByUsername(username).orElse(null);
     }
 
+    public Page<OrganizerEntity> findProfilesByUsernamePagable(String username, Pageable pageable) {
+        Page<OrganizerEntity> profiles = organizerRepository.findByUsernameContainingIgnoreCase(addProcents(username), pageable);
+        log.info("Service -> getTotalPages -> " + profiles.getTotalPages());
+        log.info("Service -> getTotalElements -> " + profiles.getTotalElements());
+        return profiles;
+    }
+
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public OrganizerEntity findOrganizerById(UUID id) {
         log.info("OrganizerService: findOrganizerByUsername: id={}", id);
@@ -41,5 +50,9 @@ public class OrganizerService {
         OrganizerEntity organizer = organizerRepository.findById(putNewRatingDto.getEntityId()).orElseThrow(RuntimeException::new);
         organizer.setRating(putNewRatingDto.getRating());
         organizerRepository.save(organizer);
+    }
+
+    private String addProcents(String username) {
+        return "%" + username + "%";
     }
 }

@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
+            console.log("USER IS AUTH")
             setIsAuthenticated(true);
             const payload = JSON.parse(atob(token.split(".")[1]));
             setRole(payload.roles[0]); // Предполагаем, что roles - массив строк

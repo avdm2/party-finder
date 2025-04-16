@@ -21,6 +21,7 @@ export async function registerUser(formData) {
 
 export async function loginUser(formData) {
 
+    console.log(formData)
     const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
