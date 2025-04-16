@@ -31,7 +31,6 @@ function EventsPage() {
     const [profile, setProfile] = useState(null); // Добавляем состояние для профиля
     const navigate = useNavigate();
 
-    // Загрузка профиля организатора
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/login");
@@ -105,17 +104,16 @@ function EventsPage() {
         }
 
         const maxDate = new Date();
-        maxDate.setFullYear(currentDate.getFullYear() + 2); // +2 года
+        maxDate.setFullYear(currentDate.getFullYear() + 2);
 
         if (eventDate > maxDate) {
             alert("Дата мероприятия не может быть позже чем через 2 года.");
             return;
         }
 
-        // Преобразуем дату к формату yyyy-MM-dd'T'HH:mm:ss
         const formattedEventData = {
             ...formDataEvent,
-            organizerId: profile?.id, // Используем UUID из профиля
+            organizerId: profile?.id,
             dateOfEvent: eventDate.toISOString().slice(0, 19).replace("T", "T"),
             status: "UPCOMING",
             rating: 0,

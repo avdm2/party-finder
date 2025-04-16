@@ -3,6 +3,7 @@ package ru.partyfinder.organizerprofile.service;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,9 @@ import ru.partyfinder.organizerprofile.entity.MediaEntity;
 import ru.partyfinder.organizerprofile.entity.OrganizerEntity;
 import ru.partyfinder.organizerprofile.repository.MediaRepository;
 
+import java.util.Arrays;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MediaService {

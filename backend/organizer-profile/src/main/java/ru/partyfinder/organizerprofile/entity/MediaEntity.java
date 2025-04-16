@@ -21,6 +21,7 @@ public class MediaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "file_name", nullable = false)
@@ -29,8 +30,7 @@ public class MediaEntity {
     @Column(name = "mime_type", nullable = false)
     private String mimeType;
 
-    @Lob
-    @Column(name = "file_data", nullable = false, columnDefinition = "BYTEA")
+    @Column(name = "file_data", nullable = false)
     private byte[] fileData;
 
     @Column(name = "created_time", nullable = false)
@@ -39,5 +39,16 @@ public class MediaEntity {
     @PrePersist
     protected void onCreate() {
         this.createdTime = Instant.now();
+    }
+
+    @Override
+    public String toString() {
+        return "MediaEntity{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", fileData=" +
+                ", createdTime=" + createdTime +
+                '}';
     }
 }

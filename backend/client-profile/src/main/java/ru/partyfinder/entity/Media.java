@@ -22,8 +22,7 @@ public class Media {
     @Column(name = "mime_type", nullable = false)
     private String mimeType;
 
-    @Lob
-    @Column(name = "file_data", nullable = false, columnDefinition = "bytea")
+    @Column(name = "file_data", nullable = false)
     private byte[] fileData;
 
     @Column(name = "created_time", nullable = false)
