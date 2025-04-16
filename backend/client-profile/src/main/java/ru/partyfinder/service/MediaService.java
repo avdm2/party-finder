@@ -2,7 +2,9 @@ package ru.partyfinder.service;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import ru.partyfinder.entity.Media;
@@ -10,15 +12,16 @@ import ru.partyfinder.entity.Profile;
 import ru.partyfinder.repository.MediaRepository;
 
 
+@Slf4j
 @Service
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class MediaService {
 
     private MediaRepository mediaRepository;
 
     private ProfileService profileService;
 
+    @Transactional
     public void saveFileForUser(MultipartFile file, String username) {
 
         Profile profile = profileService.getProfileByUsername(username);
@@ -36,13 +39,13 @@ public class MediaService {
     }
 
 
-    public Media getMediaByUser(@PathVariable String username) {
+    public Media getMediaByUser(String username) {
         Profile profile = profileService.getProfileByUsername(username);
 
         return profile.getMedia();
     }
 
-    public void changeMediaByUser(MultipartFile file, String username) {
+    /*public void changeMediaByUser(MultipartFile file, String username) {
         Media newMedia = createNewMedia(file);
         if (newMedia != null) {
             Media oldMedia = getMediaByUser(username);
@@ -57,8 +60,8 @@ public class MediaService {
             throw new IllegalArgumentException("Что-то не так с файлом, не смог создать объект");
         }
 
-    }
-    public void deleteMediaByUser(MultipartFile file, String username) {
+    }*/
+   /* public void deleteMediaByUser(MultipartFile file, String username) {
         Media oldMedia = getMediaByUser(username);
 
         Profile profile = profileService.getProfileByUsername(username);
@@ -66,7 +69,7 @@ public class MediaService {
         mediaRepository.delete(oldMedia);
         profile.setMedia(null);
         profileService.saveProfileWithMedia(profile);
-    }
+    }*/
 
     private Media createNewMedia(MultipartFile file) {
         try {

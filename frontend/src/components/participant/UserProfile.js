@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProfileMe, getProfileByUsername, sendRating } from "../../utils/ApiClientProfile";
 import "../../styles/UserProfile.css";
 import createDefaultProfile from '../../utils/Base64Util';
+import { Button, Avatar, IconButton } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 let defaultProfileCache = null;
 
@@ -15,20 +17,20 @@ const UserProfile = () => {
     const [rating, setRating] = useState(1);
     const [comment, setComment] = useState("");
     const [receiveEntityId, setReceiveEntityId] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 let data;
-
                 if (username === "me") {
                     data = await getProfileMe();
+                    console.log(data);
                 } else {
                     data = await getProfileByUsername(username);
                     setReceiveEntityId(data.id);
                 }
-
                 setProfile(data);
                 setError(null);
             } catch (err) {
@@ -96,18 +98,68 @@ const UserProfile = () => {
         }
     };
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setAvatarFile(file);
+            uploadAvatar(file);
+        }
+    };
+
+    const uploadAvatar = async (file) => {
+        const token = localStorage.getItem("token");
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(
+                `http://localhost:8724/api/v3/media/user/uploadPhoto?username=${profile.username}`,
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: { Authorization: `Bearer ${token}` }, // Убираем Content-Type
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Ошибка загрузки:", errorText);
+                alert(`Ошибка загрузки: ${errorText}`);
+                return;
+            }
+
+            console.log("Фото успешно загружено!");
+            const updatedProfile = await getProfileByUsername(profile.username);
+            if (updatedProfile.media) {
+                setProfile((prevProfile) => ({ ...prevProfile, media: updatedProfile.media }));
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке фото:", error);
+            alert("Ошибка при загрузке фото: " + error.message);
+        }
+    };
+
     return (
         <div className="user-profile-container">
             <div className="profile-header">
                 <div className="profile-avatar">
-                    {profile?.media?.fileUrl ? (
-                        <img
-                            src={profile.media.fileUrl}
-                            alt={`${profile.username}'s photo`}
-                            className="avatar-image"
+                    {profile?.media?.fileData ? (
+                        <Avatar
+                            src={`data:image/jpeg;base64,${profile.media.fileData}`}
+                            sx={{ width: 120, height: 120, margin: "auto", bgcolor: "grey.300" }}
                         />
                     ) : (
-                        <div className="default-avatar">?</div>
+                        <Avatar
+                            sx={{ width: 120, height: 120, margin: "auto", bgcolor: "grey.300" }}
+                        >
+                            <PhotoCamera fontSize="large" />
+                        </Avatar>
+                    )}
+                    {username === "me" && (
+                        <IconButton component="label">
+                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
+                            <PhotoCamera />
+                        </IconButton>
                     )}
                 </div>
                 <div className="profile-info">

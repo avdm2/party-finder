@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     Button,
@@ -162,10 +162,12 @@ function OrganizerProfile() {
                     >
                         {!profile.media && <PhotoCamera fontSize="large" />}
                     </Avatar>
-                    <IconButton component="label">
-                        <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
-                        <PhotoCamera />
-                    </IconButton>
+                    {username === "me" && (
+                        <IconButton component="label">
+                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
+                            <PhotoCamera />
+                        </IconButton>
+                    )}
                     <Typography variant="h5">{profile.name} {profile.surname}</Typography>
                     <Typography variant="body2" color="textSecondary">
                         Рейтинг: {profile.rating ?? "Неизвестно"}

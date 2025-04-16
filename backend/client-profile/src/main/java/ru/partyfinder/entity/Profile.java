@@ -44,7 +44,7 @@ public class Profile {
     @Column(name = "about_me")
     private String aboutMe;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "media_id")
     private Media media;
 
