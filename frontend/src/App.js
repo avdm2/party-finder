@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomePageParticipant from "./components/homepage/HomePageParticipant";
 import HomePageOrganizer from "./components/homepage/HomePageOrganizer";
 import EventsPage from "./components/organizer/Events";
+import ChannelInterface from "./components/organizer/ChannelInterface";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
@@ -42,6 +43,7 @@ const App = () => {
                 <Route path="/organizer-profile/:username" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
                 <Route path="/organizer-profile/" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
                 <Route path="/find-event" element={<ProtectedRoute><FindEvent /></ProtectedRoute>} />
+                <Route path="/channel/:channelId" element={<ChannelInterface />} />
             </Routes>
         </div>
     );

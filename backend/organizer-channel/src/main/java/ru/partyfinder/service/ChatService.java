@@ -22,10 +22,10 @@ public class ChatService {
     private final SubscriberMapper subscriberMapper;
 
     public void createChannel(Channel channel) {
-        channelMapper.createChannel(Channel.builder()
+        channelMapper.save(Channel.builder()
                 .id(UUID.randomUUID())
-                .name(channel.name())
-                .ownerUsername(channel.ownerUsername())
+                .name(channel.getName())
+                .ownerUsername(channel.getOwnerUsername())
                 .build());
     }
 
@@ -38,27 +38,27 @@ public class ChatService {
     }
 
     public void sendMessage(Message message) {
-        messageMapper.sendMessage(Message.builder()
+        messageMapper.save(Message.builder()
                 .id(UUID.randomUUID())
-                .channelId(message.channelId())
-                .content(message.content())
+                .channel(message.getChannel())
+                .content(message.getContent())
                 .createdAt(LocalDateTime.now())
                 .build());
     }
 
     public List<Message> findMessagesByChannel(UUID channelId) {
-        return messageMapper.findMessagesByChannel(channelId);
+        return messageMapper.findMessagesByChannel_IdOrderByCreatedAtAsc(channelId);
     }
 
     public void subscribe(Subscriber subscriber) {
-        subscriberMapper.subscribe(Subscriber.builder()
+        subscriberMapper.save(Subscriber.builder()
                 .id(UUID.randomUUID())
-                .subscriberId(subscriber.subscriberId())
-                .channelId(subscriber.channelId())
+                .subscriberId(subscriber.getSubscriberId())
+                .channel(subscriber.getChannel())
                 .build());
     }
 
     public List<Subscriber> findSubscribersByChannel(UUID channelId) {
-        return subscriberMapper.findSubscribersByChannel(channelId);
+        return subscriberMapper.findSubscribersByChannel(channelMapper.findById(channelId).get());
     }
 }
