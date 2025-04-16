@@ -33,8 +33,6 @@ function OrganizerProfile() {
             const token = localStorage.getItem("token");
             if (!token) return navigate("/login");
             const payload = JSON.parse(atob(token.split(".")[1]));
-            if (!payload.roles.includes("ORGANIZER")) return navigate("/home");
-
             let data;
             if (username === "me") {
                 console.log(username)
