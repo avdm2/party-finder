@@ -1,13 +1,15 @@
 import { createProfile } from "../../utils/ApiClientProfile";
+import {useNavigate} from "react-router-dom";
+
 
 export const useProfileService = () => {
+    const navigate = useNavigate();
     const handleCreateProfile = async (clientDTO) => {
         try {
             const token = localStorage.getItem("token");
             const profileId = await createProfile(clientDTO, token);
-            alert(`Профиль успешно создан! Username: ${profileId}`);
+            navigate("/profile/me")
         } catch (error) {
-            alert("Произошла ошибка при создании профиля.");
             throw error;
         }
     };

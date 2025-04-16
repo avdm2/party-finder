@@ -118,6 +118,7 @@ function EventsPage() {
             organizerId: profile?.id, // Используем UUID из профиля
             dateOfEvent: eventDate.toISOString().slice(0, 19).replace("T", "T"),
             status: "UPCOMING",
+            rating: 0,
         };
 
         const token = localStorage.getItem("token");

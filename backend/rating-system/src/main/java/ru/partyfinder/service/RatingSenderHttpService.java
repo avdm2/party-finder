@@ -24,6 +24,8 @@ public class RatingSenderHttpService {
 
     private final WebClient eventWebClient;
 
+    private final String token = "SYSTEM_USER";
+
     public RatingSenderHttpService(@Qualifier("clientWebClient") WebClient clientWebClient,
                                    @Qualifier("organizerWebClient") WebClient organizerWebClient,
                                    @Qualifier("eventWebClient") WebClient eventWebClient) {
@@ -63,7 +65,8 @@ public class RatingSenderHttpService {
     }
 
     public void putRating(PutNewRatingDto putNewRatingDto) {
-        String token = UserContextHolder.getContext().getToken();
+        log.info(putNewRatingDto.toString());
+        log.info(token);
         switch (putNewRatingDto.getEntityType()) {
             case "PARTICIPANT" -> clientWebClient.post().uri("/putNewRating")
                     .bodyValue(putNewRatingDto)

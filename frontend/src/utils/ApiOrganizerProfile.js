@@ -1,24 +1,42 @@
 import { jwtDecode } from "jwt-decode";
 
 
-const API_URL = "http://localhost:8724/api/v1/client-service/profile";
-
 const API_RATING_URL = "http://localhost:8725/api/v1/ratingSystem"
+const API_URL = "http://localhost:8722/api/v1/organizer";
 
-export const createProfile = async (clientDTO, token) => {
+
+
+
+export const sendRating = async (receiveEntityId, score, comment, token) => {
     try {
-        console.log(token);
-        const response = await fetch(`${API_URL}/create`, {
+        const decodedToken = jwtDecode(token);
+        const senderEntityType = decodedToken.roles[0];
+
+        const requestDTO = {
+            receiveEntityId,
+            receiveEntityType: "ORGANIZER",
+            senderEntityType,
+            score: Number(score),
+            comment
+        };
+        console.log(requestDTO)
+
+        const response = await fetch(`${API_RATING_URL}/putRating`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(clientDTO)
+            body: JSON.stringify(requestDTO)
         });
-        return response.data;
+
+        if (!response.ok) {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+
+        return await response.json();
     } catch (error) {
-        console.error("Ошибка при создании профиля:", error.response?.data || error.message);
+        console.error("Ошибка при отправке оценки:", error.response?.data || error.message);
         throw error;
     }
 };
@@ -40,10 +58,10 @@ export const getProfileMe = async () => {
     return await response.json();
 };
 
-export const getProfileByUsername = async (username) => {
+export const getProfileByUsernameOrganizer = async (username) => {
     const token = localStorage.getItem("token");
     console.log(token);
-    const response = await fetch(`${API_URL}/by-username/${username}`, {
+    const response = await fetch(`${API_URL}/username/${username}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -70,7 +88,7 @@ export const getProfileByUsername = async (username) => {
     return data;
 };
 
-export const getProfileByUsernamePaginationClients = async (username, page, size, token) => {
+export const getProfileByUsernamePaginationOrganizers = async (username, page, size, token) => {
     try {
         const response = await fetch(`${API_URL}/search?username=${username}&page=${page}&size=${size}`, {
             method: "GET",
@@ -87,40 +105,6 @@ export const getProfileByUsernamePaginationClients = async (username, page, size
         return await response.json();
     } catch (error) {
         console.error("Ошибка при получении профиля по username:", error.response?.data || error.message);
-        throw error;
-    }
-};
-
-export const sendRating = async (receiveEntityId, score, comment, token) => {
-    try {
-        const decodedToken = jwtDecode(token);
-        const senderEntityType = decodedToken.roles[0];
-
-        const requestDTO = {
-            receiveEntityId,
-            receiveEntityType: "PARTICIPANT",
-            senderEntityType,
-            score: Number(score),
-            comment
-        };
-        console.log(requestDTO)
-
-        const response = await fetch(`${API_RATING_URL}/putRating`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(requestDTO)
-        });
-
-        if (!response.ok) {
-            throw new Error(`Ошибка сервера: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Ошибка при отправке оценки:", error.response?.data || error.message);
         throw error;
     }
 };

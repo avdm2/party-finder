@@ -1,53 +1,59 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Button,
     Avatar,
     Box,
     Typography,
-    IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    TextField,
+    DialogActions,
+    Rating,
 } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
+import { sendRating } from "../../utils/ApiOrganizerProfile";
+import { getProfileByUsernameOrganizer, getProfileMe } from "../../utils/ApiOrganizerProfile";
 
 function OrganizerProfile() {
+    const { username } = useParams();
     const [profile, setProfile] = useState(null);
-    const [rating, setRating] = useState("0/5");
     const [modalOpen, setModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: "", surname: "", birthday: "", username: "" });
     const [avatarFile, setAvatarFile] = useState(null);
+    const [ratingValue, setRatingValue] = useState(1);
+    const [ratingComment, setRatingComment] = useState("");
+    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) return navigate("/login");
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        if (!payload.roles.includes("ORGANIZER")) return navigate("/home");
+        const fetchProfile = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return navigate("/login");
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            let data;
+            if (username === "me") {
+                console.log(username)
+                try {
+                    data = await getProfileMe();
 
-        getOrganizerProfile(payload.sub).then((data) => {
+                } catch (error) {
+                    setFormData((prev) => ({ ...prev, username: payload.sub }));
+                    setModalOpen(true);
+                }
+
+            } else {
+                data = await getProfileByUsernameOrganizer(username);
+            }
             if (data) {
                 setProfile(data);
-                fetchRating(data.id);
-            } else {
-                setFormData((prev) => ({ ...prev, username: payload.sub }));
-                setModalOpen(true);
             }
-        });
-    }, [navigate]);
+        };
 
-    const fetchRating = async (organizerId) => {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/rating/${organizerId}`, { // TODO
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            setRating(`${data.rating}/5`);
-        } else {
-            setRating("0/5");
-        }
-    };
+        fetchProfile();
+    }, [navigate, username]);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -77,7 +83,7 @@ function OrganizerProfile() {
                 return;
             }
             console.log("Фото успешно загружено!");
-            const updatedProfile = await getOrganizerProfile(profile.username);
+            const updatedProfile = await getProfileByUsernameOrganizer(profile.username);
             if (updatedProfile.media) {
                 setProfile((prevProfile) => ({ ...prevProfile, media: updatedProfile.media }));
             }
@@ -90,9 +96,10 @@ function OrganizerProfile() {
     const handleSubmit = async () => {
         const formattedData = { ...formData, birthday: `${formData.birthday}T00:00:00` };
         if (await createOrganizerProfile(formattedData)) {
-            const updatedProfile = await getOrganizerProfile(formData.username);
+            const updatedProfile = await getProfileByUsernameOrganizer(formData.username);
             setProfile(updatedProfile);
             setModalOpen(false);
+            navigate("")
         }
     };
 
@@ -103,6 +110,36 @@ function OrganizerProfile() {
     const handleLogout = () => {
         localStorage.removeItem("token");
         navigate("/home");
+    };
+
+    const handleOpenRatingModal = () => {
+        setIsRatingModalOpen(true);
+    };
+
+    const handleCloseRatingModal = () => {
+        setIsRatingModalOpen(false);
+        setRatingValue(1);
+        setRatingComment("");
+    };
+
+    const handleRatingChange = (event, newValue) => {
+        setRatingValue(newValue);
+    };
+
+    const handleRatingCommentChange = (event) => {
+        setRatingComment(event.target.value);
+    };
+
+    const handleSubmitRating = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await sendRating(profile.id, ratingValue, ratingComment, token);
+            alert("Оценка успешно отправлена!");
+            handleCloseRatingModal();
+        } catch (error) {
+            console.error("Ошибка при отправке оценки:", error);
+            alert("Произошла ошибка при отправке оценки.");
+        }
     };
 
     return (
@@ -131,7 +168,7 @@ function OrganizerProfile() {
                     </IconButton>
                     <Typography variant="h5">{profile.name} {profile.surname}</Typography>
                     <Typography variant="body2" color="textSecondary">
-                        Рейтинг: {rating}
+                        Рейтинг: {profile.rating ?? "Неизвестно"}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
@@ -139,6 +176,11 @@ function OrganizerProfile() {
                     <Typography variant="body2" color="textSecondary">
                         UUID: {profile.id}
                     </Typography>
+                    {username !== "me" && (
+                        <Button variant="contained" color="primary" onClick={handleOpenRatingModal} style={{ marginTop: 16 }}>
+                            Оценить организатора
+                        </Button>
+                    )}
                 </>
             ) : (
                 <Typography variant="body1">Загрузка...</Typography>
@@ -175,38 +217,47 @@ function OrganizerProfile() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            {/* Диалог для оценки организатора */}
+            <Dialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
+                <DialogTitle>Оцените организатора</DialogTitle>
+                <DialogContent>
+                    <Rating
+                        name="simple-controlled"
+                        value={ratingValue}
+                        onChange={handleRatingChange}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="Комментарий"
+                        multiline
+                        rows={4}
+                        value={ratingComment}
+                        onChange={handleRatingCommentChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSubmitRating} variant="contained" color="primary">
+                        Отправить
+                    </Button>
+                    <Button onClick={handleCloseRatingModal} variant="outlined" color="secondary">
+                        Закрыть
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
 
 export async function createOrganizerProfile(profileData) {
     const token = localStorage.getItem("token");
+    console.log(profileData)
     const response = await fetch("http://localhost:8722/api/v1/organizer", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(profileData),
     });
     return response.ok;
-}
-
-export async function getOrganizerProfile(username) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        console.error("Токен отсутствует в localStorage");
-        return null;
-    }
-
-    const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${username}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    });
-
-    if (!response.ok) {
-        console.error(`Ошибка получения профиля: ${response.status}`);
-        return null;
-    }
-
-    return await response.json();
 }
 
 export default OrganizerProfile;

@@ -4,6 +4,7 @@ import "../../styles/MainStyle.css";
 import { loginUser } from "../../services/auth/Auth";
 import { getProfileByUsername } from "../../utils/ApiClientProfile";
 import { useAuth } from "../../services/auth/AuthContext";
+import {getProfileByUsernameOrganizer} from "../../utils/ApiOrganizerProfile";
 
 function Login() {
     const [formData, setFormData] = useState({ username: "", password: "" });
@@ -20,6 +21,8 @@ function Login() {
         e.preventDefault();
         const result = await loginUser(formData);
 
+        console.log(result)
+
         if (!result.success) {
             setError(result.message);
             return;
@@ -29,7 +32,12 @@ function Login() {
         const payload = JSON.parse(atob(result.token.split(".")[1]));
 
         if (payload.roles.includes("ORGANIZER")) {
-            navigate("/organizer-profile");
+            try {
+                const profile = await getProfileByUsernameOrganizer(payload.sub);
+                navigate("/organizer-profile/me");
+            } catch (error) {
+                navigate(`/organizer-profile/me`);
+            }
         } else if (payload.roles.includes("PARTICIPANT")) {
             try {
                 const profile = await getProfileByUsername(payload.sub);

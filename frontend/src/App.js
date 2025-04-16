@@ -40,7 +40,8 @@ const App = () => {
                 <Route path="/profile/:username" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/organizer-profile" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
+                <Route path="/organizer-profile/:username" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
+                <Route path="/organizer-profile/" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
                 <Route path="/find-event" element={<ProtectedRoute><FindEvent /></ProtectedRoute>} />
                 <Route path="/channel/:channelId" element={<ChannelInterface />} />
             </Routes>
