@@ -1,19 +1,14 @@
 package ru.partyfinder.repository;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.partyfinder.entity.Message;
 
 import java.util.List;
 import java.util.UUID;
 
-@Mapper
-public interface MessageMapper {
+@Repository
+public interface MessageMapper extends JpaRepository<Message, UUID> {
 
-    @Insert("INSERT INTO channels.messages (id, channel_id, content) VALUES (#{id}, #{channelId}, #{content})")
-    void sendMessage(Message message);
-
-    @Select("SELECT * FROM channels.messages WHERE channel_id = #{channelId} ORDER BY created_at ASC")
-    List<Message> findMessagesByChannel(UUID channelId);
+    List<Message> findMessagesByChannel_IdOrderByCreatedAtAsc(UUID channelId);
 }

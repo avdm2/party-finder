@@ -1,19 +1,15 @@
 package ru.partyfinder.repository;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.partyfinder.entity.Channel;
 import ru.partyfinder.entity.Subscriber;
 
 import java.util.List;
 import java.util.UUID;
 
-@Mapper
-public interface SubscriberMapper {
+@Repository
+public interface SubscriberMapper extends JpaRepository<Subscriber, UUID> {
 
-    @Insert("INSERT INTO channels.subscribers (id, channel_id, subscriber_id) VALUES (#{id}, #{channelId}, #{subscriberId})")
-    void subscribe(Subscriber subscriber);
-
-    @Select("SELECT * FROM channels.subscribers WHERE channel_id = #{channelId}")
-    List<Subscriber> findSubscribersByChannel(UUID channelId);
+    List<Subscriber> findSubscribersByChannel(Channel channel);
 }

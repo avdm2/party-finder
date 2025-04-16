@@ -1,26 +1,24 @@
 package ru.partyfinder.repository;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.partyfinder.entity.Channel;
 
 import java.util.List;
 import java.util.UUID;
 
-@Mapper
-public interface ChannelMapper {
+@Repository
+public interface ChannelMapper extends JpaRepository<Channel, UUID> {
 
-    @Insert("INSERT INTO channels.channels (id, name, owner_username) VALUES (#{id}, #{name}. #{ownerUsername})")
-    void createChannel(Channel channel);
-
-    @Select("SELECT * FROM channels.channels WHERE owner_username = #{ownerUsername}")
     Channel findByOwnerUsername(String ownerUsername);
 
-    @Select("""
-            select c.id, c.name, c.owner_username
-            from channels.channels c
-            left join channels.subscribers s on s.channel_id = c.id where s.cid = #{cid}
+    @Query("""
+                SELECT c
+                FROM Channel c
+                LEFT JOIN Subscriber s ON s.channel.id = c.id
+                WHERE s.subscriberId = :subscriberId
             """)
-    List<Channel> findAllForSubscriber(UUID subscriberId);
+    List<Channel> findAllForSubscriber(@Param("subscriberId") UUID subscriberId);
 }

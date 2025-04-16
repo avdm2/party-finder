@@ -29,7 +29,7 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/owner{ownerUsername}")
+    @GetMapping("/owner/{ownerUsername}")
     public ResponseEntity<Channel> findByOwnerUsername(@PathVariable String ownerUsername) {
         return ResponseEntity.ok(chatService.findByOwnerUsername(ownerUsername));
     }

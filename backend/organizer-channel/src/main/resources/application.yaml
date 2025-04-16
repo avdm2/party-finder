@@ -1,0 +1,17 @@
+server:
+  port: 8123
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/diploma
+    username: artem
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
