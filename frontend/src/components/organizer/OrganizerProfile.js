@@ -73,7 +73,7 @@ function OrganizerProfile() {
                 {
                     method: "POST",
                     body: formData,
-                    headers: { Authorization: `Bearer ${token}` }, // Убираем Content-Type
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
             if (!response.ok) {
@@ -187,7 +187,6 @@ function OrganizerProfile() {
             ) : (
                 <Typography variant="body1">Загрузка...</Typography>
             )}
-            {/* Диалог для заполнения профиля */}
             <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
                 <DialogTitle>Заполните профиль</DialogTitle>
                 <DialogContent>
@@ -214,12 +213,8 @@ function OrganizerProfile() {
                     <Button onClick={handleSubmit} variant="contained" color="primary">
                         Сохранить
                     </Button>
-                    <Button onClick={() => setModalOpen(false)} variant="outlined" color="secondary">
-                        Отмена
-                    </Button>
                 </DialogActions>
             </Dialog>
-            {/* Диалог для оценки организатора */}
             <Dialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
                 <DialogTitle>Оцените организатора</DialogTitle>
                 <DialogContent>

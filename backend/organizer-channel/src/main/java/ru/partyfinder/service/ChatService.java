@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.partyfinder.entity.Channel;
 import ru.partyfinder.entity.Message;
 import ru.partyfinder.entity.Subscriber;
+import ru.partyfinder.model.MessageDTO;
 import ru.partyfinder.repository.ChannelMapper;
 import ru.partyfinder.repository.MessageMapper;
 import ru.partyfinder.repository.SubscriberMapper;
@@ -21,8 +22,8 @@ public class ChatService {
     private final MessageMapper messageMapper;
     private final SubscriberMapper subscriberMapper;
 
-    public void createChannel(Channel channel) {
-        channelMapper.save(Channel.builder()
+    public Channel createChannel(Channel channel) {
+        return channelMapper.save(Channel.builder()
                 .id(UUID.randomUUID())
                 .name(channel.getName())
                 .ownerUsername(channel.getOwnerUsername())
@@ -37,10 +38,13 @@ public class ChatService {
         return channelMapper.findAllForSubscriber(subscriberId);
     }
 
-    public void sendMessage(Message message) {
-        messageMapper.save(Message.builder()
+    public Message sendMessage(MessageDTO message) {
+        Channel channel = channelMapper.findById(message.getChannelId())
+                .orElseThrow(() -> new IllegalArgumentException("Канал не найден"));
+
+        return messageMapper.save(Message.builder()
                 .id(UUID.randomUUID())
-                .channel(message.getChannel())
+                .channel(channel)
                 .content(message.getContent())
                 .createdAt(LocalDateTime.now())
                 .build());

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Для запросов к API
 import "../../styles/FindEvent.css";
 import { fetchEventsRequest } from "../../utils/ApiFindEvents";
 
@@ -19,9 +18,9 @@ const FindEvent = () => {
         maxAge: "",
     });
 
-    const [events, setEvents] = useState([]); // Список мероприятий
-    const [pagination, setPagination] = useState({ page: 0, size: 10 }); // Параметры пагинации
-    const [totalPages, setTotalPages] = useState(0); // Общее количество страниц
+    const [events, setEvents] = useState([]);
+    const [pagination, setPagination] = useState({ page: 0, size: 10 });
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         fetchEvents(filters, pagination);
@@ -204,7 +203,6 @@ const FindEvent = () => {
                 ))}
             </ul>
 
-            {/* Пагинация */}
             <div className="pagination">
                 <button
                     onClick={() => handlePageChange(pagination.page - 1)}

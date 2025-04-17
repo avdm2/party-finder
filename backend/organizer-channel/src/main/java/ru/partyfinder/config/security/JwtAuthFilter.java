@@ -57,8 +57,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             List<String> roles = (List<String>) payload.getOrDefault("roles", List.of());
 
-            log.info("USERNAME -> " + payload.get("sub"));
-
             User user = new User(
                     (String) payload.get("sub"), "",
                     roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList()

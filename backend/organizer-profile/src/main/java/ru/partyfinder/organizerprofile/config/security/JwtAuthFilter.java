@@ -69,6 +69,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
+                log.info("--- Response: {}", response.getStatus());
+
                 // Передаем запрос дальше по цепочке фильтров
                 filterChain.doFilter(request, response);
             } else {
@@ -81,6 +83,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 log.info(user.getAuthorities().toString());
                 PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(userRequest, userRequest, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
+                log.info("--- Response: {}", response.getStatus());
 
                 filterChain.doFilter(request, response);
             }

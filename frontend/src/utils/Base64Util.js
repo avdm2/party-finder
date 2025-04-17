@@ -1,4 +1,4 @@
-import avatar from '../defualtPhoto.jpg'; // Импортируем файл
+import avatar from '../defualtPhoto.jpg';
 
 function getBase64FromImageUrl(imageUrl) {
     return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ function arrayBufferToBase64(arrayBuffer) {
 }
 async function createDefaultProfile() {
     try {
-        const base64String = await getBase64FromImageUrl(avatar); // Получаем Base64
+        const base64String = await getBase64FromImageUrl(avatar);
         const defaultProfile = {
             username: "guest_user",
             name: "Гость",
@@ -32,13 +32,13 @@ async function createDefaultProfile() {
             rating: 0,
             isConfirmed: false,
             media: {
-                fileUrl: `data:image/jpeg;base64,${base64String}` // Вставляем Base64
+                fileUrl: `data:image/jpeg;base64,${base64String}`
             },
             createdTime: null,
             updatedTime: null,
         };
 
-        console.log("Default Profile:", defaultProfile); // Для проверки
+        console.log("Default Profile:", defaultProfile);
         return defaultProfile;
     } catch (error) {
         console.error("Ошибка при создании defaultProfile:", error);

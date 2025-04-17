@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.partyfinder.entity.Channel;
 import ru.partyfinder.entity.Message;
 import ru.partyfinder.entity.Subscriber;
+import ru.partyfinder.model.MessageDTO;
 import ru.partyfinder.service.ChatService;
 
 import java.util.List;
@@ -24,9 +25,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createChannel(@RequestBody Channel channel) {
-        chatService.createChannel(channel);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Channel> createChannel(@RequestBody Channel channel) {
+        return ResponseEntity.ok(chatService.createChannel(channel));
     }
 
     @GetMapping("/owner/{ownerUsername}")
@@ -40,9 +40,8 @@ public class ChatController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Void> sendMessage(@RequestBody Message message) {
-        chatService.sendMessage(message);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Message> sendMessage(@RequestBody MessageDTO message) {
+        return ResponseEntity.ok(chatService.sendMessage(message));
     }
 
     @GetMapping("/channel/{channelId}")

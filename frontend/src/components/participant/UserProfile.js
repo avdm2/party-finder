@@ -117,7 +117,7 @@ const UserProfile = () => {
                 {
                     method: "POST",
                     body: formData,
-                    headers: { Authorization: `Bearer ${token}` }, // Убираем Content-Type
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
 

@@ -1,6 +1,4 @@
-// src/components/HomePageOrganizer.js
 import React from 'react';
-import Header from '../Header';
 import '../../styles/HomePage.css';
 
 const HomePageParticipant = () => {
