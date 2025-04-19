@@ -42,25 +42,15 @@ services:
     ports:
       - "8722:8722"
 
-  #organizer-channel-service:
-      #depends_on:
-       #- kafka
-       #- redis
-       #- postgres
-      #image: partyfinder/organizer-channel:latest
-      #container_name: organizer-channel
-      #ports:
-       #- "8123:8123"
-
-  client-profile-service:
+  organizer-channel-service:
       depends_on:
-        - kafka
-        - redis
-        - postgres
-      image: partyfinder/client-profile:latest
-      container_name: client-profile
+       - kafka
+       - redis
+       - postgres
+      image: partyfinder/organizer-channel:latest
+      container_name: organizer-channel
       ports:
-        - "8724:8724"
+       - "8123:8123"
 
   email-service:
     depends_on:
@@ -71,6 +61,16 @@ services:
     container_name: email
     ports:
       - "8726:8726"
+
+  client-profile-service:
+      depends_on:
+        - kafka
+        - redis
+        - postgres
+      image: partyfinder/client-profile:latest
+      container_name: client-profile
+      ports:
+        - "8724:8724"
 
   event-service:
       depends_on:

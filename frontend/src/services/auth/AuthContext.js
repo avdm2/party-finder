@@ -1,4 +1,3 @@
-// src/context/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
@@ -15,7 +14,7 @@ export const AuthProvider = ({ children }) => {
             console.log("USER IS AUTH")
             setIsAuthenticated(true);
             const payload = JSON.parse(atob(token.split(".")[1]));
-            setRole(payload.roles[0]); // Предполагаем, что roles - массив строк
+            setRole(payload.roles[0]);
         }
     }, []);
 
@@ -23,13 +22,13 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
         const payload = JSON.parse(atob(token.split(".")[1]));
-        setRole(payload.roles[0]); // Устанавливаем роль пользователя
+        setRole(payload.roles[0]);
     };
 
     const logout = () => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
-        setRole(''); // Сбрасываем роль
+        setRole('');
     };
 
     return (

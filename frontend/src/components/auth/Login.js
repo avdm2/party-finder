@@ -8,13 +8,13 @@ import {getProfileByUsernameOrganizer} from "../../utils/ApiOrganizerProfile";
 
 function Login() {
     const [formData, setFormData] = useState({ username: "", password: "" });
-    const [error, setError] = useState(""); // Храним сообщение об ошибке
+    const [error, setError] = useState("");
     const navigate = useNavigate();
     const { login } = useAuth();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        setError(""); // Сбрасываем ошибку при вводе
+        setError("");
     };
 
     const handleSubmit = async (e) => {
@@ -54,7 +54,7 @@ function Login() {
         <div className="create-profile-container">
             <h2>Вход</h2>
             <form className="create-profile-form" onSubmit={handleSubmit}>
-                {error && <div className="error-message">{error}</div>} {/* Вывод ошибки */}
+                {error && <div className="error-message">{error}</div>}
                 <div className="form-group">
                     <label>Логин</label>
                     <input name="username" type="text" value={formData.username} onChange={handleChange} required />

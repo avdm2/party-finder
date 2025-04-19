@@ -28,7 +28,7 @@ function EventsPage() {
         capacity: 0,
         age: 0,
     });
-    const [profile, setProfile] = useState(null); // Добавляем состояние для профиля
+    const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,8 +40,8 @@ function EventsPage() {
 
         getOrganizerProfile(payload.sub).then((data) => {
             if (data) {
-                setProfile(data); // Сохраняем профиль
-                fetchEvents(data.id); // Загружаем мероприятия
+                setProfile(data);
+                fetchEvents(data.id);
             } else {
                 navigate("/home");
             }
@@ -89,7 +89,6 @@ function EventsPage() {
     };
 
     const handleSaveEvent = async () => {
-        // Проверка даты
         const currentDate = new Date();
         const eventDate = new Date(formDataEvent.dateOfEvent);
 
@@ -135,7 +134,7 @@ function EventsPage() {
         });
 
         if (response.ok) {
-            fetchEvents(profile?.id); // Обновляем список мероприятий
+            fetchEvents(profile?.id);
             setEventModalOpen(false);
         } else {
             console.error("Ошибка сохранения мероприятия");
@@ -155,13 +154,13 @@ function EventsPage() {
                 id: eventData.id,
                 title: eventData.title,
                 description: eventData.description,
-                dateOfEvent: new Date(eventData.dateOfEvent).toISOString().slice(0, 16), // Преобразуем дату в формат datetime-local
+                dateOfEvent: new Date(eventData.dateOfEvent).toISOString().slice(0, 16),
                 address: eventData.address,
                 price: eventData.price,
                 capacity: eventData.capacity,
                 age: eventData.age,
             });
-            setEventModalOpen(true); // Открываем модальное окно
+            setEventModalOpen(true);
         } else {
             console.error("Ошибка загрузки данных мероприятия");
         }
@@ -266,11 +265,9 @@ function EventsPage() {
                 <Typography variant="body1">Загрузка...</Typography>
             )}
 
-            {/* Диалог создания/редактирования мероприятия */}
             <Dialog open={eventModalOpen} onClose={() => setEventModalOpen(false)}>
                 <DialogTitle>{formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}</DialogTitle>
                 <DialogContent>
-                    {/* Остальные поля остаются без изменений */}
                     <TextField
                         fullWidth
                         margin="dense"
@@ -332,7 +329,6 @@ function EventsPage() {
                         value={formDataEvent.capacity || ""}
                         onChange={handleChangeEvent}
                     />
-                    {/* Ползунок для возраста */}
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="body1" gutterBottom>
                             Возраст: {formDataEvent.age}+
@@ -364,7 +360,6 @@ function EventsPage() {
     );
 }
 
-// Функция для загрузки профиля организатора
 async function getOrganizerProfile(username) {
     const token = localStorage.getItem("token");
     if (!token) {

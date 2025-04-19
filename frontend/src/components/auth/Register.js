@@ -28,7 +28,7 @@ function Register() {
                             <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
                             <input
                                 name={key}
-                                type={key === "password" ? "password" : "text"} // Добавляем проверку для типа поля
+                                type={key === "password" ? "password" : "text"}
                                 value={formData[key]}
                                 onChange={handleChange}
                                 required
