@@ -3,7 +3,13 @@ import { jwtDecode } from "jwt-decode";
 
 const API_URL = "http://localhost:8724/api/v1/client-service/profile";
 
+const API_URL_EMAIL = "http://localhost:8724/api/v1/client-service/email";
+
+
 const API_RATING_URL = "http://localhost:8725/api/v1/ratingSystem"
+
+
+
 
 export const createProfile = async (clientDTO, token) => {
     try {
@@ -121,6 +127,55 @@ export const sendRating = async (receiveEntityId, score, comment, token) => {
         return await response.json();
     } catch (error) {
         console.error("Ошибка при отправке оценки:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const sendConfirmationRequest = async (token) => {
+    try {
+        console.log(token);
+        const response = await fetch(`${API_URL_EMAIL}/send-confirmation-request-user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: {}
+        });
+        console.log(response)
+        return response;
+    } catch (error) {
+        console.error("Ошибка при создании профиля:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const confirmProfile = async (code, token) => {
+    const requestDTO = {
+        code
+    };
+    console.log(requestDTO);
+    try {
+        console.log(token);
+        const response = await fetch(`${API_URL_EMAIL}/confirm`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(requestDTO)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+        }
+
+        console.log(response);
+        const data = await response.text(); // Парсим тело ответа как текст
+        return data;
+    } catch (error) {
+        console.error("Ошибка при подтверждении профиля:", error.message);
         throw error;
     }
 };

@@ -15,6 +15,15 @@ create table client.media
     created_time timestamp
 );
 
+create table client.emails_codes
+(
+    id           uuid primary key,
+    username     varchar(255)          not null,
+    email        varchar(255)  not null,
+    code         varchar(255)  not null,
+    created_time timestamp
+);
+
 create table client.profile
 (
     id           uuid   primary key,

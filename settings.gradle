@@ -3,4 +3,4 @@ include 'backend:auth', 'backend:client-profile', 'backend:chat', 'backend:organ
 include 'backend:organizer-loyalty'
 include 'backend:rating-system'
 include 'backend:event'
-
+include 'backend:email'

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername, sendRating } from "../../utils/ApiClientProfile";
+import { getProfileMe, getProfileByUsername, sendRating, sendConfirmationRequest, confirmProfile } from "../../utils/ApiClientProfile";
 import "../../styles/UserProfile.css";
 import createDefaultProfile from '../../utils/Base64Util';
-import { Button, Avatar, IconButton } from "@mui/material";
+import { Button, Avatar, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 
 let defaultProfileCache = null;
@@ -18,6 +18,8 @@ const UserProfile = () => {
     const [comment, setComment] = useState("");
     const [receiveEntityId, setReceiveEntityId] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+    const [confirmationCode, setConfirmationCode] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,13 +43,11 @@ const UserProfile = () => {
                 setLoading(false);
             }
         };
-
         if (!defaultProfileCache) {
             createDefaultProfile().then(profile => {
                 defaultProfileCache = profile;
             });
         }
-
         if (username) {
             fetchProfile();
         }
@@ -110,7 +110,6 @@ const UserProfile = () => {
         const token = localStorage.getItem("token");
         const formData = new FormData();
         formData.append("file", file);
-
         try {
             const response = await fetch(
                 `http://localhost:8724/api/v3/media/user/uploadPhoto?username=${profile.username}`,
@@ -120,14 +119,12 @@ const UserProfile = () => {
                     headers: { Authorization: `Bearer ${token}` }, // Убираем Content-Type
                 }
             );
-
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Ошибка загрузки:", errorText);
                 alert(`Ошибка загрузки: ${errorText}`);
                 return;
             }
-
             console.log("Фото успешно загружено!");
             const updatedProfile = await getProfileByUsername(profile.username);
             if (updatedProfile.media) {
@@ -136,6 +133,56 @@ const UserProfile = () => {
         } catch (error) {
             console.error("Ошибка при загрузке фото:", error);
             alert("Ошибка при загрузке фото: " + error.message);
+        }
+    };
+
+    const handleConfirmClick = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await sendConfirmationRequest(token);
+            if (response.ok) {
+                alert("Запрос на подтверждение отправлен. Пожалуйста, введите код подтверждения.");
+                setIsConfirmationModalOpen(true);
+            } else {
+                const errorText = await response.text();
+                console.error("Ошибка при отправке запроса на подтверждение:", errorText);
+                alert(`Ошибка при отправке запроса на подтверждение: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Ошибка при отправке запроса на подтверждение:", error);
+            alert("Произошла ошибка при отправке запроса на подтверждение.");
+        }
+    };
+
+    const handleCloseConfirmationModal = () => {
+        setIsConfirmationModalOpen(false);
+        setConfirmationCode("");
+    };
+
+    const handleConfirmationCodeChange = (event) => {
+        setConfirmationCode(event.target.value);
+    };
+
+    const handleSubmitConfirmationCode = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await confirmProfile(confirmationCode, token);
+            console.log(response);
+
+            if (typeof response === 'string' && response.includes("Профиль успешно подтвержден.")) {
+                alert("Профиль успешно подтвержден!");
+                const updatedProfile = await getProfileMe();
+                setProfile(updatedProfile);
+                handleCloseConfirmationModal();
+            } else {
+                // Если ответ не содержит текст "Профиль успешно подтвержден!", считаем его ошибкой
+                const errorText = typeof response === 'string' ? response : "Неизвестная ошибка";
+                console.error("Ошибка подтверждения профиля:", errorText);
+                alert(`Ошибка подтверждения профиля: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Ошибка при подтверждении профиля:", error.message);
+            alert("Произошла ошибка при подтверждении профиля.");
         }
     };
 
@@ -209,6 +256,11 @@ const UserProfile = () => {
                         {profile.aboutMe || "Не указано"}
                     </div>
                 </div>
+                {username === "me" && !profile.isConfirmed && (
+                    <Button variant="contained" color="primary" onClick={handleConfirmClick}>
+                        Подтвердить профиль
+                    </Button>
+                )}
                 {username !== "me" && (
                     <button className="rate-button" onClick={handleRateClick}>
                         Оценить
@@ -248,6 +300,31 @@ const UserProfile = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {isConfirmationModalOpen && (
+                <Dialog open={isConfirmationModalOpen} onClose={handleCloseConfirmationModal}>
+                    <DialogTitle>Подтверждение профиля</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="confirmation-code"
+                            label="Код подтверждения"
+                            type="text"
+                            fullWidth
+                            value={confirmationCode}
+                            onChange={handleConfirmationCodeChange}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseConfirmationModal} color="primary">
+                            Закрыть
+                        </Button>
+                        <Button onClick={handleSubmitConfirmationCode} color="primary">
+                            Подтвердить
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             )}
         </div>
     );

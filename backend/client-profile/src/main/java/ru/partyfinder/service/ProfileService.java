@@ -40,6 +40,13 @@ public class ProfileService {
         profileRepository.save(profileConverter.toProfile(clientDTO));
     }
 
+    public void updateUserProfileToConfirmed(String username) {
+        Profile profile = getProfileByUsername(username);
+        profile.setIsConfirmed(true);
+        profileRepository.save(profile);
+    }
+
+
     public ProfileDTO getProfile(String username) {
         return profileConverter.toProfileDTO(profileRepository.findByUsername(username).orElseThrow());
     }
