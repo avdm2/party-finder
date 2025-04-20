@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername, sendRating, sendConfirmationRequest, confirmProfile } from "../../utils/ApiClientProfile";
+import { getProfileMe, getProfileByUsername, sendRating, sendConfirmationRequest, confirmProfile } from "../../api/ApiClientProfile";
 import "../../styles/UserProfile.css";
-import createDefaultProfile from '../../utils/Base64Util';
+import createDefaultProfile from '../../utils/base64Util';
 import { Button, Avatar, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
+import { createChat } from "../../api/ApiClientChat";
 
 let defaultProfileCache = null;
 
@@ -56,7 +57,6 @@ const UserProfile = () => {
     if (loading) {
         return <div className="profile-loading">Загрузка профиля...</div>;
     }
-
     if (error) {
         return (
             <div className="profile-error">
@@ -168,7 +168,6 @@ const UserProfile = () => {
             const token = localStorage.getItem("token");
             const response = await confirmProfile(confirmationCode, token);
             console.log(response);
-
             if (typeof response === 'string' && response.includes("Профиль успешно подтвержден.")) {
                 alert("Профиль успешно подтвержден!");
                 const updatedProfile = await getProfileMe();
@@ -183,6 +182,18 @@ const UserProfile = () => {
         } catch (error) {
             console.error("Ошибка при подтверждении профиля:", error.message);
             alert("Произошла ошибка при подтверждении профиля.");
+        }
+    };
+
+    const handleSendMessageClick = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await createChat({ receiverUsername: profile.username }, token);
+            const chatId = response.id;
+            navigate(`/chat/${chatId}`);
+        } catch (error) {
+            console.error("Ошибка при создании чата:", error);
+            alert("Произошла ошибка при создании чата.");
         }
     };
 
@@ -262,9 +273,14 @@ const UserProfile = () => {
                     </Button>
                 )}
                 {username !== "me" && (
-                    <button className="rate-button" onClick={handleRateClick}>
-                        Оценить
-                    </button>
+                    <>
+                        <Button variant="contained" color="primary" onClick={handleRateClick}>
+                            Оценить
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={handleSendMessageClick}>
+                            Отправить сообщение
+                        </Button>
+                    </>
                 )}
             </div>
             {isModalOpen && (

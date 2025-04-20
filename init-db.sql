@@ -41,6 +41,41 @@ create table client.profile
     updated_time timestamp     not null
 );
 
+CREATE TABLE client.chat (
+                             id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                             created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             updated_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE client.chat_participant (
+                                         id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                         chat_id    UUID NOT NULL REFERENCES client.chat (id) ON DELETE CASCADE,
+                                         profile_id UUID NOT NULL REFERENCES client.profile (id) ON DELETE CASCADE,
+                                         created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                         updated_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                         CONSTRAINT unique_chat_participant UNIQUE (chat_id, profile_id)
+);
+
+CREATE TABLE client.message (
+                                id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                chat_id         UUID NOT NULL REFERENCES client.chat (id) ON DELETE CASCADE,
+                                sender_id       UUID NOT NULL REFERENCES client.profile (id) ON DELETE CASCADE,
+                                receiver_id     UUID NOT NULL REFERENCES client.profile (id) ON DELETE CASCADE,
+                                content         TEXT,
+                                encrypted_content TEXT,
+                                sent_time       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE client.encryption_key (
+                                       id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                       sender_id  UUID NOT NULL REFERENCES client.profile (id) ON DELETE CASCADE,
+                                       receiver_id UUID NOT NULL REFERENCES client.profile (id) ON DELETE CASCADE,
+                                       key        VARCHAR(255) NOT NULL,
+                                       created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                       updated_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                       CONSTRAINT unique_encryption_key UNIQUE (sender_id, receiver_id)
+);
+
 create table source.new_ratings
 (
     id           bigserial primary key,
@@ -132,14 +167,6 @@ create table organizer.event_client
 
 
 
-/*create table organizer.rating
-(
-    id           bigserial
-        primary key,
-    organizer_id uuid,
-    rating       smallint
-);*/
-
 CREATE TABLE organizer.channel
 (
     id   bigserial primary key,
@@ -209,3 +236,4 @@ CREATE TABLE channels.messages (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+

@@ -42,15 +42,15 @@ services:
     ports:
       - "8722:8722"
 
-  organizer-channel-service:
-      depends_on:
-       - kafka
-       - redis
-       - postgres
-      image: partyfinder/organizer-channel:latest
-      container_name: organizer-channel
-      ports:
-       - "8123:8123"
+  #organizer-channel-service:
+      #depends_on:
+       #- kafka
+       #- redis
+       #- postgres
+      #image: partyfinder/organizer-channel:latest
+      #container_name: organizer-channel
+      #ports:
+       #- "8123:8123"
 
   email-service:
     depends_on:
@@ -91,6 +91,16 @@ services:
       container_name: rating-system
       ports:
         - "8725:8725"
+
+  chat-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/chat:latest
+    container_name: chat
+    ports:
+      - "8727:8727"
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest

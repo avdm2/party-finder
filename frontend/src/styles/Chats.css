@@ -1,0 +1,79 @@
+.chats-container {
+    display: flex;
+    height: 100vh;
+}
+
+.chat-list {
+    width: 30%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.chat-item.active {
+    background-color: #e0e0e0;
+}
+
+.chat-info {
+    margin-left: 10px;
+}
+
+.chat-window {
+    width: 70%;
+    background-color: #fff;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.messages-container {
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.message.sent {
+    justify-content: flex-end;
+}
+
+.message.received {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 60%;
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.message.sent .message-content {
+    background-color: #b2ebf2;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.send-message-container {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.send-message-container .MuiTextField-root {
+    flex: 1;
+    margin-right: 10px;
+}

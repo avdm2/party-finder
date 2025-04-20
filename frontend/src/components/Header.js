@@ -7,7 +7,7 @@ import { getProfileByUsernamePaginationOrganizers } from "../api/ApiOrganizerPro
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 
 const Header = () => {
-    const { isAuthenticated, role, logout } = useAuth();
+    const { isAuthenticated, role , logout} = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState('');
@@ -169,11 +169,9 @@ const Header = () => {
         const fetchProfile = async () => {
             const token = localStorage.getItem("token");
             if (!token) return;
-
             try {
                 const payload = JSON.parse(atob(token.split(".")[1]));
                 setTokenUsername(payload.sub);
-
                 // Загружаем профиль организатора
                 if (role === 'ORGANIZER') {
                     const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${payload.sub}`, {
@@ -189,7 +187,6 @@ const Header = () => {
                 console.error("Ошибка при загрузке профиля:", error);
             }
         };
-
         fetchProfile();
     }, [role]);
 
@@ -305,9 +302,9 @@ const Header = () => {
                             )}
                             {role === 'PARTICIPANT' && (
                                 <li>
-                                    <button onClick={() => {}} className="button-link">
-                                        Отслеживаемые каналы
-                                    </button>
+                                    <Link to="/chat" className="button-link">
+                                        Чаты
+                                    </Link>
                                 </li>
                             )}
                             <li>
@@ -347,6 +344,7 @@ const Header = () => {
                     <TextField
                         fullWidth
                         margin="dense"
+                        id="confirmation-code"
                         label="Название канала"
                         name="name"
                         value={newChannelName}
