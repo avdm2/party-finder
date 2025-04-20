@@ -1,4 +1,4 @@
-import avatar from '../defualtPhoto.jpg';
+import avatar from './defualtPhoto.jpg';
 
 function getBase64FromImageUrl(imageUrl) {
     return new Promise((resolve, reject) => {

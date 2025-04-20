@@ -14,8 +14,8 @@ import {
     Rating,
 } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
-import { sendRating } from "../../utils/ApiOrganizerProfile";
-import { getProfileByUsernameOrganizer, getProfileMe } from "../../utils/ApiOrganizerProfile";
+import { sendRating } from "../../api/ApiOrganizerProfile";
+import { getProfileByUsernameOrganizer, getProfileMe } from "../../api/ApiOrganizerProfile";
 
 function OrganizerProfile() {
     const { username } = useParams();
@@ -169,6 +169,9 @@ function OrganizerProfile() {
                         </IconButton>
                     )}
                     <Typography variant="h5">{profile.name} {profile.surname}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Логин: {profile.username ?? "Неизвестно"}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
                         Рейтинг: {profile.rating ?? "Неизвестно"}
                     </Typography>

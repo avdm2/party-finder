@@ -7,12 +7,13 @@ import FindEvent from "./components/participant/FindEvent";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Header from "./components/Header";
-import { useAuth } from './services/auth/AuthContext';
+import { useAuth } from './components/auth/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import HomePageParticipant from "./components/homepage/HomePageParticipant";
 import HomePageOrganizer from "./components/homepage/HomePageOrganizer";
 import EventsPage from "./components/organizer/Events";
 import ChannelInterface from "./components/organizer/ChannelInterface";
+import Loyalty from "./components/Loyalty";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
@@ -44,6 +45,7 @@ const App = () => {
                 <Route path="/organizer-profile/" element={<ProtectedRoute><OrganizerProfile /></ProtectedRoute>} />
                 <Route path="/find-event" element={<ProtectedRoute><FindEvent /></ProtectedRoute>} />
                 <Route path="/channel/:channelId" element={<ChannelInterface />} />
+                <Route path="/loyalty/organizer/:organizerId" element={<Loyalty />} />
             </Routes>
         </div>
     );
