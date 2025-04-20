@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername, sendRating } from "../../utils/ApiClientProfile";
+import { getProfileMe, getProfileByUsername, sendRating } from "../../api/ApiClientProfile";
 import "../../styles/UserProfile.css";
-import createDefaultProfile from '../../utils/Base64Util';
+import createDefaultProfile from '../../utils/base64Util';
 import { Button, Avatar, IconButton } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 

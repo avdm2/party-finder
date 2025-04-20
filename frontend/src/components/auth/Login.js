@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/MainStyle.css";
-import { loginUser } from "../../services/auth/Auth";
-import { getProfileByUsername } from "../../utils/ApiClientProfile";
-import { useAuth } from "../../services/auth/AuthContext";
-import {getProfileByUsernameOrganizer} from "../../utils/ApiOrganizerProfile";
+import { loginUser } from "./Auth";
+import { getProfileByUsername } from "../../api/ApiClientProfile";
+import { useAuth } from "./AuthContext";
+import {getProfileByUsernameOrganizer} from "../../api/ApiOrganizerProfile";
 
 function Login() {
     const [formData, setFormData] = useState({ username: "", password: "" });

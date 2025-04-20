@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/FindEvent.css";
-import { fetchEventsRequest } from "../../utils/ApiFindEvents";
+import { fetchEventsRequest } from "../../api/ApiFindEvents";
 
 const FindEvent = () => {
     const [filters, setFilters] = useState({

@@ -20,13 +20,4 @@ public interface PrizeRepository extends JpaRepository<PrizeEntity, UUID> {
             """)
     int reduceAmount(UUID prizeUuid);
 
-    @Modifying
-    @Query("""
-            update PrizeEntity e
-            set e.amount = case when :amount IS NOT NULL then :amount ELSE e.amount END,
-                e.bonusCost = case when :bonusCost IS NOT NULL then :bonusCost ELSE e.bonusCost END,
-                e.fileData = case when :fileData IS NOT NULL then :fileData ELSE e.fileData END
-            where e.id = :id
-            """)
-    int updatePrize(PrizeEntity prizeEntity);
 }

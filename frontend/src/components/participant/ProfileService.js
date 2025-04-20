@@ -1,4 +1,4 @@
-import { createProfile } from "../../utils/ApiClientProfile";
+import { createProfile } from "../../api/ApiClientProfile";
 import {useNavigate} from "react-router-dom";
 
 

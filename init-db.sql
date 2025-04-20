@@ -145,15 +145,15 @@ CREATE TABLE organizer.channel_profile
     client_id  uuid   not null references client.profile (id)
 );
 
-
-
 create table loyalty.prize
 (
     id         uuid  primary key,
     owner_uuid uuid,
     bonus_cost integer,
     file_data  bytea not null,
-    amount     integer
+    amount     integer,
+    file_name    varchar(255)                not null,
+    mime_type    varchar(255)                not null
 );
 
 create table loyalty.promocodes

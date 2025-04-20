@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useProfileService } from "../../services/participant/ProfileService";
+import { useProfileService } from "./ProfileService";
 import "../../styles/MainStyle.css";
 
 const CreateProfile = () => {

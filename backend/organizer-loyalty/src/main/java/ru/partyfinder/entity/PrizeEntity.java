@@ -1,17 +1,18 @@
 package ru.partyfinder.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.With;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
@@ -37,10 +38,13 @@ public class PrizeEntity {
     @Column(name = "bonus_cost")
     private Integer bonusCost;
 
-    @Lob
-    @Column(name = "file_data", nullable = false, columnDefinition = "bytea")
-    private byte[] fileData;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "media_id")
+    private MediaEntity media;
 
     @Column(name = "amount")
     private Integer amount;
+
+    @Column(name = "needToShow")
+    private Boolean needToShow;
 }

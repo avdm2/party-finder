@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../services/auth/AuthContext';
+import { useAuth } from './auth/AuthContext';
 import '../styles/Header.css';
-import { getProfileByUsernamePaginationClients } from "../utils/ApiClientProfile";
-import { getProfileByUsernamePaginationOrganizers } from "../utils/ApiOrganizerProfile";
+import { getProfileByUsernamePaginationClients } from "../api/ApiClientProfile";
+import { getProfileByUsernamePaginationOrganizers } from "../api/ApiOrganizerProfile";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 
 const Header = () => {
@@ -18,15 +18,19 @@ const Header = () => {
     const [tokenUsername, setTokenUsername] = useState('');
     const [channelModalOpen, setChannelModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
+    const [profile, setProfile] = useState(null); // Добавляем состояние для профиля
 
+    // Функция выхода из системы
     const handleLogout = () => {
         logout();
         navigate('');
     };
 
+    // Определение путей для профиля и мероприятий
     const profilePath = role === 'ORGANIZER' ? '/organizer-profile/me' : '/profile/me';
     const eventsHandle = role === 'ORGANIZER' ? '/events' : '/find-event';
 
+    // Поиск пользователей
     const handleSearchChange = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
@@ -41,6 +45,7 @@ const Header = () => {
         }
     };
 
+    // Загрузка результатов поиска
     const fetchSearchResults = async (term, page, size) => {
         try {
             const token = localStorage.getItem("token");
@@ -62,6 +67,7 @@ const Header = () => {
         }
     };
 
+    // Обработка клика по результату поиска
     const handleResultClick = (username, type) => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -83,15 +89,7 @@ const Header = () => {
         setShowResults(false);
     };
 
-    const handlePageChange = (newPage) => {
-        if (newPage >= 0 && newPage < totalPages) {
-            setPagination((prevPagination) => ({
-                ...prevPagination,
-                page: newPage,
-            }));
-        }
-    };
-
+    // Проверка существования канала пользователя
     const checkUserChannel = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -99,21 +97,17 @@ const Header = () => {
                 console.error("Токен отсутствует в localStorage");
                 return;
             }
-
             const payload = JSON.parse(atob(token.split(".")[1]));
             const ownerUsername = payload.sub;
-
             const response = await fetch(`http://localhost:8123/api/chat/owner/${ownerUsername}`, {
                 method: 'GET',
                 headers: { Authorization: `Bearer ${token}` },
             });
-
             if (response.ok) {
                 const contentType = response.headers.get("content-type");
                 if (contentType && contentType.includes("application/json")) {
                     const channel = await response.json();
                     console.log("Ответ сервера:", channel);
-
                     if (channel && channel.id) {
                         navigate(`/channel/${channel.id}`);
                     } else {
@@ -131,12 +125,25 @@ const Header = () => {
         }
     };
 
+    // Метод для перехода к системе лояльности
+    const handleLoyaltyClick = () => {
+        if (!isAuthenticated || role !== 'ORGANIZER') {
+            alert("Доступно только для организаторов.");
+            return;
+        }
+        if (!profile) {
+            alert("Профиль организатора не загружен.");
+            return;
+        }
+        navigate(`/loyalty/organizer/${profile.id}`); // Используем ID организатора
+    };
+
+    // Создание нового канала
     const handleCreateChannel = async () => {
         try {
             const token = localStorage.getItem("token");
             const payload = JSON.parse(atob(token.split(".")[1]));
             const ownerUsername = payload.sub;
-
             const response = await fetch('http://localhost:8123/api/chat/create', {
                 method: 'POST',
                 headers: {
@@ -145,7 +152,6 @@ const Header = () => {
                 },
                 body: JSON.stringify({ name: newChannelName, ownerUsername }),
             });
-
             if (response.ok) {
                 const createdChannel = await response.json();
                 setChannelModalOpen(false);
@@ -158,20 +164,46 @@ const Header = () => {
         }
     };
 
+    // Получение имени пользователя и профиля из токена
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            setTokenUsername(payload.sub);
-        }
-    }, []);
+        const fetchProfile = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
 
-    useEffect(() => {
-        if (searchTerm.length > 3) {
-            fetchSearchResults(searchTerm, pagination.page, pagination.size);
-        }
-    }, [pagination.page, pagination.size, searchTerm]);
+            try {
+                const payload = JSON.parse(atob(token.split(".")[1]));
+                setTokenUsername(payload.sub);
 
+                // Загружаем профиль организатора
+                if (role === 'ORGANIZER') {
+                    const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${payload.sub}`, {
+                        method: 'GET',
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setProfile(data); // Сохраняем профиль в состояние
+                    }
+                }
+            } catch (error) {
+                console.error("Ошибка при загрузке профиля:", error);
+            }
+        };
+
+        fetchProfile();
+    }, [role]);
+
+    // Переключение страницы поиска
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPagination((prevPagination) => ({
+                ...prevPagination,
+                page: newPage,
+            }));
+        }
+    };
+
+    // Отображение кнопок пагинации
     const renderPaginationButtons = () => {
         const { page } = pagination;
         const pagesToShow = 3;
@@ -258,13 +290,24 @@ const Header = () => {
                                 </Link>
                             </li>
                             {role === 'ORGANIZER' && (
-                                <li>
-                                    <button onClick={checkUserChannel} className="button-link">Мой канал</button>
-                                </li>
+                                <>
+                                    <li>
+                                        <button onClick={checkUserChannel} className="button-link">
+                                            Мой канал
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button onClick={handleLoyaltyClick} className="button-link">
+                                            Лояльность
+                                        </button>
+                                    </li>
+                                </>
                             )}
                             {role === 'PARTICIPANT' && (
                                 <li>
-                                    <button onClick={() => {}} className="button-link">Отслеживаемые каналы</button>
+                                    <button onClick={() => {}} className="button-link">
+                                        Отслеживаемые каналы
+                                    </button>
                                 </li>
                             )}
                             <li>

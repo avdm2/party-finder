@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import ru.partyfinder.entity.PrizeEntity;
 import ru.partyfinder.service.PrizeService;
 
@@ -27,33 +26,27 @@ public class PrizeController {
     // Добавить приз (для организатора)
     @SneakyThrows
     @PostMapping("/add")
-    public ResponseEntity<PrizeEntity> add(
-            @RequestBody PrizeEntity prizeEntity,
-            @RequestParam(value = "file", required = false) MultipartFile file
-    ) {
-        return ResponseEntity.ok(prizeService.add(prizeEntity.withFileData(file.getBytes())));
+    public ResponseEntity<PrizeEntity> add(@RequestBody PrizeEntity prizeEntity) {
+        return ResponseEntity.ok(prizeService.add(prizeEntity));
     }
 
-    // Отредактировать приз (для организатора)
-    @PostMapping("/modify")
+    // Отключить показ приза (для организатора)
+    @PostMapping("/off/{prizeUuid}")
     @SneakyThrows
-    public ResponseEntity<PrizeEntity> modify(
-            @RequestBody PrizeEntity prizeEntity,
-            @RequestParam(value = "file", required = false) MultipartFile file
-    ) {
-        return ResponseEntity.ok(prizeService.modify(prizeEntity.withFileData(file.getBytes())));
+    public ResponseEntity<PrizeEntity> turnOff(@PathVariable UUID prizeUuid) {
+        return ResponseEntity.ok(prizeService.modify(prizeService.get(prizeUuid).withNeedToShow(false)));
     }
-
-    // Просмотреть приз
-    @GetMapping("/items/{prizeUuid}")
-    public ResponseEntity<PrizeEntity> get(@PathVariable UUID prizeUuid) {
-        return ResponseEntity.ok(prizeService.get(prizeUuid));
-    }
-
     // Просмотреть все призы
     @GetMapping("/items/{organizerUuid}")
-    public ResponseEntity<List<PrizeEntity>> getAll(@PathVariable UUID organizerUuid) {
-        return ResponseEntity.ok(prizeService.getAll(organizerUuid));
+    public ResponseEntity<List<PrizeEntity>> getAll(@PathVariable UUID organizerUuid, @RequestParam(required = false) Boolean onlyOff) {
+
+        if (onlyOff == null) {
+            return ResponseEntity.ok(prizeService.getAll(organizerUuid));
+        }
+
+        return ResponseEntity.ok(prizeService.getAll(organizerUuid)
+                .stream()
+                .filter(prizeEntity -> prizeEntity.getNeedToShow().equals(!onlyOff)).toList());
     }
 
     // Заказать приз для отправки (для клиента)

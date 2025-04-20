@@ -39,7 +39,7 @@ public class PrizeService {
     }
 
     public PrizeEntity modify(PrizeEntity prizeEntity) {
-        prizeRepository.updatePrize(prizeEntity);
+        prizeRepository.save(prizeEntity);
         return prizeRepository.findById(prizeEntity.getId()).get();
     }
 
