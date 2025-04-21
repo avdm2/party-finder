@@ -26,7 +26,9 @@ public class PromocodeService {
     }
 
     public BonusBalanceEntity redeemPromocode(String participantUsername, String promocode) {
-        if (promocodeRepository.findByValue(promocode).isEmpty() || promocodeRepository.findByValue(promocode).get().getNumberOfUsage() == 0) {
+        if (promocodeRepository.findByValue(promocode).isEmpty()
+                || promocodeRepository.findByValue(promocode).get().getNumberOfUsage() == 0
+                || !promocodeRepository.findByValue(promocode).get().getIsActive()) {
             throw new IllegalPromocodeException("Illegal promocode");
         }
 

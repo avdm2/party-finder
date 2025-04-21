@@ -32,6 +32,12 @@ public class PrizeEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "owner_uuid")
     private UUID ownerUUID;
 

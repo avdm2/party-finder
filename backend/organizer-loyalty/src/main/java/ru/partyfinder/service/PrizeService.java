@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PrizeService {
 
-    private BonusBalanceService bonusBalanceService;
-    private PrizeHistoryService prizeHistoryService;
-    private PrizeRepository prizeRepository;
+    private final BonusBalanceService bonusBalanceService;
+    private final PrizeHistoryService prizeHistoryService;
+    private final PrizeRepository prizeRepository;
 
     public List<PrizeEntity> getAll(UUID organizerUuid) {
         return prizeRepository.findAllByOwnerUUID(organizerUuid)

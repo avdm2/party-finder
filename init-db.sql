@@ -184,6 +184,8 @@ CREATE TABLE organizer.channel_profile
 create table loyalty.prize
 (
     id         uuid  primary key,
+    title varchar,
+    desciption varchar,
     owner_uuid uuid,
     bonus_cost integer,
     file_data  bytea not null,
