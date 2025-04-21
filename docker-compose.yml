@@ -52,15 +52,15 @@ services:
       #ports:
        #- "8123:8123"
 
-  email-service:
-    depends_on:
-      - kafka
-      - redis
-      - postgres
-    image: partyfinder/email:latest
-    container_name: email
-    ports:
-      - "8726:8726"
+  # email-service:
+  #   depends_on:
+  #     - kafka
+  #     - redis
+  #     - postgres
+  #   image: partyfinder/email:latest
+  #   container_name: email
+  #   ports:
+  #     - "8726:8726"
 
   client-profile-service:
       depends_on:
@@ -82,25 +82,25 @@ services:
       ports:
         - "8723:8723"
 
-  rating-system-service:
-      depends_on:
-        - kafka
-        - redis
-        - postgres
-      image: partyfinder/rating-system:latest
-      container_name: rating-system
-      ports:
-        - "8725:8725"
+  # rating-system-service:
+  #     depends_on:
+  #       - kafka
+  #       - redis
+  #       - postgres
+  #     image: partyfinder/rating-system:latest
+  #     container_name: rating-system
+  #     ports:
+  #       - "8725:8725"
 
-  chat-service:
-    depends_on:
-      - kafka
-      - redis
-      - postgres
-    image: partyfinder/chat:latest
-    container_name: chat
-    ports:
-      - "8727:8727"
+  # chat-service:
+  #   depends_on:
+  #     - kafka
+  #     - redis
+  #     - postgres
+  #   image: partyfinder/chat:latest
+  #   container_name: chat
+  #   ports:
+  #     - "8727:8727"
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest

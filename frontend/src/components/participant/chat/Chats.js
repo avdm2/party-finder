@@ -34,9 +34,13 @@ const Chats = () => {
 
         fetchChats();
 
+        const token = localStorage.getItem("token");
+
         const socket = new SockJS("http://localhost:8727/ws");
         const client = Stomp.over(socket);
-        client.connect({}, (frame) => {
+        client.connect({
+            Authorization: `Bearer ${token}`
+        }, (frame) => {
             console.log("Connected: " + frame);
             setStompClient(client);
         });
