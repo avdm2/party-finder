@@ -1,4 +1,3 @@
-
 const API_URL = "http://localhost:8727/api/v3/chat";
 
 export const getChats = async () => {
@@ -11,8 +10,14 @@ export const getChats = async () => {
             Authorization: `Bearer ${token}`,
         },
     });
-    console.log(response.json())
-    return response;
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data)
+    return data;
 };
 
 export const createChat = async (data, token) => {
@@ -24,6 +29,11 @@ export const createChat = async (data, token) => {
         },
         body: {}
     });
-    console.log(response.json())
-    return response;
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    return responseData;
 };

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getChats } from "../../../api/ApiClientChat";
-import { getProfileByUsername } from "../../../api/ApiClientProfile";
 import "../../../styles/Chats.css";
-import { Button, Avatar, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
+import { Button, Avatar, TextField } from "@mui/material";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
@@ -22,7 +20,11 @@ const Chats = () => {
         const fetchChats = async () => {
             try {
                 const data = await getChats();
-                setChats(data);
+                if (Array.isArray(data)) {
+                    setChats(data);
+                } else {
+                    throw new Error("Неправильный формат данных от API");
+                }
                 setError(null);
             } catch (err) {
                 console.error("Ошибка при загрузке чатов:", err);
@@ -65,8 +67,12 @@ const Chats = () => {
         if (activeChatId) {
             const fetchMessages = async () => {
                 try {
-                    const chat = await getChats(activeChatId);
-                    setMessages(chat.messages);
+                    const chat = chats.find(chat => chat.id === activeChatId);
+                    if (chat) {
+                        setMessages(chat.messages || []);
+                    } else {
+                        console.error("Чат не найден");
+                    }
                 } catch (err) {
                     console.error("Ошибка при загрузке сообщений:", err);
                 }
@@ -74,7 +80,7 @@ const Chats = () => {
 
             fetchMessages();
         }
-    }, [activeChatId]);
+    }, [activeChatId, chats]);
 
     const handleChatClick = (chatId) => {
         setActiveChatId(chatId);
@@ -94,12 +100,16 @@ const Chats = () => {
 
         const messageDTO = {
             senderUsername: senderUsername,
-            receiverUsername: chats.find(chat => chat.id === activeChatId).participants.find(participant => participant.profile.username !== senderUsername).profile.username,
+            receiverUsername: chats.find(chat => chat.id === activeChatId)?.participants?.find(participant => participant.profile.username !== senderUsername)?.profile.username,
             content: newMessage
         };
 
-        stompClient.send("/app/chat/" + activeChatId, {}, JSON.stringify(messageDTO));
-        setNewMessage("");
+        if (stompClient) {
+            stompClient.send("/app/chat/" + activeChatId, {}, JSON.stringify(messageDTO));
+            setNewMessage("");
+        } else {
+            console.error("Stomp клиент не подключен");
+        }
     };
 
     return (
@@ -110,6 +120,8 @@ const Chats = () => {
                     <div>Загрузка чатов...</div>
                 ) : error ? (
                     <div>{error}</div>
+                ) : chats.length === 0 ? (
+                    <div>У вас нет ни одного чата</div>
                 ) : (
                     chats.map((chat) => (
                         <div
