@@ -50,6 +50,9 @@ const App = () => {
                 {role === 'PARTICIPANT' && (
                     <Route path="/chat" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
                 )}
+                {role === 'PARTICIPANT' && (
+                    <Route path="/chat/:id" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
+                )}
             </Routes>
         </div>
     );

@@ -12,6 +12,8 @@ import java.util.UUID;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, UUID> {
 
-    @Query("SELECT c FROM Chat c JOIN c.participants cp WHERE cp.profile IN :profiles GROUP BY c HAVING COUNT(DISTINCT cp.profile) = :size")
-    List<Chat> findByParticipants(List<Profile> profiles, int size);
+    @Query("""
+        
+    """)
+    List<Chat> findByParticipants(Profile sender, Profile receiver);
 }
