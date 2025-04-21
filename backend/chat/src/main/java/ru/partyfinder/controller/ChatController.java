@@ -1,6 +1,7 @@
 package ru.partyfinder.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.partyfinder.config.security.UserContextHolder;
@@ -15,6 +16,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v3/chat")
@@ -26,10 +28,11 @@ public class ChatController {
 
     @PostMapping
     public Chat createChat(@RequestBody List<String> usernames) {
+        log.info(String.valueOf(usernames));
         List<Profile> profiles = usernames.stream()
                 .map(profileService::findByUsername)
                 .toList();
-        return chatService.createChat(profiles);
+        return chatService.findOrCreateChat(profiles.get(0), profiles.get(1));
     }
 
     @GetMapping("/{chatId}")
@@ -43,9 +46,9 @@ public class ChatController {
         Profile profile = profileService.findByUsername(username);
         return chatService.getChatsForProfile(profile);
     }
+
     @GetMapping
     public List<Message> getMessagesByChatId(@RequestParam UUID chatId) {
         return messageService.getMessagesForChat(chatService.getChatById(chatId));
     }
-
 }

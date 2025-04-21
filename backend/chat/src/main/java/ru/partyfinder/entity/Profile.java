@@ -60,8 +60,6 @@ public class Profile {
     @Column(name = "updated_time", nullable = false)
     private Instant updatedTime;
 
-    // не знаю надо ли тут хранить приватныи и паблик клюс или как сделать лучше
-
     @PrePersist
     protected void prePersist() {
         createdTime = Instant.now();

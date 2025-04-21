@@ -188,7 +188,9 @@ const UserProfile = () => {
     const handleSendMessageClick = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await createChat({ receiverUsername: profile.username }, token);
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const ownerUsername = payload.sub;
+            const response = await createChat([ownerUsername, profile.username], token);
             const chatId = response.id;
             navigate(`/chat/${chatId}`);
         } catch (error) {

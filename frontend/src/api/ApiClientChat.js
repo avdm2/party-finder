@@ -27,7 +27,7 @@ export const createChat = async (data, token) => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: {}
+        body: JSON.stringify(data)
     });
 
     if (!response.ok) {

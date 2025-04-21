@@ -1,6 +1,7 @@
 package ru.partyfinder.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.entity.Chat;
 import ru.partyfinder.entity.ChatParticipant;
@@ -11,6 +12,7 @@ import ru.partyfinder.repository.ChatRepository;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ChatService {
@@ -18,7 +20,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatParticipantRepository chatParticipantRepository;
 
-    public Chat createChat(List<Profile> participants) {
+    private Chat createChat(List<Profile> participants) {
         Chat chat = new Chat();
         chat = chatRepository.save(chat);
 
@@ -44,7 +46,7 @@ public class ChatService {
     }
 
     public Chat findOrCreateChat(Profile sender, Profile receiver) {
-        List<Chat> chats = chatRepository.findByParticipants(List.of(sender, receiver), 2);
+        List<Chat> chats = chatRepository.findByParticipants(sender, receiver);
         if (!chats.isEmpty()) {
             return chats.get(0);
         }
