@@ -2,17 +2,17 @@ package ru.partyfinder.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.partyfinder.config.security.UserContextHolder;
-import ru.partyfinder.entity.Chat;
-import ru.partyfinder.entity.Message;
 import ru.partyfinder.entity.Profile;
+import ru.partyfinder.model.dto.ChatDTO;
+import ru.partyfinder.model.dto.MessageDTO;
+import ru.partyfinder.model.mapper.ChatMapper;
+import ru.partyfinder.model.mapper.MessageMapper;
 import ru.partyfinder.service.ChatService;
 import ru.partyfinder.service.MessageService;
 import ru.partyfinder.service.ProfileService;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,30 +25,32 @@ public class ChatController {
     private final ChatService chatService;
     private final ProfileService profileService;
     private final MessageService messageService;
+    private final ChatMapper chatMapper;
+    private final MessageMapper messageMapper;
 
     @PostMapping
-    public Chat createChat(@RequestBody List<String> usernames) {
+    public ChatDTO createChat(@RequestBody List<String> usernames) {
         log.info(String.valueOf(usernames));
         List<Profile> profiles = usernames.stream()
                 .map(profileService::findByUsername)
                 .toList();
-        return chatService.findOrCreateChat(profiles.get(0), profiles.get(1));
+        return chatMapper.toDto(chatService.findOrCreateChat(profiles.get(0), profiles.get(1)));
     }
 
     @GetMapping("/{chatId}")
-    public Chat getChatById(@PathVariable UUID chatId) {
-        return chatService.getChatById(chatId);
+    public ChatDTO getChatById(@PathVariable UUID chatId) {
+        return chatMapper.toDto(chatService.getChatById(chatId));
     }
 
     @GetMapping("/user")
-    public List<Chat> getUserChats() {
+    public List<ChatDTO> getUserChats() {
         String username = UserContextHolder.getContext().getUsername();
         Profile profile = profileService.findByUsername(username);
-        return chatService.getChatsForProfile(profile);
+        return chatMapper.toDtoList(chatService.getChatsForProfile(profile));
     }
 
     @GetMapping
-    public List<Message> getMessagesByChatId(@RequestParam UUID chatId) {
-        return messageService.getMessagesForChat(chatService.getChatById(chatId));
+    public List<MessageDTO> getMessagesByChatId(@RequestParam UUID chatId) {
+        return messageMapper.toDtoList(messageService.getMessagesForChat(chatService.getChatById(chatId)));
     }
 }

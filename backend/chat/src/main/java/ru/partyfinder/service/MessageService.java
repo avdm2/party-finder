@@ -17,14 +17,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     public final EncryptionService encryptionService;
 
-    public Message sendMessage(Chat chat, Profile sender, Profile receiver, String content) {
-        String encryptedContent = encryptionService.encryptMessage(content, sender, receiver);
-        Message message = new Message();
-        message.setChat(chat);
-        message.setSender(sender);
-        message.setReceiver(receiver);
-        message.setContent(content);
-        message.setEncryptedContent(encryptedContent);
+    public Message saveMessage(Message message) {
         return messageRepository.save(message);
     }
 

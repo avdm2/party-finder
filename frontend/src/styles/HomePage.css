@@ -1,42 +1,116 @@
-/* src/components/HomePageParticipant.css */
 .home-page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .home-main-content {
     max-width: 800px;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 80px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .home-main-content h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .home-main-content p {
-    font-size: 18px;
-    margin-bottom: 40px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    color: #4a5568;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .home-buttons {
     display: flex;
-    gap: 20px;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .home-button {
-    background-color: #333;
-    color: #fff;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+    position: relative;
+    overflow: hidden;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .home-button:hover {
-    background-color: #555;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(106, 17, 203, 0.4);
+    background: linear-gradient(135deg, #5a0db5 0%, #1a64e6 100%);
+}
+
+.home-button:active {
+    transform: translateY(1px);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .home-main-content {
+        padding: 30px 20px;
+        margin-top: 40px;
+    }
+
+    .home-main-content h1 {
+        font-size: 2rem;
+    }
+
+    .home-main-content p {
+        font-size: 1rem;
+    }
+
+    .home-buttons {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .home-button {
+        width: 100%;
+    }
 }

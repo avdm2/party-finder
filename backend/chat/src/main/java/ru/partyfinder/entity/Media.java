@@ -3,7 +3,7 @@ package ru.partyfinder.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import java.util.Base64;
 import java.time.Instant;
 
 @Getter
@@ -22,7 +22,7 @@ public class Media {
     @Column(name = "mime_type", nullable = false)
     private String mimeType;
 
-    @Column(name = "file_data", nullable = false)
+    @Column(name = "file_data", nullable = false, columnDefinition = "bytea")
     private byte[] fileData;
 
     @Column(name = "created_time", nullable = false)
@@ -30,6 +30,8 @@ public class Media {
 
     @PrePersist
     protected void onCreate() {
-        this.createdTime = Instant.now();
+        if (this.createdTime == null) {
+            this.createdTime = Instant.now();
+        }
     }
 }

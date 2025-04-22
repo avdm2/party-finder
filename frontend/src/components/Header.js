@@ -20,17 +20,14 @@ const Header = () => {
     const [newChannelName, setNewChannelName] = useState('');
     const [profile, setProfile] = useState(null); // Добавляем состояние для профиля
 
-    // Функция выхода из системы
     const handleLogout = () => {
         logout();
         navigate('');
     };
 
-    // Определение путей для профиля и мероприятий
     const profilePath = role === 'ORGANIZER' ? '/organizer-profile/me' : '/profile/me';
     const eventsHandle = role === 'ORGANIZER' ? '/events' : '/find-event';
 
-    // Поиск пользователей
     const handleSearchChange = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
@@ -45,7 +42,6 @@ const Header = () => {
         }
     };
 
-    // Загрузка результатов поиска
     const fetchSearchResults = async (term, page, size) => {
         try {
             const token = localStorage.getItem("token");
@@ -67,7 +63,6 @@ const Header = () => {
         }
     };
 
-    // Обработка клика по результату поиска
     const handleResultClick = (username, type) => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -89,7 +84,6 @@ const Header = () => {
         setShowResults(false);
     };
 
-    // Проверка существования канала пользователя
     const checkUserChannel = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -138,7 +132,6 @@ const Header = () => {
         navigate(`/loyalty/organizer/${profile.id}`); // Используем ID организатора
     };
 
-    // Создание нового канала
     const handleCreateChannel = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -164,7 +157,6 @@ const Header = () => {
         }
     };
 
-    // Получение имени пользователя и профиля из токена
     useEffect(() => {
         const fetchProfile = async () => {
             const token = localStorage.getItem("token");
@@ -172,7 +164,6 @@ const Header = () => {
             try {
                 const payload = JSON.parse(atob(token.split(".")[1]));
                 setTokenUsername(payload.sub);
-                // Загружаем профиль организатора
                 if (role === 'ORGANIZER') {
                     const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${payload.sub}`, {
                         method: 'GET',
@@ -190,17 +181,15 @@ const Header = () => {
         fetchProfile();
     }, [role]);
 
-    // Переключение страницы поиска
     const handlePageChange = (newPage) => {
         if (newPage >= 0 && newPage < totalPages) {
             setPagination((prevPagination) => ({
                 ...prevPagination,
                 page: newPage,
             }));
+            fetchSearchResults(searchTerm, newPage, pagination.size); // Добавляем вызов fetchSearchResults
         }
     };
-
-    // Отображение кнопок пагинации
     const renderPaginationButtons = () => {
         const { page } = pagination;
         const pagesToShow = 3;

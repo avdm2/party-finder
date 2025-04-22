@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getChats } from "../../../api/ApiClientChat";
 import "../../../styles/Chats.css";
 import { Button, Avatar, TextField } from "@mui/material";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import { toast } from "react-toastify";
 
 const Chats = () => {
     const navigate = useNavigate();
@@ -15,101 +16,281 @@ const Chats = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [stompClient, setStompClient] = useState(null);
+    const [currentUserProfile, setCurrentUserProfile] = useState(null);
+    const messagesEndRef = useRef(null);
+    const tempMessagesRef = useRef({});
+    const participantsCache = useRef({});
+
+    const token = localStorage.getItem("token");
+    const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
+    const currentUsername = payload?.sub || "";
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     useEffect(() => {
-        const fetchChats = async () => {
-            try {
-                const data = await getChats();
-                if (Array.isArray(data)) {
-                    setChats(data);
-                } else {
-                    throw new Error("Неправильный формат данных от API");
-                }
-                setError(null);
-            } catch (err) {
-                console.error("Ошибка при загрузке чатов:", err);
-                setError("Чаты не найдены");
-            } finally {
-                setLoading(false);
-            }
-        };
+        scrollToBottom();
+    }, [messages]);
 
-        fetchChats();
-
-        const token = localStorage.getItem("token");
-
-        const socket = new SockJS("http://localhost:8727/ws");
-        const client = Stomp.over(socket);
-        client.connect({
-            Authorization: `Bearer ${token}`
-        }, (frame) => {
-            console.log("Connected: " + frame);
-            setStompClient(client);
+    const sortMessagesByTime = (messages) => {
+        return [...messages].sort((a, b) => {
+            return new Date(a.sentTime).getTime() - new Date(b.sentTime).getTime();
         });
+    };
 
-        return () => {
-            if (client) {
-                client.disconnect();
+    const getCurrentUserProfile = (chats) => {
+        for (const chat of chats) {
+            const participant = chat.participants?.find(
+                p => p.profile.username === currentUsername
+            );
+            if (participant) {
+                return participant.profile;
             }
-        };
-    }, []);
-
-    useEffect(() => {
-        if (activeChatId && stompClient) {
-            stompClient.subscribe(`/topic/messages/${activeChatId}`, (message) => {
-                const msg = JSON.parse(message.body);
-                setMessages((prevMessages) => [...prevMessages, msg]);
-            });
         }
-    }, [activeChatId, stompClient]);
+        return null;
+    };
 
-    useEffect(() => {
-        if (activeChatId) {
-            const fetchMessages = async () => {
-                try {
-                    const chat = chats.find(chat => chat.id === activeChatId);
-                    if (chat) {
-                        setMessages(chat.messages || []);
-                    } else {
-                        console.error("Чат не найден");
-                    }
-                } catch (err) {
-                    console.error("Ошибка при загрузке сообщений:", err);
+    const updateLastMessageInChats = (chatId, message, tempMessage) => {
+        setChats(prevChats => {
+            return prevChats.map(chat => {
+                if (chat.id === chatId) {
+                    const lastMessage = {
+                        id: message.id,
+                        content: message.content,
+                        sentTime: message.sentTime,
+                        sender: tempMessage?.sender || message.sender,
+                        receiver: message.receiver,
+                        chatId: message.chatId
+                    };
+
+                    return {
+                        ...chat,
+                        lastMessage,
+                        messages: activeChatId === chatId
+                            ? sortMessagesByTime([...(chat.messages || []).filter(m => m.id !== `temp-${message.tempId}`), lastMessage])
+                            : chat.messages
+                    };
                 }
-            };
-
-            fetchMessages();
-        }
-    }, [activeChatId, chats]);
+                return chat;
+            });
+        });
+    };
 
     const handleChatClick = (chatId) => {
         setActiveChatId(chatId);
     };
 
-    const handleSendMessage = () => {
-        if (!newMessage.trim()) return;
+    const getOtherParticipant = (chat) => {
+        if (!chat) return null;
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Вы не авторизованы.");
-            return;
+        // Используем кеш участников
+        if (participantsCache.current[chat.id]) {
+            return participantsCache.current[chat.id];
         }
 
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const senderUsername = payload.sub;
+        const participant = chat.participants?.find(
+            p => p.profile.username !== currentUsername
+        )?.profile;
 
-        const messageDTO = {
-            senderUsername: senderUsername,
-            receiverUsername: chats.find(chat => chat.id === activeChatId)?.participants?.find(participant => participant.profile.username !== senderUsername)?.profile.username,
-            content: newMessage
+        if (participant) {
+            participantsCache.current[chat.id] = participant;
+        }
+
+        return participant;
+    };
+
+    const renderAvatar = (profile) => {
+        if (!profile?.media?.fileData) {
+            return (
+                <Avatar sx={{ bgcolor: "grey.300" }}>
+                    {profile?.name?.[0]}{profile?.surname?.[0]}
+                </Avatar>
+            );
+        }
+        return (
+            <Avatar
+                src={`data:${profile.media.mimeType};base64,${profile.media.fileData}`}
+                alt={`${profile.name} ${profile.surname}`}
+            />
+        );
+    };
+
+    useEffect(() => {
+        const fetchChats = async () => {
+            try {
+                const data = await getChats();
+                const currentProfile = getCurrentUserProfile(data);
+                setCurrentUserProfile(currentProfile);
+
+                data.forEach(chat => {
+                    const participant = chat.participants?.find(
+                        p => p.profile.username !== currentUsername
+                    )?.profile;
+                    if (participant) {
+                        participantsCache.current[chat.id] = participant;
+                    }
+                });
+
+                const formattedChats = data.map(chat => ({
+                    ...chat,
+                    lastMessage: chat.messages && chat.messages.length > 0
+                        ? sortMessagesByTime(chat.messages)[chat.messages.length - 1]
+                        : null
+                }));
+                setChats(formattedChats);
+                setError(null);
+            } catch (err) {
+                console.error("Error loading chats:", err);
+                setError("Failed to load chats");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchChats();
+
+        if (token) {
+            const socket = new SockJS("http://localhost:8727/ws");
+            const client = Stomp.over(socket);
+            client.connect({ Authorization: `Bearer ${token}` }, () => {
+                setStompClient(client);
+            });
+            return () => {
+                if (client && client.connected) {
+                    client.disconnect();
+                }
+            };
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!stompClient) return;
+
+        const chatSubscription = activeChatId ? stompClient.subscribe(
+            `/topic/messages/${activeChatId}`,
+            (message) => {
+                const msg = JSON.parse(message.body);
+                const tempMessage = tempMessagesRef.current[msg.tempId];
+                const chat = chats.find(c => c.id === msg.chatId);
+                const sender = msg.sender?.username === currentUsername
+                    ? currentUserProfile
+                    : getOtherParticipant(chat);
+
+                const completeMessage = {
+                    ...msg,
+                    sender: {
+                        ...(tempMessage?.sender || msg.sender || {}),
+                        ...sender,
+                        username: msg.sender?.username || sender?.username
+                    }
+                };
+
+                setMessages(prev => {
+                    const filtered = prev.filter(m => m.id !== `temp-${msg.tempId}`);
+                    return sortMessagesByTime([...filtered, completeMessage]);
+                });
+
+                updateLastMessageInChats(msg.chatId, completeMessage, tempMessage);
+                delete tempMessagesRef.current[msg.tempId];
+            }
+        ) : null;
+
+        const userSubscription = stompClient.subscribe(
+            `/user/queue/messages`,
+            (message) => {
+                const msg = JSON.parse(message.body);
+                const tempMessage = tempMessagesRef.current[msg.tempId];
+                const chat = chats.find(c => c.id === msg.chatId);
+                const sender = msg.sender?.username === currentUsername
+                    ? currentUserProfile
+                    : getOtherParticipant(chat);
+
+                const completeMessage = {
+                    ...msg,
+                    sender: {
+                        ...(tempMessage?.sender || msg.sender || {}),
+                        ...sender,
+                        username: msg.sender?.username || sender?.username
+                    }
+                };
+
+                if (activeChatId === msg.chatId) {
+                    setMessages(prev => {
+                        const filtered = prev.filter(m => m.id !== `temp-${msg.tempId}`);
+                        return sortMessagesByTime([...filtered, completeMessage]);
+                    });
+                } else {
+                    toast.info(`Новое сообщение от ${sender?.name || 'Unknown'}: ${msg.content.substring(0, 30)}...`);
+                }
+
+                updateLastMessageInChats(msg.chatId, completeMessage, tempMessage);
+                delete tempMessagesRef.current[msg.tempId];
+            }
+        );
+
+        return () => {
+            chatSubscription?.unsubscribe();
+            userSubscription?.unsubscribe();
+        };
+    }, [stompClient, activeChatId, chats, currentUserProfile]);
+
+    useEffect(() => {
+        if (activeChatId) {
+            const chat = chats.find(c => c.id === activeChatId);
+            if (chat?.messages) {
+                setMessages(sortMessagesByTime(chat.messages));
+                setTimeout(scrollToBottom, 100);
+            } else {
+                setMessages([]);
+            }
+        }
+    }, [activeChatId, chats]);
+
+    const handleSendMessage = () => {
+        if (!newMessage.trim() || !activeChatId || !stompClient || !currentUserProfile) return;
+        const chat = chats.find(c => c.id === activeChatId);
+        const receiver = getOtherParticipant(chat);
+        if (!receiver) return;
+
+        const tempId = Date.now();
+        const tempMessage = {
+            id: `temp-${tempId}`,
+            content: newMessage,
+            sentTime: new Date().toISOString(),
+            sender: {
+                username: currentUsername,
+                name: currentUserProfile.name,
+                surname: currentUserProfile.surname,
+                media: currentUserProfile.media
+            },
+            receiver: {
+                username: receiver.username,
+                name: receiver.name,
+                surname: receiver.surname,
+                media: receiver.media
+            },
+            chatId: activeChatId,
+            isTemp: true,
+            tempId: tempId
         };
 
-        if (stompClient) {
-            stompClient.send("/app/chat/" + activeChatId, {}, JSON.stringify(messageDTO));
-            setNewMessage("");
-        } else {
-            console.error("Stomp клиент не подключен");
-        }
+        setMessages(prev => sortMessagesByTime([...prev, tempMessage]));
+        updateLastMessageInChats(activeChatId, tempMessage, null);
+        tempMessagesRef.current[tempId] = tempMessage;
+
+        stompClient.send(
+            `/app/chat/${activeChatId}`,
+            {},
+            JSON.stringify({
+                content: newMessage,
+                senderUsername: currentUsername,
+                receiverUsername: receiver.username,
+                chatId: activeChatId,
+                tempId: tempId
+            })
+        );
+
+        setNewMessage("");
     };
 
     return (
@@ -117,50 +298,70 @@ const Chats = () => {
             <div className="chat-list">
                 <h2>Чаты</h2>
                 {loading ? (
-                    <div>Загрузка чатов...</div>
+                    <div>Loading...</div>
                 ) : error ? (
                     <div>{error}</div>
                 ) : chats.length === 0 ? (
-                    <div>У вас нет ни одного чата</div>
+                    <div>No chats found</div>
                 ) : (
-                    chats.map((chat) => (
-                        <div
-                            key={chat.id}
-                            className={`chat-item ${activeChatId === chat.id ? "active" : ""}`}
-                            onClick={() => handleChatClick(chat.id)}
-                        >
-                            <Avatar src={`data:image/jpeg;base64,${chat.participants.find(participant => participant.profile.username !== localStorage.getItem("username")).profile.media.fileData}`} />
-                            <div className="chat-info">
-                                <h3>{chat.participants.find(participant => participant.profile.username !== localStorage.getItem("username")).profile.name} {chat.participants.find(participant => participant.profile.username !== localStorage.getItem("username")).profile.surname}</h3>
-                                <p>{chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].content : "Нет сообщений"}</p>
+                    chats.map(chat => {
+                        const otherParticipant = getOtherParticipant(chat);
+                        const lastMessage = chat.lastMessage;
+                        return (
+                            <div
+                                key={chat.id}
+                                className={`chat-item ${activeChatId === chat.id ? "active" : ""}`}
+                                onClick={() => handleChatClick(chat.id)}
+                            >
+                                {otherParticipant && renderAvatar(otherParticipant)}
+                                <div className="chat-info">
+                                    <h3>{otherParticipant?.name} {otherParticipant?.surname}</h3>
+                                    <p>{lastMessage?.content || "No messages"}</p>
+                                    <small>
+                                        {lastMessage?.sentTime
+                                            ? new Date(lastMessage.sentTime).toLocaleTimeString()
+                                            : ""}
+                                    </small>
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
             {activeChatId && (
                 <div className="chat-window">
-                    <h2>Чат с {chats.find((chat) => chat.id === activeChatId)?.participants.find(participant => participant.profile.username !== localStorage.getItem("username")).profile.name}</h2>
                     <div className="messages-container">
-                        {messages.map((msg) => (
-                            <div key={msg.id} className={`message ${msg.sender.username === localStorage.getItem("username") ? "sent" : "received"}`}>
-                                <Avatar src={`data:image/jpeg;base64,${msg.sender.media.fileData}`} />
+                        {messages.map(msg => (
+                            <div
+                                key={msg.id}
+                                className={`message ${msg.sender?.username === currentUsername ? "sent" : "received"} ${msg.isTemp ? "temp-message" : ""}`}
+                            >
+                                {renderAvatar(msg.sender)}
                                 <div className="message-content">
                                     <p>{msg.content}</p>
-                                    <small>{new Date(msg.sentTime).toLocaleString()}</small>
+                                    <small>
+                                        {new Date(msg.sentTime).toLocaleTimeString()}
+                                        {msg.isTemp && <span> (отправка...)</span>}
+                                    </small>
                                 </div>
                             </div>
                         ))}
+                        <div ref={messagesEndRef} />
                     </div>
-                    <div className="send-message-container">
+                    <div className="message-input">
                         <TextField
-                            label="Новое сообщение"
-                            variant="outlined"
                             fullWidth
+                            variant="outlined"
+                            placeholder="Type a message..."
                             value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
+                            onChange={e => setNewMessage(e.target.value)}
+                            onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
                         />
-                        <Button variant="contained" color="primary" onClick={handleSendMessage}>
+                        <Button
+                            variant="contained"
+                            onClick={handleSendMessage}
+                            disabled={!newMessage.trim()}
+                        >
                             Отправить
                         </Button>
                     </div>

@@ -20,6 +20,11 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatParticipantRepository chatParticipantRepository;
 
+
+    public boolean areParticipants(Chat chat, Profile user1, Profile user2) {
+        return chatParticipantRepository.existsByChatAndProfile(chat, user1) &&
+                chatParticipantRepository.existsByChatAndProfile(chat, user2);
+    }
     private Chat createChat(List<Profile> participants) {
         Chat chat = new Chat();
         chat = chatRepository.save(chat);
@@ -45,11 +50,11 @@ public class ChatService {
                 .toList();
     }
 
-    public Chat findOrCreateChat(Profile sender, Profile receiver) {
-        List<Chat> chats = chatRepository.findByParticipants(sender, receiver);
+    public Chat findOrCreateChat(Profile profile1, Profile profile2) {
+        List<Chat> chats = chatRepository.findByParticipants(profile1, profile2);
         if (!chats.isEmpty()) {
             return chats.get(0);
         }
-        return createChat(List.of(sender, receiver));
+        return createChat(List.of(profile1, profile2));
     }
 }
