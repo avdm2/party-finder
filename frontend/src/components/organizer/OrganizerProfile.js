@@ -27,6 +27,7 @@ function OrganizerProfile() {
     const [ratingComment, setRatingComment] = useState("");
     const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
     const navigate = useNavigate();
+    const [rating, setRating] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -49,6 +50,9 @@ function OrganizerProfile() {
             }
             if (data) {
                 setProfile(data);
+                if (data.id) {
+                    await fetchRating(data.id);
+                }
             }
         };
 
@@ -93,6 +97,26 @@ function OrganizerProfile() {
         }
     };
 
+    const fetchRating = async (organizerId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8725/api/v1/ratingSystem/organizer/${organizerId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setRating(parseFloat(data).toFixed(1));
+            }
+        } catch (error) {
+            console.error("Ошибка загрузки рейтинга:", error);
+        }
+    };
+
     const handleSubmit = async () => {
         const formattedData = { ...formData, birthday: `${formData.birthday}T00:00:00` };
         if (await createOrganizerProfile(formattedData)) {
@@ -134,6 +158,7 @@ function OrganizerProfile() {
         try {
             const token = localStorage.getItem("token");
             await sendRating(profile.id, ratingValue, ratingComment, token);
+            await fetchRating(profile.id);
             alert("Оценка успешно отправлена!");
             handleCloseRatingModal();
         } catch (error) {
@@ -173,7 +198,7 @@ function OrganizerProfile() {
                         Логин: {profile.username ?? "Неизвестно"}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                        Рейтинг: {profile.rating ?? "Неизвестно"}
+                        Рейтинг: {rating !== null ? rating : "Неизвестно..."}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}

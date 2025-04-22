@@ -148,12 +148,10 @@ const ChannelInterface = () => {
                             </React.Fragment>
                         ))
                     )}
-                    {/* Элемент для прокрутки */}
                     <div ref={messagesEndRef}></div>
                 </List>
             </Paper>
 
-            {/* Поле для ввода нового сообщения */}
             <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                 <TextField
                     fullWidth

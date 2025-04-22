@@ -13,7 +13,7 @@ import HomePageParticipant from "./components/homepage/HomePageParticipant";
 import HomePageOrganizer from "./components/homepage/HomePageOrganizer";
 import EventsPage from "./components/organizer/Events";
 import ChannelInterface from "./components/organizer/ChannelInterface";
-import Loyalty from "./components/Loyalty";
+import Loyalty from "./components/organizer/Loyalty";
 import Chats from "./components/participant/chat/Chats"
 
 const App = () => {

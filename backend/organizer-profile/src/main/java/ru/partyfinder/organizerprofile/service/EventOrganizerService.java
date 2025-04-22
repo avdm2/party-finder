@@ -29,7 +29,11 @@ public class EventOrganizerService {
     }
 
     public int endEvent(UUID id) {
-        return eventRepository.endEvent(id, EventStatus.CANCELLED.getValue());
+        return eventRepository.updStatus(id, EventStatus.CANCELLED.getValue());
+    }
+
+    public int completeEvent(UUID id) {
+        return eventRepository.updStatus(id, EventStatus.COMPLETED.getValue());
     }
 
     public EventEntity updateEvent(UUID id, EventEntity event) {

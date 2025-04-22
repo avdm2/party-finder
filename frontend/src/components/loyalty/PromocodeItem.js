@@ -2,7 +2,7 @@ import {IconButton, Paper, Typography} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 
-const PromocodeItem = ({ promocode, onDeactivate }) => {
+const PromocodeItem = ({promocode, onDeactivate}) => {
     const isInactive = promocode.isActive === false;
     return (
         <Paper
@@ -15,9 +15,9 @@ const PromocodeItem = ({ promocode, onDeactivate }) => {
                 flexShrink: 0,
                 transition: 'transform 0.2s',
                 backgroundColor: isInactive ? '#f5f5f5' : '#fff',
-                '&:first-of-type': { ml: 2 },
-                '&:last-of-type': { mr: 2 },
-                '&:hover': { transform: 'scale(1.02)' }
+                '&:first-of-type': {ml: 2},
+                '&:last-of-type': {mr: 2},
+                '&:hover': {transform: 'scale(1.02)'}
             }}
         >
             {!isInactive && onDeactivate && (
@@ -35,12 +35,12 @@ const PromocodeItem = ({ promocode, onDeactivate }) => {
                     }}
                     onClick={() => onDeactivate(promocode.value)}
                 >
-                    <CloseIcon fontSize="small" />
+                    <CloseIcon fontSize="small"/>
                 </IconButton>
             )}
             <Typography
                 variant="body1"
-                sx={{ textDecoration: isInactive ? 'line-through' : 'none' }}
+                sx={{textDecoration: isInactive ? 'line-through' : 'none'}}
             >
                 {promocode.value}
             </Typography>

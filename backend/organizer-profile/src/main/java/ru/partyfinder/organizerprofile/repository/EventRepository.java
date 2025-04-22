@@ -20,7 +20,7 @@ public interface EventRepository extends JpaRepository<EventEntity, UUID> {
         set e.status = :status
         where e.id = :id
         """)
-    int endEvent(@Param("id") UUID id, @Param("status") String status);
+    int updStatus(@Param("id") UUID id, @Param("status") String status);
 
     @Modifying
     @Transactional

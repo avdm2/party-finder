@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.partyfinder.entity.PrizeHistoryEntity;
 import ru.partyfinder.repository.PrizeHistoryRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,11 +19,11 @@ public class PrizeHistoryService {
         return prizeHistoryRepository.save(prizeHistoryEntity);
     }
 
-    public List<PrizeHistoryEntity> findAllUndeliveredByOrganizerUuid(UUID uuid) {
-        return prizeHistoryRepository.findAllUndeliveredByOrganizerUuid(uuid);
+    public List<PrizeHistoryEntity> findAllByOrganizerUuid(UUID uuid) {
+        return prizeHistoryRepository.findAllByOrganizerUuid(uuid);
     }
 
-    public int deliver(UUID organizer, String username, UUID prizeUuid) {
-        return prizeHistoryRepository.deliverPrize(organizer, username, prizeUuid);
+    public int deliver(String username, UUID prizeUuid) {
+        return prizeHistoryRepository.deliverPrize(username, prizeUuid, LocalDateTime.now());
     }
 }

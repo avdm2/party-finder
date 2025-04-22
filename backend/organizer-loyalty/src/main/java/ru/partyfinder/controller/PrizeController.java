@@ -30,12 +30,13 @@ public class PrizeController {
         return ResponseEntity.ok(prizeService.add(prizeEntity));
     }
 
-    // Отключить показ приза (для организатора)
-    @PostMapping("/off/{prizeUuid}")
+    // Переключить показ приза (для организатора)
+    @PostMapping("/changeVision/{prizeUuid}")
     @SneakyThrows
-    public ResponseEntity<PrizeEntity> turnOff(@PathVariable UUID prizeUuid) {
-        return ResponseEntity.ok(prizeService.modify(prizeService.get(prizeUuid).withNeedToShow(false)));
+    public ResponseEntity<PrizeEntity> turnOff(@PathVariable UUID prizeUuid, @RequestParam Boolean vision) {
+        return ResponseEntity.ok(prizeService.modify(prizeService.get(prizeUuid).withNeedToShow(vision)));
     }
+
     // Просмотреть все призы
     @GetMapping("/items/{organizerUuid}")
     public ResponseEntity<List<PrizeEntity>> getAll(@PathVariable UUID organizerUuid, @RequestParam(required = false) Boolean onlyOff) {
