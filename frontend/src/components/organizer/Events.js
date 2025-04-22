@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {
     Button,
     Dialog,
@@ -11,9 +11,10 @@ import {
     Typography,
     IconButton,
     Grid,
-    Paper, Slider,
+    Paper, Slider, AccordionDetails, AccordionSummary, Accordion,
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import {Edit} from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function EventsPage() {
     const [events, setEvents] = useState([]);
@@ -30,6 +31,12 @@ function EventsPage() {
     });
     const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
+
+    const statusTranslations = {
+        UPCOMING: "Предстоящие",
+        COMPLETED: "Завершенные",
+        CANCELLED: "Отмененные"
+    };
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -52,7 +59,7 @@ function EventsPage() {
         const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8722/api/organizers/event/list/${organizerId}`, {
             method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         });
 
         if (response.ok) {
@@ -65,7 +72,7 @@ function EventsPage() {
 
     const handleOpenEventModal = (event = null) => {
         if (event) {
-            setFormDataEvent({ ...event });
+            setFormDataEvent({...event});
         } else {
             setFormDataEvent({
                 id: null,
@@ -145,7 +152,7 @@ function EventsPage() {
         const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8722/api/organizers/event/${eventId}`, {
             method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         });
 
         if (response.ok) {
@@ -170,13 +177,13 @@ function EventsPage() {
         const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8722/api/organizers/event/cancel/${eventId}`, {
             method: "PUT",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {Authorization: `Bearer ${token}`},
         });
 
         if (response.ok) {
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
-                    event.id === eventId ? { ...event, status: "CANCELLED" } : event
+                    event.id === eventId ? {...event, status: "CANCELLED"} : event
                 )
             );
         } else {
@@ -184,55 +191,96 @@ function EventsPage() {
         }
     };
 
+    const handleCompleteEvent = async (eventId) => {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:8722/api/organizers/event/complete/${eventId}`, {
+            method: "PUT",
+            headers: {Authorization: `Bearer ${token}`},
+        });
+
+        if (response.ok) {
+            setEvents((prevEvents) =>
+                prevEvents.map((event) =>
+                    event.id === eventId ? {...event, status: "COMPLETED"} : event
+                )
+            );
+        } else {
+            console.error("Ошибка завершения мероприятия");
+        }
+    };
+
     const renderEventsByStatus = (status) => {
         const filteredEvents = events.filter((event) => event.status === status);
-        if (filteredEvents.length === 0) return null;
 
         return (
-            <Box sx={{ mt: 2 }}>
-                <Typography variant="h6">{status}</Typography>
-                <Grid container spacing={2}>
-                    {filteredEvents.map((event) => (
-                        <Grid item xs={12} key={event.id}>
-                            <Paper
-                                sx={{
-                                    p: 2,
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Box>
-                                    <Typography variant="h6">{event.title}</Typography>
-                                    <Typography variant="body2">{event.description}</Typography>
-                                    <Typography
-                                        variant="body2"
-                                    >{`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}</Typography>
-                                    <Typography variant="body2">{`Адрес: ${event.address}`}</Typography>
-                                    <Typography variant="body2">{`Цена: ${event.price} ₽`}</Typography>
-                                    <Typography variant="body2">{`Вместимость: ${event.capacity}`}</Typography>
-                                    <Typography variant="body2">{`Возраст: ${event.age}+`}</Typography>
-                                </Box>
-                                <Box>
-                                    <IconButton onClick={() => handleEditEvent(event.id)}>
-                                        <Edit />
-                                    </IconButton>
-                                    {event.status === "UPCOMING" && (
-                                        <Button
-                                            color="error"
-                                            onClick={() => handleCancelEvent(event.id)}
-                                        >
-                                            Отменить
-                                        </Button>
-                                    )}
-                                </Box>
-                            </Paper>
+            <Accordion defaultExpanded sx={{mt: 2}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                    <Typography variant="h6">
+                        {statusTranslations[status]} ({filteredEvents.length})
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {filteredEvents.length === 0 ? (
+                        <Typography variant="body2" color="textSecondary">
+                            Нет информации
+                        </Typography>
+                    ) : (
+                        <Grid container spacing={2}>
+                            {filteredEvents.map((event) => (
+                                <Grid item xs={12} key={event.id}>
+                                    <Paper sx={{
+                                        p: 2,
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center"
+                                    }}>
+                                        <Box>
+                                            <Typography variant="h6">{event.title}</Typography>
+                                            <Typography variant="body2">{event.description}</Typography>
+                                            <Typography
+                                                variant="body2"
+                                            >{`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}</Typography>
+                                            <Typography variant="body2">{`Адрес: ${event.address}`}</Typography>
+                                            <Typography variant="body2">{`Цена: ${event.price} ₽`}</Typography>
+                                            <Typography variant="body2">{`Вместимость: ${event.capacity}`}</Typography>
+                                            <Typography variant="body2">{`Возраст: ${event.age}+`}</Typography>
+                                        </Box>
+                                        <Box>
+                                            <IconButton onClick={() => handleEditEvent(event.id)}>
+                                                <Edit/>
+                                            </IconButton>
+                                            {["UPCOMING"].includes(event.status) && (
+                                                <>
+                                                    <Button
+                                                        color="success"
+                                                        onClick={() => handleCompleteEvent(event.id)}
+                                                        sx={{ml: 1}}
+                                                    >
+                                                        Завершить
+                                                    </Button>
+                                                    <Button
+                                                        color="error"
+                                                        onClick={() => handleCancelEvent(event.id)}
+                                                        sx={{ml: 1}}
+                                                    >
+                                                        Отменить
+                                                    </Button>
+                                                </>
+                                            )}
+                                        </Box>
+                                    </Paper>
+                                </Grid>
+                            ))}
                         </Grid>
-                    ))}
-                </Grid>
-            </Box>
+                    )}
+                </AccordionDetails>
+            </Accordion>
         );
     };
+
+    {["UPCOMING", "COMPLETED", "CANCELLED"].map((status) =>
+        renderEventsByStatus(status)
+    )}
 
     return (
         <Box
@@ -253,11 +301,11 @@ function EventsPage() {
                         variant="contained"
                         color="secondary"
                         onClick={() => handleOpenEventModal()}
-                        sx={{ mt: 2 }}
+                        sx={{mt: 2}}
                     >
                         Создать мероприятие
                     </Button>
-                    {["COMPLETED", "CANCELLED", "ONGOING", "UPCOMING"].map((status) =>
+                    {["UPCOMING", "COMPLETED", "CANCELLED"].map((status) =>
                         renderEventsByStatus(status)
                     )}
                 </>
@@ -274,7 +322,7 @@ function EventsPage() {
                         label="UUID создателя"
                         name="owner_uuid"
                         value={profile?.id || "empty"}
-                        InputProps={{ readOnly: true }}
+                        InputProps={{readOnly: true}}
                     />
                     <TextField
                         fullWidth
@@ -299,7 +347,7 @@ function EventsPage() {
                         name="dateOfEvent"
                         value={formDataEvent.dateOfEvent}
                         onChange={handleChangeEvent}
-                        InputLabelProps={{ shrink: true }}
+                        InputLabelProps={{shrink: true}}
                     />
                     <TextField
                         fullWidth
@@ -329,19 +377,19 @@ function EventsPage() {
                         value={formDataEvent.capacity || ""}
                         onChange={handleChangeEvent}
                     />
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{mt: 2}}>
                         <Typography variant="body1" gutterBottom>
                             Возраст: {formDataEvent.age}+
                         </Typography>
                         <Slider
                             value={formDataEvent.age || 0}
-                            onChange={(e, newValue) => setFormDataEvent((prev) => ({ ...prev, age: newValue }))}
+                            onChange={(e, newValue) => setFormDataEvent((prev) => ({...prev, age: newValue}))}
                             min={0}
                             max={60}
                             step={1}
                             marks={[
-                                { value: 0, label: "0" },
-                                { value: 60, label: "60+" },
+                                {value: 0, label: "0"},
+                                {value: 60, label: "60+"},
                             ]}
                             valueLabelDisplay="auto"
                         />
@@ -369,7 +417,7 @@ async function getOrganizerProfile(username) {
 
     const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${username}`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
     });
 
     if (!response.ok) {

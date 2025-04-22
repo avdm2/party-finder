@@ -1,17 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import {
     Box,
     Typography,
     Button,
     Grid,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
+    IconButton,
+    DialogActions,
 } from '@mui/material';
-import PromocodeItem from './PromocodeItem';
-import PrizeItem from './PrizeItem';
-import PromocodeModal from './PromocodeModal';
-import CreatePrizeModal from './PrizeModal';
+import PromocodeItem from '../loyalty/PromocodeItem';
+import PrizeItem from '../loyalty/PrizeItem';
+import PromocodeModal from '../loyalty/PromocodeModal';
+import CreatePrizeModal from '../loyalty/PrizeModal';
 import EmptyState from "../EmptyState";
-import { scrollContainerStyle } from "./scrollContainerStyle";
+import { scrollContainerStyle } from "../loyalty/scrollContainerStyle";
+import QueueModal from "../loyalty/QueueModal";
 
 const Loyalty = () => {
     const [activePromocodes, setActivePromocodes] = useState([]);
@@ -25,6 +35,8 @@ const Loyalty = () => {
     const [prizeModalOpen, setPrizeModalOpen] = useState(false);
     const [activePrizes, setActivePrizes] = useState([]);
     const [inactivePrizes, setInactivePrizes] = useState([]);
+    const [queueOpen, setQueueOpen] = useState(false);
+    const [queueList, setQueueList] = useState([]);
 
     const fetchPromocodes = async (isActive) => {
         try {
@@ -128,11 +140,40 @@ const Loyalty = () => {
         }
     };
 
+    const fetchQueue = useCallback(async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8711/api/v1/loyalty/prize/history/list/${organizerId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                const uniqueItems = data.filter((item, index, self) =>
+                    self.findIndex(t =>
+                        t.prizeUuid === item.prizeUuid &&
+                        t.participantUsername === item.participantUsername
+                    ) === index
+                );
+
+                setQueueList(uniqueItems);
+            }
+        } catch (error) {
+            console.error("Ошибка загрузки очереди:", error);
+        }
+    }, [organizerId]);
+
+    const handleQueueUpdate = useCallback(async (updater) => {
+        if (typeof updater === 'function') {
+            setQueueList(prev => updater(prev));
+        } else {
+            await fetchQueue();
+        }
+    }, [fetchQueue]);
+
     return (
         <Box sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Система лояльности
-            </Typography>
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
                 <Button
                     variant="contained"
@@ -147,6 +188,16 @@ const Loyalty = () => {
                     onClick={() => setPrizeModalOpen(true)}
                 >
                     Создать приз
+                </Button>
+                <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={async () => {
+                        await fetchQueue();
+                        setQueueOpen(true);
+                    }}
+                >
+                    Очередь
                 </Button>
             </Box>
 
@@ -183,6 +234,12 @@ const Loyalty = () => {
                     <EmptyState message="Неактивных промокодов пока нет" />
                 )}
             </Box>
+            <QueueModal
+                open={queueOpen}
+                onClose={() => setQueueOpen(false)}
+                queueList={queueList}
+                onUpdateQueue={handleQueueUpdate}
+            />
 
             <Typography variant="h5" sx={{ mt: 4 }}>
                 Активные призы

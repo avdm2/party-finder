@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -37,7 +38,13 @@ public class PrizeHistoryEntity {
     @Column(name = "prize_uuid")
     private UUID prizeUuid;
 
+    @Column(name = "prize_title")
+    private String prizeTitle;
+
     @Column(name = "delivered")
     private Boolean delivered;
+
+    @Column(name = "delivered_timestamp")
+    private LocalDateTime deliveredTimestamp;
 
 }

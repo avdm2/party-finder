@@ -34,6 +34,11 @@ public class EventOrganizerController {
         return ResponseEntity.ok(eventOrganizerService.endEvent(uuid));
     }
 
+    @PutMapping("/complete/{uuid}")
+    public ResponseEntity<Integer> complete(@PathVariable UUID uuid) {
+        return ResponseEntity.ok(eventOrganizerService.completeEvent(uuid));
+    }
+
     @PutMapping("/update/{eventId}")
     public ResponseEntity<EventEntity> update(@PathVariable UUID eventId, @RequestBody EventEntity event) {
         log.info("Updating event: {}", event);
