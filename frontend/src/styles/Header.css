@@ -1,16 +1,27 @@
 .site-header {
-    position: relative;
+    position: fixed; /* Фиксируем хедер */
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 15px 25px;
-    border-radius: 16px;
+    border-radius: 0 0 16px 16px; /* Скругляем только нижние углы */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    margin: 15px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 100;
+    z-index: 1000; /* Убедимся, что хедер выше всего */
+    margin: 0; /* Убираем margin */
+}
+
+/* Добавим основной контейнер для контента под хедером */
+.main-content {
+    margin-top: 80px; /* Высота хедера + отступ */
+    height: calc(100vh - 80px); /* Высота экрана минус высота хедера */
+    width: 100%;
+    overflow: hidden; /* Убираем скролл всей страницы */
 }
 
 .logo h1 {

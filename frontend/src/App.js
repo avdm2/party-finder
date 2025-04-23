@@ -15,6 +15,8 @@ import EventsPage from "./components/organizer/Events";
 import ChannelInterface from "./components/organizer/ChannelInterface";
 import Loyalty from "./components/organizer/Loyalty";
 import Chats from "./components/participant/chat/Chats"
+import EventPage from "./components/participant/EventPage";
+import MyEventsPage from "./components/participant/MyEventPage";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
@@ -28,6 +30,13 @@ const App = () => {
         <div className="App">
             {shouldShowHeader && <Header />}
             <Routes>
+                {role === 'PARTICIPANT' && (
+                    <Route path="/chat" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
+                )}
+                {role === 'PARTICIPANT' && (
+                    <Route path="/chat/:id" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
+                )}
+
                 <Route
                     path="/home"
                     element={
@@ -47,12 +56,11 @@ const App = () => {
                 <Route path="/find-event" element={<ProtectedRoute><FindEvent /></ProtectedRoute>} />
                 <Route path="/channel/:channelId" element={<ChannelInterface />} />
                 <Route path="/loyalty/organizer/:organizerId" element={<Loyalty />} />
+                <Route path="/event/:eventId" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
+
                 {role === 'PARTICIPANT' && (
-                    <Route path="/chat" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
-                )}
-                {role === 'PARTICIPANT' && (
-                    <Route path="/chat/:id" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
-                )}
+                    <Route path="/my-events" element={<ProtectedRoute><MyEventsPage /></ProtectedRoute>} />
+                    )}
             </Routes>
         </div>
     );

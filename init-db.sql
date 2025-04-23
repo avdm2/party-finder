@@ -160,9 +160,9 @@ create table organizer.event_client
 (
     id              uuid  not null
         primary key,
-    eventId           uuid                           not null,
+    event_id           uuid                           not null,
     username          varchar                        not null,
-    createdTime     timestamp
+    created_time     timestamp
 );
 
 

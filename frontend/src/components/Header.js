@@ -273,9 +273,23 @@ const Header = () => {
                             </li>
                             <li>
                                 <Link to={eventsHandle} className="button-link">
-                                    Мероприятия
+                                    Поиск мероприятий
                                 </Link>
                             </li>
+                            {role === 'PARTICIPANT' && (
+                                <>
+                                    <li>
+                                        <Link to="/my-events" className="button-link">
+                                            Мои мероприятия
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/chat" className="button-link">
+                                            Чаты
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
                             {role === 'ORGANIZER' && (
                                 <>
                                     <li>
@@ -289,13 +303,6 @@ const Header = () => {
                                         </button>
                                     </li>
                                 </>
-                            )}
-                            {role === 'PARTICIPANT' && (
-                                <li>
-                                    <Link to="/chat" className="button-link">
-                                        Чаты
-                                    </Link>
-                                </li>
                             )}
                             <li>
                                 <button onClick={handleLogout} className="button-link">
