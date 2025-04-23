@@ -1,20 +1,32 @@
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     TextField,
-    Box,
-    Typography,
+    DialogContent,
+    DialogActions,
     IconButton,
     Grid,
-    Paper, Slider, AccordionDetails, AccordionSummary, Accordion,
+    Slider,
+    CircularProgress,
+    Typography,
+    Box,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
 } from "@mui/material";
-import {Edit} from "@mui/icons-material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Edit, ExpandMore } from "@mui/icons-material";
+import {
+    EventsContainer,
+    EventPaper,
+    CreateEventButton,
+    StyledAccordion,
+    StyledDialog,
+    DialogTitleStyled,
+    SubmitButton,
+    CancelButton,
+    CompleteButton,
+} from "../../styles/EventsPage.styles.js";
+import { getOrganizerProfile } from "../../api/ApiOrganizerProfile";
 
 function EventsPage() {
     const [events, setEvents] = useState([]);
@@ -35,7 +47,7 @@ function EventsPage() {
     const statusTranslations = {
         UPCOMING: "Предстоящие",
         COMPLETED: "Завершенные",
-        CANCELLED: "Отмененные"
+        CANCELLED: "Отмененные",
     };
 
     useEffect(() => {
@@ -57,10 +69,13 @@ function EventsPage() {
 
     const fetchEvents = async (organizerId) => {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/organizers/event/list/${organizerId}`, {
-            method: "GET",
-            headers: {Authorization: `Bearer ${token}`},
-        });
+        const response = await fetch(
+            `http://localhost:8722/api/organizers/event/list/${organizerId}`,
+            {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
 
         if (response.ok) {
             const data = await response.json();
@@ -72,7 +87,7 @@ function EventsPage() {
 
     const handleOpenEventModal = (event = null) => {
         if (event) {
-            setFormDataEvent({...event});
+            setFormDataEvent({ ...event });
         } else {
             setFormDataEvent({
                 id: null,
@@ -150,10 +165,13 @@ function EventsPage() {
 
     const handleEditEvent = async (eventId) => {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/organizers/event/${eventId}`, {
-            method: "GET",
-            headers: {Authorization: `Bearer ${token}`},
-        });
+        const response = await fetch(
+            `http://localhost:8722/api/organizers/event/${eventId}`,
+            {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
 
         if (response.ok) {
             const eventData = await response.json();
@@ -175,15 +193,18 @@ function EventsPage() {
 
     const handleCancelEvent = async (eventId) => {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/organizers/event/cancel/${eventId}`, {
-            method: "PUT",
-            headers: {Authorization: `Bearer ${token}`},
-        });
+        const response = await fetch(
+            `http://localhost:8722/api/organizers/event/cancel/${eventId}`,
+            {
+                method: "PUT",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
 
         if (response.ok) {
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
-                    event.id === eventId ? {...event, status: "CANCELLED"} : event
+                    event.id === eventId ? { ...event, status: "CANCELLED" } : event
                 )
             );
         } else {
@@ -193,15 +214,18 @@ function EventsPage() {
 
     const handleCompleteEvent = async (eventId) => {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:8722/api/organizers/event/complete/${eventId}`, {
-            method: "PUT",
-            headers: {Authorization: `Bearer ${token}`},
-        });
+        const response = await fetch(
+            `http://localhost:8722/api/organizers/event/complete/${eventId}`,
+            {
+                method: "PUT",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
 
         if (response.ok) {
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
-                    event.id === eventId ? {...event, status: "COMPLETED"} : event
+                    event.id === eventId ? { ...event, status: "COMPLETED" } : event
                 )
             );
         } else {
@@ -213,8 +237,8 @@ function EventsPage() {
         const filteredEvents = events.filter((event) => event.status === status);
 
         return (
-            <Accordion defaultExpanded sx={{mt: 2}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+            <StyledAccordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMore />}>
                     <Typography variant="h6">
                         {statusTranslations[status]} ({filteredEvents.length})
                     </Typography>
@@ -228,93 +252,89 @@ function EventsPage() {
                         <Grid container spacing={2}>
                             {filteredEvents.map((event) => (
                                 <Grid item xs={12} key={event.id}>
-                                    <Paper sx={{
-                                        p: 2,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center"
-                                    }}>
+                                    <EventPaper>
                                         <Box>
-                                            <Typography variant="h6">{event.title}</Typography>
-                                            <Typography variant="body2">{event.description}</Typography>
-                                            <Typography
-                                                variant="body2"
-                                            >{`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}</Typography>
-                                            <Typography variant="body2">{`Адрес: ${event.address}`}</Typography>
-                                            <Typography variant="body2">{`Цена: ${event.price} ₽`}</Typography>
-                                            <Typography variant="body2">{`Вместимость: ${event.capacity}`}</Typography>
-                                            <Typography variant="body2">{`Возраст: ${event.age}+`}</Typography>
+                                            <Typography variant="h6" sx={{ color: "#2c3e50" }}>
+                                                {event.title}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1 }}>
+                                                {event.description}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#6a11cb", mt: 1 }}>
+                                                {`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                                {`Адрес: ${event.address}`}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                                {`Цена: ${event.price} ₽`}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                                {`Вместимость: ${event.capacity}`}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                                {`Возраст: ${event.age}+`}
+                                            </Typography>
                                         </Box>
                                         <Box>
                                             <IconButton onClick={() => handleEditEvent(event.id)}>
-                                                <Edit/>
+                                                <Edit sx={{ color: "#6a11cb" }} />
                                             </IconButton>
                                             {["UPCOMING"].includes(event.status) && (
                                                 <>
-                                                    <Button
-                                                        color="success"
+                                                    <CompleteButton
                                                         onClick={() => handleCompleteEvent(event.id)}
-                                                        sx={{ml: 1}}
                                                     >
                                                         Завершить
-                                                    </Button>
-                                                    <Button
-                                                        color="error"
+                                                    </CompleteButton>
+                                                    <CancelButton
                                                         onClick={() => handleCancelEvent(event.id)}
-                                                        sx={{ml: 1}}
                                                     >
                                                         Отменить
-                                                    </Button>
+                                                    </CancelButton>
                                                 </>
                                             )}
                                         </Box>
-                                    </Paper>
+                                    </EventPaper>
                                 </Grid>
                             ))}
                         </Grid>
                     )}
                 </AccordionDetails>
-            </Accordion>
+            </StyledAccordion>
         );
     };
 
-    {["UPCOMING", "COMPLETED", "CANCELLED"].map((status) =>
-        renderEventsByStatus(status)
-    )}
-
     return (
-        <Box
-            sx={{
-                maxWidth: 800,
-                margin: "auto",
-                textAlign: "center",
-                p: 3,
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                boxShadow: 3,
-            }}
-        >
-            <Typography variant="h4">Мои мероприятия</Typography>
+        <EventsContainer>
+            <Typography variant="h4" sx={{ color: "#2c3e50", fontWeight: 700 }}>
+                Мои мероприятия
+            </Typography>
             {profile ? (
                 <>
-                    <Button
+                    <CreateEventButton
                         variant="contained"
-                        color="secondary"
                         onClick={() => handleOpenEventModal()}
-                        sx={{mt: 2}}
                     >
                         Создать мероприятие
-                    </Button>
+                    </CreateEventButton>
                     {["UPCOMING", "COMPLETED", "CANCELLED"].map((status) =>
                         renderEventsByStatus(status)
                     )}
                 </>
             ) : (
-                <Typography variant="body1">Загрузка...</Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                    <CircularProgress sx={{ color: "#6a11cb" }} />
+                </Box>
             )}
 
-            <Dialog open={eventModalOpen} onClose={() => setEventModalOpen(false)}>
-                <DialogTitle>{formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}</DialogTitle>
+            <StyledDialog
+                open={eventModalOpen}
+                onClose={() => setEventModalOpen(false)}
+            >
+                <DialogTitleStyled>
+                    {formDataEvent.id ? "Редактировать мероприятие" : "Создать мероприятие"}
+                </DialogTitleStyled>
                 <DialogContent>
                     <TextField
                         fullWidth
@@ -322,7 +342,8 @@ function EventsPage() {
                         label="UUID создателя"
                         name="owner_uuid"
                         value={profile?.id || "empty"}
-                        InputProps={{readOnly: true}}
+                        InputProps={{ readOnly: true }}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -331,6 +352,7 @@ function EventsPage() {
                         name="title"
                         value={formDataEvent.title}
                         onChange={handleChangeEvent}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -339,6 +361,7 @@ function EventsPage() {
                         name="description"
                         value={formDataEvent.description}
                         onChange={handleChangeEvent}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -347,7 +370,8 @@ function EventsPage() {
                         name="dateOfEvent"
                         value={formDataEvent.dateOfEvent}
                         onChange={handleChangeEvent}
-                        InputLabelProps={{shrink: true}}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -356,6 +380,7 @@ function EventsPage() {
                         name="address"
                         value={formDataEvent.address}
                         onChange={handleChangeEvent}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -366,6 +391,7 @@ function EventsPage() {
                         placeholder="0"
                         value={formDataEvent.price || ""}
                         onChange={handleChangeEvent}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -376,56 +402,45 @@ function EventsPage() {
                         placeholder="0"
                         value={formDataEvent.capacity || ""}
                         onChange={handleChangeEvent}
+                        sx={{ mb: 2 }}
                     />
-                    <Box sx={{mt: 2}}>
-                        <Typography variant="body1" gutterBottom>
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body1" gutterBottom sx={{ color: "#2c3e50" }}>
                             Возраст: {formDataEvent.age}+
                         </Typography>
                         <Slider
                             value={formDataEvent.age || 0}
-                            onChange={(e, newValue) => setFormDataEvent((prev) => ({...prev, age: newValue}))}
+                            onChange={(e, newValue) =>
+                                setFormDataEvent((prev) => ({ ...prev, age: newValue }))
+                            }
                             min={0}
                             max={60}
                             step={1}
                             marks={[
-                                {value: 0, label: "0"},
-                                {value: 60, label: "60+"},
+                                { value: 0, label: "0" },
+                                { value: 60, label: "60+" },
                             ]}
                             valueLabelDisplay="auto"
+                            sx={{
+                                color: "#6a11cb",
+                                "& .MuiSlider-thumb": {
+                                    "&:hover, &.Mui-focusVisible": {
+                                        boxShadow: "0 0 0 8px rgba(106, 17, 203, 0.16)",
+                                    },
+                                },
+                            }}
                         />
                     </Box>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleSaveEvent} variant="contained" color="primary">
-                        Сохранить
-                    </Button>
-                    <Button onClick={() => setEventModalOpen(false)} variant="outlined" color="secondary">
+                <DialogActions sx={{ justifyContent: "center" }}>
+                    <SubmitButton onClick={handleSaveEvent}>Сохранить</SubmitButton>
+                    <CancelButton onClick={() => setEventModalOpen(false)}>
                         Отмена
-                    </Button>
+                    </CancelButton>
                 </DialogActions>
-            </Dialog>
-        </Box>
+            </StyledDialog>
+        </EventsContainer>
     );
-}
-
-async function getOrganizerProfile(username) {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        console.error("Токен отсутствует в localStorage");
-        return null;
-    }
-
-    const response = await fetch(`http://localhost:8722/api/v1/organizer/username/${username}`, {
-        method: "GET",
-        headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
-    });
-
-    if (!response.ok) {
-        console.error(`Ошибка получения профиля: ${response.status}`);
-        return null;
-    }
-
-    return await response.json();
 }
 
 export default EventsPage;

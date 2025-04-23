@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-    Button,
-    Avatar,
-    Box,
     Typography,
     IconButton,
     Dialog,
-    DialogTitle,
     DialogContent,
     TextField,
     DialogActions,
     Rating,
+    Box,
+    CircularProgress,
 } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import { sendRating } from "../../api/ApiOrganizerProfile";
 import { getProfileByUsernameOrganizer, getProfileMe } from "../../api/ApiOrganizerProfile";
+import {
+    ProfileContainer,
+    StyledAvatar,
+    GradientButton,
+    StyledDialog,
+    DialogTitleStyled,
+    SubmitButton,
+    CancelButton,
+    LoadingContainer,
+} from "../../styles/OrganizerProfile.styles.js";
 
 function OrganizerProfile() {
     const { username } = useParams();
@@ -36,15 +44,12 @@ function OrganizerProfile() {
             const payload = JSON.parse(atob(token.split(".")[1]));
             let data;
             if (username === "me") {
-                console.log(username)
                 try {
                     data = await getProfileMe();
-
                 } catch (error) {
                     setFormData((prev) => ({ ...prev, username: payload.sub }));
                     setModalOpen(true);
                 }
-
             } else {
                 data = await getProfileByUsernameOrganizer(username);
             }
@@ -86,7 +91,6 @@ function OrganizerProfile() {
                 alert(`Ошибка загрузки: ${errorText}`);
                 return;
             }
-            console.log("Фото успешно загружено!");
             const updatedProfile = await getProfileByUsernameOrganizer(profile.username);
             if (updatedProfile.media) {
                 setProfile((prevProfile) => ({ ...prevProfile, media: updatedProfile.media }));
@@ -131,11 +135,6 @@ function OrganizerProfile() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/home");
-    };
-
     const handleOpenRatingModal = () => {
         setIsRatingModalOpen(true);
     };
@@ -168,58 +167,70 @@ function OrganizerProfile() {
     };
 
     return (
-        <Box
-            sx={{
-                maxWidth: 600,
-                margin: "auto",
-                textAlign: "center",
-                p: 3,
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                boxShadow: 3,
-            }}
-        >
+        <ProfileContainer>
             {profile ? (
                 <>
-                    <Avatar
+                    <StyledAvatar
                         src={profile.media ? `data:image/jpeg;base64,${profile.media.fileData}` : ""}
-                        sx={{ width: 120, height: 120, margin: "auto", bgcolor: "grey.300" }}
                     >
                         {!profile.media && <PhotoCamera fontSize="large" />}
-                    </Avatar>
+                    </StyledAvatar>
                     {username === "me" && (
-                        <IconButton component="label">
+                        <IconButton component="label" sx={{ mt: 2 }}>
                             <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
                             <PhotoCamera />
                         </IconButton>
                     )}
-                    <Typography variant="h5">{profile.name} {profile.surname}</Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="h5" sx={{ mt: 2, color: "#2c3e50", fontWeight: 700 }}>
+                        {profile.name} {profile.surname}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 1 }}>
                         Логин: {profile.username ?? "Неизвестно"}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 1 }}>
                         Рейтинг: {rating !== null ? rating : "Неизвестно..."}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1 }}>
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1, fontSize: "0.8rem" }}>
                         UUID: {profile.id}
                     </Typography>
                     {username !== "me" && (
-                        <Button variant="contained" color="primary" onClick={handleOpenRatingModal} style={{ marginTop: 16 }}>
+                        <GradientButton
+                            variant="contained"
+                            onClick={handleOpenRatingModal}
+                            sx={{ mt: 3 }}
+                        >
                             Оценить организатора
-                        </Button>
+                        </GradientButton>
                     )}
                 </>
             ) : (
-                <Typography variant="body1">Загрузка...</Typography>
+                <LoadingContainer>
+                    <CircularProgress sx={{ color: "#6a11cb" }} />
+                </LoadingContainer>
             )}
-            <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
-                <DialogTitle>Заполните профиль</DialogTitle>
+
+            <StyledDialog open={modalOpen} onClose={() => setModalOpen(false)}>
+                <DialogTitleStyled>Заполните профиль</DialogTitleStyled>
                 <DialogContent>
-                    <TextField fullWidth margin="dense" label="Имя" name="name" onChange={handleChange} />
-                    <TextField fullWidth margin="dense" label="Фамилия" name="surname" onChange={handleChange} />
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="Имя"
+                        name="name"
+                        onChange={handleChange}
+                        sx={{ mb: 2 }}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="Фамилия"
+                        name="surname"
+                        onChange={handleChange}
+                        sx={{ mb: 2 }}
+                    />
                     <TextField
                         fullWidth
                         margin="dense"
@@ -227,6 +238,7 @@ function OrganizerProfile() {
                         name="birthday"
                         onChange={handleChange}
                         InputLabelProps={{ shrink: true }}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -237,20 +249,36 @@ function OrganizerProfile() {
                         InputProps={{ readOnly: true }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleSubmit} variant="contained" color="primary">
+                <DialogActions sx={{ justifyContent: "center" }}>
+                    <SubmitButton onClick={handleSubmit}>
                         Сохранить
-                    </Button>
+                    </SubmitButton>
                 </DialogActions>
-            </Dialog>
-            <Dialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
-                <DialogTitle>Оцените организатора</DialogTitle>
+            </StyledDialog>
+
+            <StyledDialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
+                <DialogTitleStyled>Оцените организатора</DialogTitleStyled>
                 <DialogContent>
-                    <Rating
-                        name="simple-controlled"
-                        value={ratingValue}
-                        onChange={handleRatingChange}
-                    />
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+                        <Rating
+                            name="simple-controlled"
+                            value={ratingValue}
+                            onChange={handleRatingChange}
+                            size="large"
+                            sx={{
+                                "& .MuiRating-icon": {
+                                    color: "#ffcc00",
+                                    fontSize: "2.5rem",
+                                },
+                                "& .MuiRating-iconFilled": {
+                                    color: "#ffcc00",
+                                },
+                                "& .MuiRating-iconHover": {
+                                    color: "#ffdd33",
+                                },
+                            }}
+                        />
+                    </Box>
                     <TextField
                         fullWidth
                         margin="dense"
@@ -259,24 +287,33 @@ function OrganizerProfile() {
                         rows={4}
                         value={ratingComment}
                         onChange={handleRatingCommentChange}
+                        sx={{
+                            mb: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "10px",
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#6a11cb",
+                                    boxShadow: "0 0 0 3px rgba(106, 17, 203, 0.1)",
+                                },
+                            },
+                        }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleSubmitRating} variant="contained" color="primary">
-                        Отправить
-                    </Button>
-                    <Button onClick={handleCloseRatingModal} variant="outlined" color="secondary">
+                <DialogActions sx={{ justifyContent: "center" }}>
+                    <CancelButton onClick={handleCloseRatingModal} sx={{ mr: 2 }}>
                         Закрыть
-                    </Button>
+                    </CancelButton>
+                    <SubmitButton onClick={handleSubmitRating}>
+                        Отправить
+                    </SubmitButton>
                 </DialogActions>
-            </Dialog>
-        </Box>
+            </StyledDialog>
+        </ProfileContainer>
     );
 }
 
 export async function createOrganizerProfile(profileData) {
     const token = localStorage.getItem("token");
-    console.log(profileData)
     const response = await fetch("http://localhost:8722/api/v1/organizer", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
