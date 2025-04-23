@@ -105,7 +105,7 @@ export const getProfileByUsernamePaginationOrganizers = async (username, page, s
         return await response.json();
     } catch (error) {
         console.error("Ошибка при получении профиля по username:", error.response?.data || error.message);
-        throw error;
+        return {page:{totalPages:0}}
     }
 };
 
