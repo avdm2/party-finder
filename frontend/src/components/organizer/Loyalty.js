@@ -22,6 +22,13 @@ import CreatePrizeModal from '../loyalty/PrizeModal';
 import EmptyState from "../EmptyState";
 import { scrollContainerStyle } from "../loyalty/scrollContainerStyle";
 import QueueModal from "../loyalty/QueueModal";
+import {
+    CancelButton, CompleteButton,
+    CreateEventButton,
+    DialogTitleStyled,
+    EventsContainer,
+    StyledDialog
+} from "../../styles/EventsPage.styles";
 
 const Loyalty = () => {
     const [activePromocodes, setActivePromocodes] = useState([]);
@@ -173,32 +180,55 @@ const Loyalty = () => {
     }, [fetchQueue]);
 
     return (
-        <Box sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-                <Button
+        <EventsContainer>
+            <Typography variant="h4" sx={{ color: "#2c3e50", fontWeight: 700 }}>
+                Система лояльности
+            </Typography>
+            <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 2,
+                mb: 4,
+                mt: 2,
+                width: '100%'
+            }}>
+                <CreateEventButton
                     variant="contained"
-                    color="primary"
                     onClick={() => setPromocodeModalOpen(true)}
+                    sx={{
+                        minWidth: 200,
+                        justifyContent: 'center'
+                    }}
                 >
                     Создать промокод
-                </Button>
-                <Button
+                </CreateEventButton>
+
+                <CreateEventButton
                     variant="contained"
                     color="secondary"
                     onClick={() => setPrizeModalOpen(true)}
+                    sx={{
+                        minWidth: 200,
+                        justifyContent: 'center'
+                    }}
                 >
                     Создать приз
-                </Button>
-                <Button
+                </CreateEventButton>
+
+                <CreateEventButton
                     variant="contained"
-                    color="warning"
+                    color="info"
                     onClick={async () => {
                         await fetchQueue();
                         setQueueOpen(true);
                     }}
+                    sx={{
+                        minWidth: 200,
+                        justifyContent: 'center'
+                    }}
                 >
                     Очередь
-                </Button>
+                </CreateEventButton>
             </Box>
 
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
@@ -240,7 +270,6 @@ const Loyalty = () => {
                 queueList={queueList}
                 onUpdateQueue={handleQueueUpdate}
             />
-
             <Typography variant="h5" sx={{ mt: 4 }}>
                 Активные призы
             </Typography>
@@ -271,6 +300,8 @@ const Loyalty = () => {
                                         console.error("Ошибка:", error);
                                     }
                                 }}
+                                ToggleButton={CompleteButton}
+                                CancelButton={CancelButton}
                             />
                         </Grid>
                     ))}
@@ -280,7 +311,6 @@ const Loyalty = () => {
                     <Typography variant="body1">Призов пока нет</Typography>
                 </Box>
             )}
-
             <Typography variant="h5" sx={{ mt: 4 }}>
                 Неактивные призы
             </Typography>
@@ -311,6 +341,8 @@ const Loyalty = () => {
                                         console.error("Ошибка:", error);
                                     }
                                 }}
+                                ToggleButton={CompleteButton}
+                                CancelButton={CancelButton}
                             />
                         </Grid>
                     ))}
@@ -320,7 +352,6 @@ const Loyalty = () => {
                     <Typography variant="body1">Неактивных призов нет</Typography>
                 </Box>
             )}
-
             <PromocodeModal
                 open={promocodeModalOpen}
                 onClose={() => setPromocodeModalOpen(false)}
@@ -328,6 +359,8 @@ const Loyalty = () => {
                     setActivePromocodes(prev => [...prev, newCode]);
                 }}
                 organizerId={organizerId}
+                DialogComponent={StyledDialog}
+                TitleComponent={DialogTitleStyled}
             />
 
             <CreatePrizeModal
@@ -353,8 +386,10 @@ const Loyalty = () => {
                     }
                 }}
                 organizerId={organizerId}
+                DialogComponent={StyledDialog}
+                TitleComponent={DialogTitleStyled}
             />
-        </Box>
+        </EventsContainer>
     );
 };
 

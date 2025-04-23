@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {
     TextField,
     DialogContent,
@@ -14,7 +14,7 @@ import {
     AccordionSummary,
     AccordionDetails,
 } from "@mui/material";
-import { Edit, ExpandMore } from "@mui/icons-material";
+import {Edit, ExpandMore} from "@mui/icons-material";
 import {
     EventsContainer,
     EventPaper,
@@ -26,7 +26,7 @@ import {
     CancelButton,
     CompleteButton,
 } from "../../styles/EventsPage.styles.js";
-import { getOrganizerProfile } from "../../api/ApiOrganizerProfile";
+import {getOrganizerProfile} from "../../api/ApiOrganizerProfile";
 
 function EventsPage() {
     const [events, setEvents] = useState([]);
@@ -73,7 +73,7 @@ function EventsPage() {
             `http://localhost:8722/api/organizers/event/list/${organizerId}`,
             {
                 method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             }
         );
 
@@ -87,7 +87,7 @@ function EventsPage() {
 
     const handleOpenEventModal = (event = null) => {
         if (event) {
-            setFormDataEvent({ ...event });
+            setFormDataEvent({...event});
         } else {
             setFormDataEvent({
                 id: null,
@@ -169,7 +169,7 @@ function EventsPage() {
             `http://localhost:8722/api/organizers/event/${eventId}`,
             {
                 method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             }
         );
 
@@ -197,14 +197,14 @@ function EventsPage() {
             `http://localhost:8722/api/organizers/event/cancel/${eventId}`,
             {
                 method: "PUT",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             }
         );
 
         if (response.ok) {
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
-                    event.id === eventId ? { ...event, status: "CANCELLED" } : event
+                    event.id === eventId ? {...event, status: "CANCELLED"} : event
                 )
             );
         } else {
@@ -218,14 +218,14 @@ function EventsPage() {
             `http://localhost:8722/api/organizers/event/complete/${eventId}`,
             {
                 method: "PUT",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             }
         );
 
         if (response.ok) {
             setEvents((prevEvents) =>
                 prevEvents.map((event) =>
-                    event.id === eventId ? { ...event, status: "COMPLETED" } : event
+                    event.id === eventId ? {...event, status: "COMPLETED"} : event
                 )
             );
         } else {
@@ -238,7 +238,7 @@ function EventsPage() {
 
         return (
             <StyledAccordion defaultExpanded>
-                <AccordionSummary expandIcon={<ExpandMore />}>
+                <AccordionSummary expandIcon={<ExpandMore/>}>
                     <Typography variant="h6">
                         {statusTranslations[status]} ({filteredEvents.length})
                     </Typography>
@@ -254,34 +254,35 @@ function EventsPage() {
                                 <Grid item xs={12} key={event.id}>
                                     <EventPaper>
                                         <Box>
-                                            <Typography variant="h6" sx={{ color: "#2c3e50" }}>
+                                            <Typography variant="h6" sx={{color: "#2c3e50"}}>
                                                 {event.title}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1 }}>
+                                            <Typography variant="body2" sx={{color: "#7f8c8d", mt: 1}}>
                                                 {event.description}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#6a11cb", mt: 1 }}>
+                                            <Typography variant="body2" sx={{color: "#6a11cb", mt: 1}}>
                                                 {`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
                                                 {`Адрес: ${event.address}`}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
                                                 {`Цена: ${event.price} ₽`}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
                                                 {`Вместимость: ${event.capacity}`}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ color: "#6a11cb" }}>
+                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
                                                 {`Возраст: ${event.age}+`}
                                             </Typography>
                                         </Box>
                                         <Box>
-                                            <IconButton onClick={() => handleEditEvent(event.id)}>
-                                                <Edit sx={{ color: "#6a11cb" }} />
-                                            </IconButton>
                                             {["UPCOMING"].includes(event.status) && (
-                                                <>
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    gap: 2,
+                                                    marginLeft: 1
+                                                }}>
                                                     <CompleteButton
                                                         onClick={() => handleCompleteEvent(event.id)}
                                                     >
@@ -292,7 +293,10 @@ function EventsPage() {
                                                     >
                                                         Отменить
                                                     </CancelButton>
-                                                </>
+                                                    <IconButton onClick={() => handleEditEvent(event.id)}>
+                                                        <Edit sx={{color: "#6a11cb"}}/>
+                                                    </IconButton>
+                                                </Box>
                                             )}
                                         </Box>
                                     </EventPaper>
@@ -307,7 +311,7 @@ function EventsPage() {
 
     return (
         <EventsContainer>
-            <Typography variant="h4" sx={{ color: "#2c3e50", fontWeight: 700 }}>
+            <Typography variant="h4" sx={{color: "#2c3e50", fontWeight: 700}}>
                 Мои мероприятия
             </Typography>
             {profile ? (
@@ -315,6 +319,9 @@ function EventsPage() {
                     <CreateEventButton
                         variant="contained"
                         onClick={() => handleOpenEventModal()}
+                        sx={{
+                            mt: 2
+                        }}
                     >
                         Создать мероприятие
                     </CreateEventButton>
@@ -323,8 +330,8 @@ function EventsPage() {
                     )}
                 </>
             ) : (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-                    <CircularProgress sx={{ color: "#6a11cb" }} />
+                <Box sx={{display: "flex", justifyContent: "center", py: 4}}>
+                    <CircularProgress sx={{color: "#6a11cb"}}/>
                 </Box>
             )}
 
@@ -342,8 +349,8 @@ function EventsPage() {
                         label="UUID создателя"
                         name="owner_uuid"
                         value={profile?.id || "empty"}
-                        InputProps={{ readOnly: true }}
-                        sx={{ mb: 2 }}
+                        InputProps={{readOnly: true}}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -352,7 +359,7 @@ function EventsPage() {
                         name="title"
                         value={formDataEvent.title}
                         onChange={handleChangeEvent}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -361,7 +368,7 @@ function EventsPage() {
                         name="description"
                         value={formDataEvent.description}
                         onChange={handleChangeEvent}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -370,8 +377,8 @@ function EventsPage() {
                         name="dateOfEvent"
                         value={formDataEvent.dateOfEvent}
                         onChange={handleChangeEvent}
-                        InputLabelProps={{ shrink: true }}
-                        sx={{ mb: 2 }}
+                        InputLabelProps={{shrink: true}}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -380,7 +387,7 @@ function EventsPage() {
                         name="address"
                         value={formDataEvent.address}
                         onChange={handleChangeEvent}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -391,7 +398,7 @@ function EventsPage() {
                         placeholder="0"
                         value={formDataEvent.price || ""}
                         onChange={handleChangeEvent}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -402,23 +409,23 @@ function EventsPage() {
                         placeholder="0"
                         value={formDataEvent.capacity || ""}
                         onChange={handleChangeEvent}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
-                    <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1" gutterBottom sx={{ color: "#2c3e50" }}>
+                    <Box sx={{mt: 2}}>
+                        <Typography variant="body1" gutterBottom sx={{color: "#2c3e50"}}>
                             Возраст: {formDataEvent.age}+
                         </Typography>
                         <Slider
                             value={formDataEvent.age || 0}
                             onChange={(e, newValue) =>
-                                setFormDataEvent((prev) => ({ ...prev, age: newValue }))
+                                setFormDataEvent((prev) => ({...prev, age: newValue}))
                             }
                             min={0}
                             max={60}
                             step={1}
                             marks={[
-                                { value: 0, label: "0" },
-                                { value: 60, label: "60+" },
+                                {value: 0, label: "0"},
+                                {value: 60, label: "60+"},
                             ]}
                             valueLabelDisplay="auto"
                             sx={{
@@ -432,7 +439,7 @@ function EventsPage() {
                         />
                     </Box>
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: "center" }}>
+                <DialogActions sx={{justifyContent: "center"}}>
                     <SubmitButton onClick={handleSaveEvent}>Сохранить</SubmitButton>
                     <CancelButton onClick={() => setEventModalOpen(false)}>
                         Отмена

@@ -172,7 +172,7 @@ export const confirmProfile = async (code, token) => {
         }
 
         console.log(response);
-        const data = await response.text(); // Парсим тело ответа как текст
+        const data = await response.text();
         return data;
     } catch (error) {
         console.error("Ошибка при подтверждении профиля:", error.message);

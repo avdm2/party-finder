@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/diploma
+    url: jdbc:postgresql://localhost:5432/diploma
     username: artem
     password: postgres
 

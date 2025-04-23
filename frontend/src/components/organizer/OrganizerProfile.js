@@ -184,16 +184,16 @@ function OrganizerProfile() {
                     <Typography variant="h5" sx={{ mt: 2, color: "#2c3e50", fontWeight: 700 }}>
                         {profile.name} {profile.surname}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         Логин: {profile.username ?? "Неизвестно"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 1 }}>
-                        Рейтинг: {rating !== null ? rating : "Неизвестно..."}
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
+                        Рейтинг: {rating !== null ? rating : "N/A"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#7f8c8d", mt: 1, fontSize: "0.8rem" }}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         UUID: {profile.id}
                     </Typography>
                     {username !== "me" && (
