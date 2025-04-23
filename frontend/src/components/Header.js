@@ -45,9 +45,10 @@ const Header = () => {
     const fetchSearchResults = async (term, page, size) => {
         try {
             const token = localStorage.getItem("token");
+            const first = getProfileByUsernamePaginationClients(term, page, size, token);
+            const sec = getProfileByUsernamePaginationOrganizers(term, page, size, token);
             const [clientsResponse, organizersResponse] = await Promise.all([
-                getProfileByUsernamePaginationClients(term, page, size, token),
-                getProfileByUsernamePaginationOrganizers(term, page, size, token)
+                first, sec
             ]);
             const combinedResults = [
                 ...(clientsResponse.content || []).map(client => ({ ...client, type: 'client' })),
