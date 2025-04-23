@@ -7,7 +7,7 @@ import { getProfileByUsernamePaginationOrganizers } from "../api/ApiOrganizerPro
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 
 const Header = () => {
-    const { isAuthenticated, role , logout} = useAuth();
+    const { isAuthenticated, role, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState('');
@@ -18,7 +18,7 @@ const Header = () => {
     const [tokenUsername, setTokenUsername] = useState('');
     const [channelModalOpen, setChannelModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
-    const [profile, setProfile] = useState(null); // Добавляем состояние для профиля
+    const [profile, setProfile] = useState(null);
 
     const handleLogout = () => {
         logout();
@@ -47,9 +47,7 @@ const Header = () => {
             const token = localStorage.getItem("token");
             const first = getProfileByUsernamePaginationClients(term, page, size, token);
             const sec = getProfileByUsernamePaginationOrganizers(term, page, size, token);
-            const [clientsResponse, organizersResponse] = await Promise.all([
-                first, sec
-            ]);
+            const [clientsResponse, organizersResponse] = await Promise.all([first, sec]);
             const combinedResults = [
                 ...(clientsResponse.content || []).map(client => ({ ...client, type: 'client' })),
                 ...(organizersResponse.content || []).map(organizer => ({ ...organizer, type: 'organizer' }))
@@ -102,7 +100,6 @@ const Header = () => {
                 const contentType = response.headers.get("content-type");
                 if (contentType && contentType.includes("application/json")) {
                     const channel = await response.json();
-                    console.log("Ответ сервера:", channel);
                     if (channel && channel.id) {
                         navigate(`/channel/${channel.id}`);
                     } else {
@@ -120,7 +117,6 @@ const Header = () => {
         }
     };
 
-    // Метод для перехода к системе лояльности
     const handleLoyaltyClick = () => {
         if (!isAuthenticated || role !== 'ORGANIZER') {
             alert("Доступно только для организаторов.");
@@ -130,7 +126,19 @@ const Header = () => {
             alert("Профиль организатора не загружен.");
             return;
         }
-        navigate(`/loyalty/organizer/${profile.id}`); // Используем ID организатора
+        navigate(`/loyalty/organizer/${profile.id}`);
+    };
+
+    const handleAnalyticsClick = () => {
+        if (!isAuthenticated || role !== 'ORGANIZER') {
+            alert("Доступно только для организаторов.");
+            return;
+        }
+        if (!profile) {
+            alert("Профиль организатора не загружен.");
+            return;
+        }
+        navigate(`/analytics/organizer/${profile.id}`);
     };
 
     const handleCreateChannel = async () => {
@@ -172,7 +180,7 @@ const Header = () => {
                     });
                     if (response.ok) {
                         const data = await response.json();
-                        setProfile(data); // Сохраняем профиль в состояние
+                        setProfile(data);
                     }
                 }
             } catch (error) {
@@ -188,9 +196,10 @@ const Header = () => {
                 ...prevPagination,
                 page: newPage,
             }));
-            fetchSearchResults(searchTerm, newPage, pagination.size); // Добавляем вызов fetchSearchResults
+            fetchSearchResults(searchTerm, newPage, pagination.size);
         }
     };
+
     const renderPaginationButtons = () => {
         const { page } = pagination;
         const pagesToShow = 3;
@@ -300,6 +309,11 @@ const Header = () => {
                                     <li>
                                         <button onClick={handleLoyaltyClick} className="button-link">
                                             Лояльность
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button onClick={handleAnalyticsClick} className="button-link">
+                                            Кабинет аналитики
                                         </button>
                                     </li>
                                 </>

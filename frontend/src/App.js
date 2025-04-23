@@ -17,6 +17,7 @@ import Loyalty from "./components/organizer/Loyalty";
 import Chats from "./components/participant/chat/Chats"
 import EventPage from "./components/participant/EventPage";
 import MyEventsPage from "./components/participant/MyEventPage";
+import Analytics from "./components/organizer/Analytics";
 
 const App = () => {
     const { isAuthenticated, role } = useAuth();
@@ -56,8 +57,8 @@ const App = () => {
                 <Route path="/find-event" element={<ProtectedRoute><FindEvent /></ProtectedRoute>} />
                 <Route path="/channel/:channelId" element={<ChannelInterface />} />
                 <Route path="/loyalty/organizer/:organizerId" element={<Loyalty />} />
+                <Route path="/analytics/organizer/:organizerId" element={<Analytics />} />
                 <Route path="/event/:eventId" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
-
                 {role === 'PARTICIPANT' && (
                     <Route path="/my-events" element={<ProtectedRoute><MyEventsPage /></ProtectedRoute>} />
                     )}

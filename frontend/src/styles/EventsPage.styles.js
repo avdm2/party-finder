@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import {
     Button,
     Dialog,
-    DialogTitle, // Добавляем импорт DialogTitle
+    DialogTitle,
     Box,
     Paper,
     Accordion,
@@ -59,7 +59,11 @@ export const CreateEventButton = styled(Button)(({ theme }) => ({
     borderRadius: "50px",
     boxShadow: "0 4px 15px rgba(106, 17, 203, 0.3)",
     transition: "all 0.3s ease",
-    marginTop: theme.spacing(2),
+    position: 'sticky',
+    top: theme.spacing(2),
+    zIndex: 1,
+    alignSelf: 'flex-start',
+    margin: `${theme.spacing(2)} 0`,
     "&:hover": {
         transform: "translateY(-2px)",
         boxShadow: "0 8px 25px rgba(106, 17, 203, 0.4)",

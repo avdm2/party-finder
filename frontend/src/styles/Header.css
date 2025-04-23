@@ -26,6 +26,7 @@
 
 .logo h1 {
     font-size: 24px;
+    font-family: 'Montserrat', sans-serif;
     margin: 0;
     color: #2c3e50;
     font-weight: 700;
@@ -61,8 +62,8 @@
 
 .site-nav a.button-link,
 .site-nav button.button-link {
-    display: inline-block;
-    padding: 10px 20px;
+    display: inline-flex; /* Используем flexbox */
+    padding: 10px 20px; /* Вертикальное и горизонтальное padding */
     background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     color: white;
     font-size: 14px;
@@ -75,6 +76,12 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    height: 48px; /* Фиксированная высота для всех кнопок */
+    align-items: center; /* Выравнивание текста по вертикали */
+    justify-content: center; /* Выравнивание текста по горизонтали */
+    width: auto; /* Автоматическая ширина, но можно установить фиксированную, если нужно */
+    white-space: normal; /* Разрешаем перенос текста на несколько строк */
 }
 
 .site-nav a.button-link::before,
