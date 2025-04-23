@@ -1,5 +1,5 @@
 .site-header {
-    position: fixed; /* Фиксируем хедер */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -8,20 +8,19 @@
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 15px 25px;
-    border-radius: 0 0 16px 16px; /* Скругляем только нижние углы */
+    border-radius: 0 0 16px 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 1000; /* Убедимся, что хедер выше всего */
-    margin: 0; /* Убираем margin */
+    z-index: 1000;
+    margin: 0;
 }
 
-/* Добавим основной контейнер для контента под хедером */
 .main-content {
-    margin-top: 80px; /* Высота хедера + отступ */
-    height: calc(100vh - 80px); /* Высота экрана минус высота хедера */
+    margin-top: 80px;
+    height: calc(100vh - 80px);
     width: 100%;
-    overflow: hidden; /* Убираем скролл всей страницы */
+    overflow: hidden;
 }
 
 .logo h1 {
@@ -77,11 +76,11 @@
     position: relative;
     overflow: hidden;
     font-family: 'Montserrat', sans-serif;
-    height: 48px; /* Фиксированная высота для всех кнопок */
-    align-items: center; /* Выравнивание текста по вертикали */
-    justify-content: center; /* Выравнивание текста по горизонтали */
-    width: auto; /* Автоматическая ширина, но можно установить фиксированную, если нужно */
-    white-space: normal; /* Разрешаем перенос текста на несколько строк */
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    white-space: normal;
 }
 
 .site-nav a.button-link::before,

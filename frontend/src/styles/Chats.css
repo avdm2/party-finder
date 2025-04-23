@@ -193,7 +193,6 @@
     border-radius: 24px;
 }
 
-/* Стили для скроллбара */
 ::-webkit-scrollbar {
     width: 6px;
 }
