@@ -39,10 +39,40 @@ public class ProfileService {
         log.info(clientDTO.toString());
         profileRepository.save(profileConverter.toProfile(clientDTO));
     }
+    public ProfileDTO updateProfile(String username, ClientDTO clientDTO) {
+        if (profileRepository.existsByUsername(username) && profileRepository.findByUsername(username).get().getIsConfirmed()) {
+            updateUserProfileToNotConfirmed(username);
+        }
+        Profile existingProfile = getProfileByUsername(username);
 
+        if (clientDTO.getName() != null && !clientDTO.getName().isEmpty()) {
+            existingProfile.setName(clientDTO.getName());
+        }
+        if (clientDTO.getSurname() != null && !clientDTO.getSurname().isEmpty()) {
+            existingProfile.setSurname(clientDTO.getSurname());
+        }
+        if (clientDTO.getPhone() != null && !clientDTO.getPhone().isEmpty()) {
+            existingProfile.setPhone(clientDTO.getPhone());
+        }
+        if (clientDTO.getAboutMe() != null) {
+            existingProfile.setAboutMe(clientDTO.getAboutMe());
+        }
+        if (clientDTO.getBirthDate() != null) {
+            existingProfile.setBirthDate(clientDTO.getBirthDate());
+        }
+
+        Profile updatedProfile = profileRepository.save(existingProfile);
+        return profileConverter.toProfileDTO(updatedProfile);
+    }
     public void updateUserProfileToConfirmed(String username) {
         Profile profile = getProfileByUsername(username);
         profile.setIsConfirmed(true);
+        profileRepository.save(profile);
+    }
+
+    public void updateUserProfileToNotConfirmed(String username) {
+        Profile profile = getProfileByUsername(username);
+        profile.setIsConfirmed(false);
         profileRepository.save(profile);
     }
 
