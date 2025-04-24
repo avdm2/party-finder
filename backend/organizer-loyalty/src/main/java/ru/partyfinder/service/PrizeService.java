@@ -6,6 +6,7 @@ import ru.partyfinder.entity.PrizeEntity;
 import ru.partyfinder.entity.PrizeHistoryEntity;
 import ru.partyfinder.repository.PrizeRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,12 +28,14 @@ public class PrizeService {
 
     public PrizeEntity order(UUID prizeUuid, String username) {
         PrizeEntity prizeEntity = prizeRepository.findById(prizeUuid).get();
-        bonusBalanceService.removeBonuses(username, prizeEntity.getOwnerUUID(), prizeEntity.getAmount());
+        bonusBalanceService.removeBonuses(username, prizeEntity.getOwnerUUID(), prizeEntity.getBonusCost());
         prizeHistoryService.save(PrizeHistoryEntity.builder()
                 .delivered(false)
                 .participantUsername(username)
                 .prizeUuid(prizeUuid)
                 .organizerUuid(prizeEntity.getOwnerUUID())
+                .prizeTitle(prizeEntity.getTitle())
+                .orderTimestamp(LocalDateTime.now())
                 .build());
         prizeRepository.reduceAmount(prizeUuid);
         return prizeRepository.findById(prizeUuid).get();

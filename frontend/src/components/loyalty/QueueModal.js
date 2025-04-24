@@ -24,10 +24,10 @@ const QueueModal = ({ open, onClose, queueList }) => {
     const pendingPrizes = queueList.filter(item => !item.delivered);
     const deliveredPrizes = queueList.filter(item => item.delivered);
 
-    const handleDeliverPrize = async (prizeUuid, username) => {
+    const handleDeliverPrize = async (prizeUuid, username, prizeHistoryId) => {
         try {
             const token = localStorage.getItem("token");
-            const url = `http://localhost:8711/api/v1/loyalty/prize/history/deliver?prizeUUID=${prizeUuid}&username=${username}`;
+            const url = `http://localhost:8711/api/v1/loyalty/prize/history/deliver?id=${prizeHistoryId}`;
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -92,7 +92,7 @@ const QueueModal = ({ open, onClose, queueList }) => {
                             >
                                 <ListItemText
                                     primary={`Пользователь: ${item.participantUsername}`}
-                                    secondary={`Приз: ${item.prizeTitle}`}
+                                    secondary={`ID: ${item.id}; Дата заказа: ${formatDeliveryTime(item.orderTimestamp) || "N/A"}; Приз: ${item.prizeTitle}`}
                                     sx={{ flexBasis: '70%' }}
                                 />
                                 <ListItemSecondaryAction sx={{ right: 16 }}>
@@ -100,7 +100,7 @@ const QueueModal = ({ open, onClose, queueList }) => {
                                         variant="contained"
                                         color="primary"
                                         size="small"
-                                        onClick={() => handleDeliverPrize(item.prizeUuid, item.participantUsername)}
+                                        onClick={() => handleDeliverPrize(item.prizeUuid, item.participantUsername, item.id)}
                                     >
                                         Выдать
                                     </Button>
@@ -133,11 +133,17 @@ const QueueModal = ({ open, onClose, queueList }) => {
                                     secondary={
                                         <>
                                             <Box component="span" display="block">
+                                                ID: {item.id}
+                                            </Box>
+                                            <Box component="span" display="block">
                                                 Приз: {item.prizeTitle}
                                             </Box>
                                             <Box component="span" display="block" sx={{ mt: 0.5 }}>
                                                 <AccessTimeIcon sx={{ fontSize: 14, verticalAlign: 'middle', mr: 1 }} />
                                                 {formatDeliveryTime(item.deliveredTimestamp)}
+                                            </Box>
+                                            <Box component="span" display="block" sx={{ mt: 0.5 }}>
+                                               Дата заказа: {formatDeliveryTime(item.orderTimestamp) || "N/A"}
                                             </Box>
                                         </>
                                     }

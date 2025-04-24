@@ -1,5 +1,6 @@
 package ru.partyfinder.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,7 @@ public interface PrizeRepository extends JpaRepository<PrizeEntity, UUID> {
     List<PrizeEntity> findAllByOwnerUUID(UUID organizerUuid);
 
     @Modifying
+    @Transactional
     @Query("""
             update PrizeEntity e
             set e.amount = e.amount - 1

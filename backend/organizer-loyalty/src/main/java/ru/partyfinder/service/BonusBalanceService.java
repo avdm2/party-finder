@@ -1,15 +1,19 @@
 package ru.partyfinder.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.entity.BonusBalanceEntity;
 import ru.partyfinder.model.exception.IllegalBonusBalance;
 import ru.partyfinder.repository.BonusBalanceRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BonusBalanceService {
 
     private final BonusBalanceRepository bonusBalanceRepository;
@@ -32,12 +36,15 @@ public class BonusBalanceService {
         }
     }
 
+    @Transactional
     public BonusBalanceEntity removeBonuses(String username, UUID organizerUUID, Integer amount) {
         if (bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID).isEmpty()) {
             throw new IllegalBonusBalance("No loyalty account found for username");
         }
 
-        if (bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID).get().getBonusAmount().compareTo(amount) > 0) {
+        Integer bonusBalance = bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID).get().getBonusAmount();
+
+        if (bonusBalance < amount) {
             throw new IllegalBonusBalance("Illegal bonus balance");
         }
 
@@ -46,11 +53,15 @@ public class BonusBalanceService {
     }
 
     public BonusBalanceEntity getBonusBalance(String username, UUID organizerUUID) {
-        return bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID)
-                .orElse(createBonusBalance(BonusBalanceEntity.builder()
-                        .participantUsername(username)
-                        .organizerUUID(organizerUUID)
-                        .bonusAmount(0)
-                        .build()));
+
+        Optional<BonusBalanceEntity> optionalBonusBalance = bonusBalanceRepository.findByParticipantUsernameAndOrganizerUUID(username, organizerUUID);
+
+        log.info("BonusBalance found for username? = {}", optionalBonusBalance.isPresent());
+
+        return optionalBonusBalance.orElseGet(() -> createBonusBalance(BonusBalanceEntity.builder()
+                .participantUsername(username)
+                .organizerUUID(organizerUUID)
+                .bonusAmount(0)
+                .build()));
     }
 }

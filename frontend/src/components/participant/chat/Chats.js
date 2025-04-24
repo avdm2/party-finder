@@ -84,7 +84,6 @@ const Chats = () => {
     const getOtherParticipant = (chat) => {
         if (!chat) return null;
 
-        // Используем кеш участников
         if (participantsCache.current[chat.id]) {
             return participantsCache.current[chat.id];
         }

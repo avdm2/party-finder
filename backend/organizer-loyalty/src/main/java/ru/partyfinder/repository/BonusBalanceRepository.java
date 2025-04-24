@@ -21,6 +21,7 @@ public interface BonusBalanceRepository extends JpaRepository<BonusBalanceEntity
     int addBonuses(String participantUsername, UUID organizerUUID, Integer amount);
 
     @Modifying
+    @Transactional
     @Query("""
             update BonusBalanceEntity bonusBalanceEntity
             set bonusBalanceEntity.bonusAmount = bonusBalanceEntity.bonusAmount - :amount

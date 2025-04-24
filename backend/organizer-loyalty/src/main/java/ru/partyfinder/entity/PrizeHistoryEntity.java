@@ -47,4 +47,7 @@ public class PrizeHistoryEntity {
     @Column(name = "delivered_timestamp")
     private LocalDateTime deliveredTimestamp;
 
+    @Column(name = "order_timestamp")
+    private LocalDateTime orderTimestamp;
+
 }

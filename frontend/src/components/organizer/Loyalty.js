@@ -157,14 +157,7 @@ const Loyalty = () => {
             if (response.ok) {
                 const data = await response.json();
 
-                const uniqueItems = data.filter((item, index, self) =>
-                    self.findIndex(t =>
-                        t.prizeUuid === item.prizeUuid &&
-                        t.participantUsername === item.participantUsername
-                    ) === index
-                );
-
-                setQueueList(uniqueItems);
+                setQueueList(data);
             }
         } catch (error) {
             console.error("Ошибка загрузки очереди:", error);

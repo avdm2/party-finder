@@ -23,7 +23,7 @@ public class PrizeHistoryService {
         return prizeHistoryRepository.findAllByOrganizerUuid(uuid);
     }
 
-    public int deliver(String username, UUID prizeUuid) {
-        return prizeHistoryRepository.deliverPrize(username, prizeUuid, LocalDateTime.now());
+    public int deliver(Integer id) {
+        return prizeHistoryRepository.deliverPrize(id, LocalDateTime.now());
     }
 }

@@ -19,8 +19,7 @@ public interface PrizeHistoryRepository extends JpaRepository<PrizeHistoryEntity
     @Query("""
             update PrizeHistoryEntity p
             set p.delivered = true, p.deliveredTimestamp = :deliveredTimestamp
-            where p.participantUsername = :participantUsername
-            and p.prizeUuid = :prizeUUID
+            where p.id = :id
             """)
-    int deliverPrize(String participantUsername, UUID prizeUUID, LocalDateTime deliveredTimestamp);
+    int deliverPrize(Integer id, LocalDateTime deliveredTimestamp);
 }

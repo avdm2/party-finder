@@ -174,7 +174,6 @@ const UserProfile = () => {
                 setProfile(updatedProfile);
                 handleCloseConfirmationModal();
             } else {
-                // Если ответ не содержит текст "Профиль успешно подтвержден!", считаем его ошибкой
                 const errorText = typeof response === 'string' ? response : "Неизвестная ошибка";
                 console.error("Ошибка подтверждения профиля:", errorText);
                 alert(`Ошибка подтверждения профиля: ${errorText}`);

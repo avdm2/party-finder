@@ -29,7 +29,7 @@ public class PrizeHistoryController {
 
     // Отправить приз (согласиться на выдачу)
     @PostMapping("/deliver")
-    public ResponseEntity<Integer> deliver(@RequestParam UUID prizeUUID, @RequestParam String username) {
-        return ResponseEntity.ok(prizeHistoryService.deliver(username, prizeUUID));
+    public ResponseEntity<Integer> deliver(@RequestParam Integer id) {
+        return ResponseEntity.ok(prizeHistoryService.deliver(id));
     }
 }

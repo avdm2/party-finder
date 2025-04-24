@@ -33,6 +33,7 @@ public class PromocodeService {
         }
 
         PromocodeEntity promocodeEntity = promocodeRepository.findByValue(promocode).get();
+        promocodeRepository.save(promocodeEntity.withNumberOfUsage(promocodeEntity.getNumberOfUsage() - 1));
         return bonusBalanceService.addBonuses(participantUsername, promocodeEntity.getOwnerUUID(), promocodeEntity.getBonusAmount());
     }
 
