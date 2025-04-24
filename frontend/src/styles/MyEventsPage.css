@@ -1,0 +1,63 @@
+.my-events-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.my-events-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(106,17,203,0.1) 0%, rgba(106,17,203,0) 70%);
+    z-index: 0;
+}
+
+.my-events-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+
+
+
+
+.my-events-loading {
+    text-align: center;
+    padding: 3rem;
+}
+
+.my-events-loading::after {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(106,17,203,0.2);
+    border-radius: 50%;
+    border-top-color: #6a11cb;
+    animation: spin 1s ease-in-out infinite;
+}
+
+.my-events-error {
+    text-align: center;
+    padding: 2rem;
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 10px;
+    font-weight: 500;
+}

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/FindEvent.css";
 import { fetchEventsRequest } from "../../api/ApiFindEvents";
 import { FiSearch, FiCalendar, FiMapPin, FiDollarSign, FiUsers, FiStar } from "react-icons/fi";
 
 const FindEvent = () => {
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         title: "",
         description: "",
@@ -57,6 +59,10 @@ const FindEvent = () => {
                 page: newPage,
             }));
         }
+    };
+
+    const handleEventDetails = (eventId) => {
+        navigate(`/event/${eventId}`);
     };
 
     return (
@@ -254,10 +260,6 @@ const FindEvent = () => {
                         />
                     </div>
                 </div>
-
-                <button type="submit" className="search-button">
-                    Найти мероприятия
-                </button>
             </form>
 
             <div className="events-section">
@@ -284,7 +286,10 @@ const FindEvent = () => {
                                     </p>
                                     <p className="event-description">{event.description}</p>
                                     <div className="event-actions">
-                                        <button className="details-button">
+                                        <button
+                                            className="details-button"
+                                            onClick={() => handleEventDetails(event.id)}
+                                        >
                                             Подробнее
                                         </button>
                                         <span className="event-price">
@@ -307,6 +312,7 @@ const FindEvent = () => {
                     <button
                         onClick={() => handlePageChange(pagination.page - 1)}
                         disabled={pagination.page === 0}
+                        className="pagination-button"
                     >
                         Назад
                     </button>
@@ -314,7 +320,7 @@ const FindEvent = () => {
                         <button
                             key={page}
                             onClick={() => handlePageChange(page)}
-                            className={pagination.page === page ? "active" : ""}
+                            className={`pagination-button ${pagination.page === page ? "active" : ""}`}
                         >
                             {page + 1}
                         </button>
@@ -322,6 +328,7 @@ const FindEvent = () => {
                     <button
                         onClick={() => handlePageChange(pagination.page + 1)}
                         disabled={pagination.page === totalPages - 1}
+                        className="pagination-button"
                     >
                         Вперед
                     </button>

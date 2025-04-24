@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext';
 import '../styles/Header.css';
 import { getProfileByUsernamePaginationClients } from "../api/ApiClientProfile";
@@ -258,33 +258,47 @@ const Header = () => {
                     ) : !isAuthenticated ? (
                         <>
                             <li>
-                                <button onClick={() => navigate('/register')} className="button-link">
+                                <Link to="/register" className="button-link">
                                     Регистрация
-                                </button>
+                                </Link>
                             </li>
                             <li>
-                                <button onClick={() => navigate('/login')} className="button-link">
+                                <Link to="/login" className="button-link">
                                     Вход
-                                </button>
+                                </Link>
                             </li>
                         </>
                     ) : (
                         <>
                             <li>
-                                <button onClick={() => navigate('/home')} className="button-link">
+                                <Link to="/home" className="button-link">
                                     Главная
-                                </button>
+                                </Link>
                             </li>
                             <li>
-                                <button onClick={() => navigate(profilePath)} className="button-link">
+                                <Link to={profilePath} className="button-link">
                                     Мой профиль
-                                </button>
+                                </Link>
                             </li>
                             <li>
-                                <button onClick={() => navigate(eventsHandle)} className="button-link">
-                                    Мероприятия
-                                </button>
+                                <Link to={eventsHandle} className="button-link">
+                                    Поиск мероприятий
+                                </Link>
                             </li>
+                            {role === 'PARTICIPANT' && (
+                                <>
+                                    <li>
+                                        <Link to="/my-events" className="button-link">
+                                            Мои мероприятия
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/chat" className="button-link">
+                                            Чаты
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
                             {role === 'ORGANIZER' && (
                                 <>
                                     <li>
@@ -303,13 +317,6 @@ const Header = () => {
                                         </button>
                                     </li>
                                 </>
-                            )}
-                            {role === 'PARTICIPANT' && (
-                                <li>
-                                    <button onClick={() => navigate('/chat')} className="button-link">
-                                        Чаты
-                                    </button>
-                                </li>
                             )}
                             <li>
                                 <button onClick={handleLogout} className="button-link">

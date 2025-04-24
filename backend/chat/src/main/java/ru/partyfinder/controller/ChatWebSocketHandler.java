@@ -77,7 +77,6 @@ public class ChatWebSocketHandler {
 
             Message savedMessage = messageService.saveMessage(message);
 
-            // 8. Подготавливаем ответ
             MessageDTO responseDTO = new MessageDTO();
             responseDTO.setId(savedMessage.getId());
             responseDTO.setChatId(chatId);
@@ -86,7 +85,7 @@ public class ChatWebSocketHandler {
             responseDTO.setSentTime(savedMessage.getSentTime());
             responseDTO.setSender(convertToProfileDTO(sender));
             responseDTO.setReceiver(convertToProfileDTO(receiver));
-            responseDTO.setTempId(messageDTO.getTempId()); // Возвращаем временный ID
+            responseDTO.setTempId(messageDTO.getTempId());
 
             messagingTemplate.convertAndSend(
                     "/topic/messages/" + chatId,

@@ -293,79 +293,93 @@ const Chats = () => {
     };
 
     return (
-        <div className="chats-container">
-            <div className="chat-list">
-                <h2>Чаты</h2>
-                {loading ? (
-                    <div>Loading...</div>
-                ) : error ? (
-                    <div>{error}</div>
-                ) : chats.length === 0 ? (
-                    <div>No chats found</div>
-                ) : (
-                    chats.map(chat => {
-                        const otherParticipant = getOtherParticipant(chat);
-                        const lastMessage = chat.lastMessage;
-                        return (
-                            <div
-                                key={chat.id}
-                                className={`chat-item ${activeChatId === chat.id ? "active" : ""}`}
-                                onClick={() => handleChatClick(chat.id)}
-                            >
-                                {otherParticipant && renderAvatar(otherParticipant)}
-                                <div className="chat-info">
-                                    <h3>{otherParticipant?.name} {otherParticipant?.surname}</h3>
-                                    <p>{lastMessage?.content || "No messages"}</p>
-                                    <small>
-                                        {lastMessage?.sentTime
-                                            ? new Date(lastMessage.sentTime).toLocaleTimeString()
-                                            : ""}
-                                    </small>
-                                </div>
-                            </div>
-                        );
-                    })
-                )}
-            </div>
-            {activeChatId && (
-                <div className="chat-window">
-                    <div className="messages-container">
-                        {messages.map(msg => (
-                            <div
-                                key={msg.id}
-                                className={`message ${msg.sender?.username === currentUsername ? "sent" : "received"} ${msg.isTemp ? "temp-message" : ""}`}
-                            >
-                                {renderAvatar(msg.sender)}
-                                <div className="message-content">
-                                    <p>{msg.content}</p>
-                                    <small>
-                                        {new Date(msg.sentTime).toLocaleTimeString()}
-                                        {msg.isTemp && <span> (отправка...)</span>}
-                                    </small>
-                                </div>
-                            </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
-                    <div className="message-input">
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            placeholder="Type a message..."
-                            value={newMessage}
-                            onChange={e => setNewMessage(e.target.value)}
-                            onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
-                        />
-                        <Button
-                            variant="contained"
-                            onClick={handleSendMessage}
-                            disabled={!newMessage.trim()}
-                        >
-                            Отправить
-                        </Button>
+        <div className="chats-page-container">
+            <div className="chats-main-container">
+                <div className="chat-list-section">
+                    <h2 className="chat-list-title">Чаты</h2>
+                    <div className="chat-list-content">
+                        {loading ? (
+                            <div className="chat-loading">Loading...</div>
+                        ) : error ? (
+                            <div className="chat-error">{error}</div>
+                        ) : chats.length === 0 ? (
+                            <div className="chat-empty">Нет чатов</div>
+                        ) : (
+                            chats.map(chat => {
+                                const otherParticipant = getOtherParticipant(chat);
+                                const lastMessage = chat.lastMessage;
+                                return (
+                                    <div
+                                        key={chat.id}
+                                        className={`chat-item ${activeChatId === chat.id ? "active" : ""}`}
+                                        onClick={() => handleChatClick(chat.id)}
+                                    >
+                                        {otherParticipant && renderAvatar(otherParticipant)}
+                                        <div className="chat-info">
+                                            <h3>{otherParticipant?.name} {otherParticipant?.surname}</h3>
+                                            <p className="chat-preview">{lastMessage?.content || "No messages"}</p>
+                                            <small className="chat-time">
+                                                {lastMessage?.sentTime
+                                                    ? new Date(lastMessage.sentTime).toLocaleTimeString()
+                                                    : ""}
+                                            </small>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
-            )}
+
+                <div className="chat-messages-section">
+                    {activeChatId ? (
+                        <>
+                            <div className="messages-container">
+                                {messages.map(msg => (
+                                    <div
+                                        key={msg.id}
+                                        className={`message ${msg.sender?.username === currentUsername ? "sent" : "received"} ${msg.isTemp ? "temp-message" : ""}`}
+                                    >
+                                        {renderAvatar(msg.sender)}
+                                        <div className="message-content">
+                                            <p>{msg.content}</p>
+                                            <small>
+                                                {new Date(msg.sentTime).toLocaleTimeString()}
+                                                {msg.isTemp && <span> (отправка...)</span>}
+                                            </small>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div ref={messagesEndRef} />
+                            </div>
+                            <div className="message-input">
+                                <TextField
+                                    fullWidth
+                                    variant="outlined"
+                                    placeholder="Type a message..."
+                                    value={newMessage}
+                                    onChange={e => setNewMessage(e.target.value)}
+                                    onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
+                                />
+                                <Button
+                                    variant="contained"
+                                    onClick={handleSendMessage}
+                                    disabled={!newMessage.trim()}
+                                >
+                                    Отправить
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="no-chat-selected">
+                            <div className="no-chat-content">
+                                <h3>Выберите чат для общения</h3>
+                                <p>Или начните новый диалог</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
