@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import {
     Typography,
     IconButton,
@@ -11,9 +11,9 @@ import {
     Box,
     CircularProgress, Button, DialogTitle,
 } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
-import { sendRating } from "../../api/ApiOrganizerProfile";
-import { getProfileByUsernameOrganizer, getProfileMe } from "../../api/ApiOrganizerProfile";
+import {PhotoCamera} from "@mui/icons-material";
+import {sendRating} from "../../api/ApiOrganizerProfile";
+import {getProfileByUsernameOrganizer, getProfileMe} from "../../api/ApiOrganizerProfile";
 import {
     ProfileContainer,
     StyledAvatar,
@@ -24,12 +24,14 @@ import {
     CancelButton,
     LoadingContainer,
 } from "../../styles/OrganizerProfile.styles.js";
+import {useAuth} from "../auth/AuthContext";
 
 function OrganizerProfile() {
-    const { username } = useParams();
+    const {username} = useParams();
+    const {isAuthenticated, role, logout} = useAuth();
     const [profile, setProfile] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const [formData, setFormData] = useState({ name: "", surname: "", birthday: "", username: "" });
+    const [formData, setFormData] = useState({name: "", surname: "", birthday: "", username: ""});
     const [avatarFile, setAvatarFile] = useState(null);
     const [ratingValue, setRatingValue] = useState(1);
     const [ratingComment, setRatingComment] = useState("");
@@ -53,7 +55,7 @@ function OrganizerProfile() {
                 try {
                     data = await getProfileMe();
                 } catch (error) {
-                    setFormData((prev) => ({ ...prev, username: payload.sub }));
+                    setFormData((prev) => ({...prev, username: payload.sub}));
                     setModalOpen(true);
                 }
             } else {
@@ -99,7 +101,7 @@ function OrganizerProfile() {
                 {
                     method: "POST",
                     body: formData,
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: {Authorization: `Bearer ${token}`},
                 }
             );
             if (!response.ok) {
@@ -110,7 +112,7 @@ function OrganizerProfile() {
             }
             const updatedProfile = await getProfileByUsernameOrganizer(profile.username);
             if (updatedProfile.media) {
-                setProfile((prevProfile) => ({ ...prevProfile, media: updatedProfile.media }));
+                setProfile((prevProfile) => ({...prevProfile, media: updatedProfile.media}));
             }
         } catch (error) {
             console.error("Ошибка при загрузке фото:", error);
@@ -139,7 +141,7 @@ function OrganizerProfile() {
     };
 
     const handleSubmit = async () => {
-        const formattedData = { ...formData, birthday: `${formData.birthday}T00:00:00` };
+        const formattedData = {...formData, birthday: `${formData.birthday}T00:00:00`};
         if (await createOrganizerProfile(formattedData)) {
             const updatedProfile = await getProfileByUsernameOrganizer(formData.username);
             setProfile(updatedProfile);
@@ -149,7 +151,7 @@ function OrganizerProfile() {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const handleOpenRatingModal = () => {
@@ -170,7 +172,7 @@ function OrganizerProfile() {
                 const response = await fetch(
                     `http://localhost:8722/api/organizers/event/list/${data.id}`,
                     {
-                        headers: { Authorization: `Bearer ${token}` },
+                        headers: {Authorization: `Bearer ${token}`},
                     }
                 );
                 if (response.ok) {
@@ -196,7 +198,7 @@ function OrganizerProfile() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8722/api/v1/event/list/${organizerId}`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
             });
             if (response.ok) {
                 const data = await response.json();
@@ -251,12 +253,12 @@ function OrganizerProfile() {
     };
 
     const handleFeedbackChange = (e) => {
-        const { name, value } = e.target;
-        setFeedbackFormData((prev) => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFeedbackFormData((prev) => ({...prev, [name]: value}));
     };
 
     const handleRateChange = (event, newValue) => {
-        setFeedbackFormData((prev) => ({ ...prev, rate: newValue }));
+        setFeedbackFormData((prev) => ({...prev, rate: newValue}));
     };
 
     const validateForm = () => {
@@ -336,51 +338,51 @@ function OrganizerProfile() {
                     <StyledAvatar
                         src={profile.media ? `data:image/jpeg;base64,${profile.media.fileData}` : ""}
                     >
-                        {!profile.media && <PhotoCamera fontSize="large" />}
+                        {!profile.media && <PhotoCamera fontSize="large"/>}
                     </StyledAvatar>
                     {username === "me" && (
-                        <IconButton component="label" sx={{ mt: 2 }}>
-                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
-                            <PhotoCamera />
+                        <IconButton component="label" sx={{mt: 2}}>
+                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange}/>
+                            <PhotoCamera/>
                         </IconButton>
                     )}
-                    <Typography variant="h5" sx={{ mt: 2, color: "#2c3e50", fontWeight: 700 }}>
+                    <Typography variant="h5" sx={{mt: 2, color: "#2c3e50", fontWeight: 700}}>
                         {profile.name} {profile.surname}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
+                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
                         Логин: {profile.username ?? "Неизвестно"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
+                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
                         Рейтинг: {rating !== null ? rating : "N/A"}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
+                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
+                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
                         UUID: {profile.id}
                     </Typography>
-                {username !== "me" && (
-                    <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                        <GradientButton
-                            variant="contained"
-                            onClick={handleOpenRatingModal}
-                            sx={{ mr: 4 }}
-                        >
-                            Оценить организатора
-                        </GradientButton>
-                        <GradientButton
-                            variant="contained"
-                            onClick={handleLoyaltyClick}
-                            sx={{ ml: 4 }}
-                        >
-                            Лояльность
-                        </GradientButton>
-                    </Box>
-                )}
+                    {username !== "me" && (
+                        <Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
+                            <GradientButton
+                                variant="contained"
+                                onClick={handleOpenRatingModal}
+                                sx={{mr: 4}}
+                            >
+                                Оценить организатора
+                            </GradientButton>
+                            <GradientButton
+                                variant="contained"
+                                onClick={handleLoyaltyClick}
+                                sx={{ml: 4}}
+                            >
+                                Лояльность
+                            </GradientButton>
+                        </Box>
+                    )}
                 </>
             ) : (
                 <LoadingContainer>
-                    <CircularProgress sx={{ color: "#6a11cb" }} />
+                    <CircularProgress sx={{color: "#6a11cb"}}/>
                 </LoadingContainer>
             )}
 
@@ -393,7 +395,7 @@ function OrganizerProfile() {
                         label="Имя"
                         name="name"
                         onChange={handleChange}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -401,7 +403,7 @@ function OrganizerProfile() {
                         label="Фамилия"
                         name="surname"
                         onChange={handleChange}
-                        sx={{ mb: 2 }}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -409,8 +411,8 @@ function OrganizerProfile() {
                         type="date"
                         name="birthday"
                         onChange={handleChange}
-                        InputLabelProps={{ shrink: true }}
-                        sx={{ mb: 2 }}
+                        InputLabelProps={{shrink: true}}
+                        sx={{mb: 2}}
                     />
                     <TextField
                         fullWidth
@@ -418,10 +420,10 @@ function OrganizerProfile() {
                         label="Логин"
                         name="username"
                         value={formData.username}
-                        InputProps={{ readOnly: true }}
+                        InputProps={{readOnly: true}}
                     />
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: "center" }}>
+                <DialogActions sx={{justifyContent: "center"}}>
                     <SubmitButton onClick={handleSubmit}>
                         Сохранить
                     </SubmitButton>
@@ -431,7 +433,7 @@ function OrganizerProfile() {
             <StyledDialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
                 <DialogTitleStyled>Оцените организатора</DialogTitleStyled>
                 <DialogContent>
-                    <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+                    <Box sx={{display: "flex", justifyContent: "center", my: 3}}>
                         <Rating
                             name="simple-controlled"
                             value={ratingValue}
@@ -471,8 +473,8 @@ function OrganizerProfile() {
                         }}
                     />
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: "center" }}>
-                    <CancelButton onClick={handleCloseRatingModal} sx={{ mr: 2 }}>
+                <DialogActions sx={{justifyContent: "center"}}>
+                    <CancelButton onClick={handleCloseRatingModal} sx={{mr: 2}}>
                         Закрыть
                     </CancelButton>
                     <SubmitButton onClick={handleSubmitRating}>
@@ -480,248 +482,249 @@ function OrganizerProfile() {
                     </SubmitButton>
                 </DialogActions>
             </StyledDialog>
-            <Box sx={{ mt: 4 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Мероприятия организатора
-                </Typography>
-
-                <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        Завершенные мероприятия
+            {role === 'PARTICIPANT' && (
+                <Box sx={{mt: 4}}>
+                    <Typography variant="h6" sx={{mb: 2}}>
+                        Мероприятия организатора
                     </Typography>
-                    {completedEvents.length > 0 ? (
-                        <div className="events-grid">
-                            {completedEvents.map((event) => (
-                                <div key={event.id} className="event-card">
-                                    <div className="event-image-container">
-                                        {event.imageUrl ? (
-                                            <img
-                                                src={event.imageUrl}
-                                                alt={event.title}
-                                                className="event-image"
-                                            />
-                                        ) : (
-                                            <div className="event-image-placeholder"></div>
-                                        )}
-                                    </div>
-                                    <div className="event-details">
-                                        <Typography variant="h6" className="event-title">
-                                            {event.title}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-date">
-                                            {new Date(event.dateOfEvent).toLocaleString()}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-location">
-                                            {event.address}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-description">
-                                            {event.description}
-                                        </Typography>
-                                        <Button
-                                            onClick={() => handleFeedbackClick(event)}
-                                            variant="contained"
-                                            color="primary"
-                                            size="small"
-                                            sx={{ mt: 1 }}
-                                        >
-                                            Дать фидбек
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Typography>Завершенных мероприятий нет.</Typography>
-                    )}
-                </Box>
 
-                <Box sx={{ mt: 4 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        Отмененные мероприятия
-                    </Typography>
-                    {cancelledEvents.length > 0 ? (
-                        <div className="events-grid">
-                            {cancelledEvents.map((event) => (
-                                <div key={event.id} className="event-card">
-                                    <div className="event-image-container">
-                                        {event.imageUrl ? (
-                                            <img
-                                                src={event.imageUrl}
-                                                alt={event.title}
-                                                className="event-image"
-                                            />
-                                        ) : (
-                                            <div className="event-image-placeholder"></div>
-                                        )}
+                    <Box>
+                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                            Завершенные мероприятия
+                        </Typography>
+                        {completedEvents.length > 0 ? (
+                            <div className="events-grid">
+                                {completedEvents.map((event) => (
+                                    <div key={event.id} className="event-card">
+                                        <div className="event-image-container">
+                                            {event.imageUrl ? (
+                                                <img
+                                                    src={event.imageUrl}
+                                                    alt={event.title}
+                                                    className="event-image"
+                                                />
+                                            ) : (
+                                                <div className="event-image-placeholder"></div>
+                                            )}
+                                        </div>
+                                        <div className="event-details">
+                                            <Typography variant="h6" className="event-title">
+                                                {event.title}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-date">
+                                                {new Date(event.dateOfEvent).toLocaleString()}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-location">
+                                                {event.address}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-description">
+                                                {event.description}
+                                            </Typography>
+                                            <Button
+                                                onClick={() => handleFeedbackClick(event)}
+                                                variant="contained"
+                                                color="primary"
+                                                size="small"
+                                                sx={{mt: 1}}
+                                            >
+                                                Дать фидбек
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="event-details">
-                                        <Typography variant="h6" className="event-title">
-                                            {event.title}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-date">
-                                            {new Date(event.dateOfEvent).toLocaleString()}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-location">
-                                            {event.address}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-description">
-                                            {event.description}
-                                        </Typography>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Typography>Отмененных мероприятий нет.</Typography>
-                    )}
-                </Box>
+                                ))}
+                            </div>
+                        ) : (
+                            <Typography>Завершенных мероприятий нет.</Typography>
+                        )}
+                    </Box>
 
-                <Box sx={{ mt: 4 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                        Предстоящие мероприятия
-                    </Typography>
-                    {upcomingEvents.length > 0 ? (
-                        <div className="events-grid">
-                            {upcomingEvents.map((event) => (
-                                <div key={event.id} className="event-card">
-                                    <div className="event-image-container">
-                                        {event.imageUrl ? (
-                                            <img
-                                                src={event.imageUrl}
-                                                alt={event.title}
-                                                className="event-image"
-                                            />
-                                        ) : (
-                                            <div className="event-image-placeholder"></div>
-                                        )}
+                    <Box sx={{mt: 4}}>
+                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                            Отмененные мероприятия
+                        </Typography>
+                        {cancelledEvents.length > 0 ? (
+                            <div className="events-grid">
+                                {cancelledEvents.map((event) => (
+                                    <div key={event.id} className="event-card">
+                                        <div className="event-image-container">
+                                            {event.imageUrl ? (
+                                                <img
+                                                    src={event.imageUrl}
+                                                    alt={event.title}
+                                                    className="event-image"
+                                                />
+                                            ) : (
+                                                <div className="event-image-placeholder"></div>
+                                            )}
+                                        </div>
+                                        <div className="event-details">
+                                            <Typography variant="h6" className="event-title">
+                                                {event.title}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-date">
+                                                {new Date(event.dateOfEvent).toLocaleString()}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-location">
+                                                {event.address}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-description">
+                                                {event.description}
+                                            </Typography>
+                                        </div>
                                     </div>
-                                    <div className="event-details">
-                                        <Typography variant="h6" className="event-title">
-                                            {event.title}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-date">
-                                            {new Date(event.dateOfEvent).toLocaleString()}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-location">
-                                            {event.address}
-                                        </Typography>
-                                        <Typography variant="body2" className="event-description">
-                                            {event.description}
-                                        </Typography>
+                                ))}
+                            </div>
+                        ) : (
+                            <Typography>Отмененных мероприятий нет.</Typography>
+                        )}
+                    </Box>
+
+                    <Box sx={{mt: 4}}>
+                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                            Предстоящие мероприятия
+                        </Typography>
+                        {upcomingEvents.length > 0 ? (
+                            <div className="events-grid">
+                                {upcomingEvents.map((event) => (
+                                    <div key={event.id} className="event-card">
+                                        <div className="event-image-container">
+                                            {event.imageUrl ? (
+                                                <img
+                                                    src={event.imageUrl}
+                                                    alt={event.title}
+                                                    className="event-image"
+                                                />
+                                            ) : (
+                                                <div className="event-image-placeholder"></div>
+                                            )}
+                                        </div>
+                                        <div className="event-details">
+                                            <Typography variant="h6" className="event-title">
+                                                {event.title}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-date">
+                                                {new Date(event.dateOfEvent).toLocaleString()}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-location">
+                                                {event.address}
+                                            </Typography>
+                                            <Typography variant="body2" className="event-description">
+                                                {event.description}
+                                            </Typography>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <Typography>Предстоящих мероприятий нет.</Typography>
-                    )}
-                </Box>
+                                ))}
+                            </div>
+                        ) : (
+                            <Typography>Предстоящих мероприятий нет.</Typography>
+                        )}
+                    </Box>
 
-                <Dialog open={feedbackModalOpen} onClose={handleCloseFeedbackModal}>
-                    <DialogTitle>Оставить фидбек</DialogTitle>
-                    <DialogContent>
-                        <Typography variant="h6">{selectedEvent?.title}</Typography>
+                    <Dialog open={feedbackModalOpen} onClose={handleCloseFeedbackModal}>
+                        <DialogTitle>Оставить фидбек</DialogTitle>
+                        <DialogContent>
+                            <Typography variant="h6">{selectedEvent?.title}</Typography>
 
-                        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                            <Typography variant="body1" sx={{ mr: 2 }}>
-                                Рейтинг:
-                            </Typography>
-                            <Rating
-                                name="rate"
-                                value={feedbackFormData.rate}
-                                onChange={handleRateChange}
-                                size="large"
-                                sx={{
-                                    "& .MuiRating-icon": {
-                                        color: "#ffcc00",
-                                        fontSize: "2rem",
-                                    },
-                                    "& .MuiRating-iconFilled": {
-                                        color: "#ffcc00",
-                                    },
-                                    "& .MuiRating-iconHover": {
-                                        color: "#ffdd33",
-                                    },
-                                }}
+                            <Box sx={{display: "flex", alignItems: "center", mb: 2}}>
+                                <Typography variant="body1" sx={{mr: 2}}>
+                                    Рейтинг:
+                                </Typography>
+                                <Rating
+                                    name="rate"
+                                    value={feedbackFormData.rate}
+                                    onChange={handleRateChange}
+                                    size="large"
+                                    sx={{
+                                        "& .MuiRating-icon": {
+                                            color: "#ffcc00",
+                                            fontSize: "2rem",
+                                        },
+                                        "& .MuiRating-iconFilled": {
+                                            color: "#ffcc00",
+                                        },
+                                        "& .MuiRating-iconHover": {
+                                            color: "#ffdd33",
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <TextField
+                                fullWidth
+                                margin="dense"
+                                label="Средний чек (от 0 до 1 000 000)"
+                                name="avgBill"
+                                type="number"
+                                value={feedbackFormData.avgBill}
+                                onChange={handleFeedbackChange}
+                                error={!!errors.avgBill}
+                                helperText={errors.avgBill}
+                                sx={{mb: 2}}
                             />
-                        </Box>
 
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            label="Средний чек (от 0 до 1 000 000)"
-                            name="avgBill"
-                            type="number"
-                            value={feedbackFormData.avgBill}
-                            onChange={handleFeedbackChange}
-                            error={!!errors.avgBill}
-                            helperText={errors.avgBill}
-                            sx={{ mb: 2 }}
-                        />
+                            <TextField
+                                fullWidth
+                                margin="dense"
+                                label="Средний возраст (от 0 до 80)"
+                                name="avgAge"
+                                type="number"
+                                value={feedbackFormData.avgAge}
+                                onChange={handleFeedbackChange}
+                                error={!!errors.avgAge}
+                                helperText={errors.avgAge}
+                                sx={{mb: 2}}
+                            />
 
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            label="Средний возраст (от 0 до 80)"
-                            name="avgAge"
-                            type="number"
-                            value={feedbackFormData.avgAge}
-                            onChange={handleFeedbackChange}
-                            error={!!errors.avgAge}
-                            helperText={errors.avgAge}
-                            sx={{ mb: 2 }}
-                        />
+                            <TextField
+                                fullWidth
+                                margin="dense"
+                                label="Среднее время в пути (в минутах, от 1 до 1440)"
+                                name="avgTravelTimeInMinutes"
+                                type="number"
+                                value={feedbackFormData.avgTravelTimeInMinutes}
+                                onChange={handleFeedbackChange}
+                                error={!!errors.avgTravelTimeInMinutes}
+                                helperText={errors.avgTravelTimeInMinutes}
+                                sx={{mb: 2}}
+                            />
 
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            label="Среднее время в пути (в минутах, от 1 до 1440)"
-                            name="avgTravelTimeInMinutes"
-                            type="number"
-                            value={feedbackFormData.avgTravelTimeInMinutes}
-                            onChange={handleFeedbackChange}
-                            error={!!errors.avgTravelTimeInMinutes}
-                            helperText={errors.avgTravelTimeInMinutes}
-                            sx={{ mb: 2 }}
-                        />
+                            <TextField
+                                fullWidth
+                                margin="dense"
+                                label="Количество людей в группе (от 1 до 20)"
+                                name="peopleInGroup"
+                                type="number"
+                                value={feedbackFormData.peopleInGroup}
+                                onChange={handleFeedbackChange}
+                                error={!!errors.peopleInGroup}
+                                helperText={errors.peopleInGroup}
+                                sx={{mb: 2}}
+                            />
 
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            label="Количество людей в группе (от 1 до 20)"
-                            name="peopleInGroup"
-                            type="number"
-                            value={feedbackFormData.peopleInGroup}
-                            onChange={handleFeedbackChange}
-                            error={!!errors.peopleInGroup}
-                            helperText={errors.peopleInGroup}
-                            sx={{ mb: 2 }}
-                        />
+                            <TextField
+                                fullWidth
+                                margin="dense"
+                                label="Среднее время на мероприятии (в минутах, от 1 до 1440)"
+                                name="avgSpentTimeInMinutes"
+                                type="number"
+                                value={feedbackFormData.avgSpentTimeInMinutes}
+                                onChange={handleFeedbackChange}
+                                error={!!errors.avgSpentTimeInMinutes}
+                                helperText={errors.avgSpentTimeInMinutes}
+                                sx={{mb: 2}}
+                            />
 
-                        <TextField
-                            fullWidth
-                            margin="dense"
-                            label="Среднее время на мероприятии (в минутах, от 1 до 1440)"
-                            name="avgSpentTimeInMinutes"
-                            type="number"
-                            value={feedbackFormData.avgSpentTimeInMinutes}
-                            onChange={handleFeedbackChange}
-                            error={!!errors.avgSpentTimeInMinutes}
-                            helperText={errors.avgSpentTimeInMinutes}
-                            sx={{ mb: 2 }}
-                        />
-
-                        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <Button onClick={handleCloseFeedbackModal} variant="outlined" color="secondary">
-                                Отмена
-                            </Button>
-                            <Button onClick={handleSubmitFeedback} variant="contained" color="primary">
-                                Отправить
-                            </Button>
-                        </Box>
-                    </DialogContent>
-                </Dialog>
-            </Box>
+                            <Box sx={{display: "flex", justifyContent: "space-between", mt: 2}}>
+                                <Button onClick={handleCloseFeedbackModal} variant="outlined" color="secondary">
+                                    Отмена
+                                </Button>
+                                <Button onClick={handleSubmitFeedback} variant="contained" color="primary">
+                                    Отправить
+                                </Button>
+                            </Box>
+                        </DialogContent>
+                    </Dialog>
+                </Box>)}
         </ProfileContainer>
     );
 }
@@ -730,7 +733,7 @@ export async function createOrganizerProfile(profileData) {
     const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:8722/api/v1/organizer", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`},
         body: JSON.stringify(profileData),
     });
     return response.ok;
