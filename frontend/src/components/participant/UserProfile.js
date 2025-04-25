@@ -21,6 +21,14 @@ const UserProfile = () => {
     const [avatarFile, setAvatarFile] = useState(null);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
     const [confirmationCode, setConfirmationCode] = useState("");
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editFormData, setEditFormData] = useState({
+        name: "",
+        surname: "",
+        phone: "",
+        aboutMe: "",
+        birthDate: ""
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,6 +38,14 @@ const UserProfile = () => {
                 if (username === "me") {
                     data = await getProfileMe();
                     console.log(data);
+                    // Заполняем форму редактирования данными профиля
+                    setEditFormData({
+                        name: data.name || "",
+                        surname: data.surname || "",
+                        phone: data.phone || "",
+                        aboutMe: data.aboutMe || "",
+                        birthDate: data.birthDate ? data.birthDate.split('T')[0] : ""
+                    });
                 } else {
                     data = await getProfileByUsername(username);
                     setReceiveEntityId(data.id);
@@ -53,6 +69,47 @@ const UserProfile = () => {
             fetchProfile();
         }
     }, [username]);
+
+    const handleEditProfile = () => {
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditFormChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmitEdit = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const ownerUsername = payload.sub;
+            const response = await fetch("http://localhost:8724/api/v1/client-service/profile/update", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(editFormData)
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при обновлении профиля");
+            }
+
+
+            const updatedProfile = await getProfileMe();
+            setProfile(updatedProfile);
+            setIsEditModalOpen(false);
+            alert("Профиль успешно обновлен!");
+        } catch (error) {
+            console.error("Ошибка при обновлении профиля:", error);
+            alert("Произошла ошибка при обновлении профиля");
+        }
+    };
 
     if (loading) {
         return <div className="profile-loading">Загрузка профиля...</div>;
@@ -268,10 +325,17 @@ const UserProfile = () => {
                         {profile.aboutMe || "Не указано"}
                     </div>
                 </div>
-                {username === "me" && !profile.isConfirmed && (
-                    <Button variant="contained" color="primary" onClick={handleConfirmClick}>
-                        Подтвердить профиль
-                    </Button>
+                {username === "me" && (
+                <div className="profile-actions">
+                    <button className="edit-profile-button" onClick={handleEditProfile}>
+                        Изменить профиль
+                    </button>
+                    {!profile.isConfirmed && (
+                        <button className="confirm-profile-button" onClick={handleConfirmClick}>
+                            Подтвердить профиль
+                        </button>
+                    )}
+                </div>
                 )}
                 {username !== "me" && (
                     <>
@@ -284,6 +348,88 @@ const UserProfile = () => {
                     </>
                 )}
             </div>
+
+            {/* Модальное окно редактирования профиля */}
+            <Dialog
+                open={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                className="edit-profile-modal"
+            >
+                <DialogTitle>Редактирование профиля</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        margin="dense"
+                        name="name"
+                        label="Имя"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={editFormData.name}
+                        onChange={handleEditFormChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="surname"
+                        label="Фамилия"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={editFormData.surname}
+                        onChange={handleEditFormChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="phone"
+                        label="Телефон"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        value={editFormData.phone}
+                        onChange={handleEditFormChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="birthDate"
+                        label="Дата рождения"
+                        type="date"
+                        fullWidth
+                        variant="outlined"
+                        InputLabelProps={{ shrink: true }}
+                        value={editFormData.birthDate}
+                        onChange={handleEditFormChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="aboutMe"
+                        label="О себе"
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={4}
+                        value={editFormData.aboutMe}
+                        onChange={handleEditFormChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setIsEditModalOpen(false)}
+                        variant="outlined"
+                        color="primary"
+                    >
+                        Отмена
+                    </Button>
+                    <Button
+                        onClick={handleSubmitEdit}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Сохранить
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Остальные модальные окна остаются без изменений */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>

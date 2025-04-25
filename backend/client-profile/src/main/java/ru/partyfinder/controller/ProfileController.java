@@ -22,6 +22,12 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+    @PutMapping("/update")
+    public ProfileDTO updateProfile(@RequestBody ClientDTO clientDTO) {
+        String username = UserContextHolder.getContext().getUsername();
+        return profileService.updateProfile(username, clientDTO);
+    }
+
     @PostMapping("/create")
     public void createProfile(@RequestBody ClientDTO clientDTO) {
         profileService.createProfile(clientDTO);
