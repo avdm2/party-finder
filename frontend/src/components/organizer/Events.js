@@ -25,6 +25,14 @@ import {
     SubmitButton,
     CancelButton,
     CompleteButton,
+    EventDetails,
+    EventTitle,
+    EventInfo,
+    EventImagePlaceholder,
+    EventActions,
+    EventsGrid,
+    EventCard,
+    EventImageContainer,
 } from "../../styles/EventsPage.styles.js";
 import {getOrganizerProfile} from "../../api/ApiOrganizerProfile";
 
@@ -249,60 +257,67 @@ function EventsPage() {
                             Нет информации
                         </Typography>
                     ) : (
-                        <Grid container spacing={2}>
+                        <div className="events-grid">
                             {filteredEvents.map((event) => (
-                                <Grid item xs={12} key={event.id}>
-                                    <EventPaper>
-                                        <Box>
-                                            <Typography variant="h6" sx={{color: "#2c3e50"}}>
-                                                {event.title}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#7f8c8d", mt: 1}}>
-                                                {event.description}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#6a11cb", mt: 1}}>
-                                                {`Дата: ${new Date(event.dateOfEvent).toLocaleString("ru-RU")}`}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
-                                                {`Адрес: ${event.address}`}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
-                                                {`Цена: ${event.price} ₽`}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
-                                                {`Вместимость: ${event.capacity}`}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "#6a11cb"}}>
-                                                {`Возраст: ${event.age}+`}
-                                            </Typography>
-                                        </Box>
-                                        <Box>
+                                <div key={event.id} className="event-card">
+                                    <div className="event-image-container">
+                                        {event.imageUrl ? (
+                                            <img
+                                                src={event.imageUrl}
+                                                alt={event.title}
+                                                className="event-image"
+                                            />
+                                        ) : (
+                                            <div className="event-image-placeholder"></div>
+                                        )}
+                                    </div>
+                                    <div className="event-details">
+                                        <Typography variant="h6" className="event-title">
+                                            {event.title}
+                                        </Typography>
+                                        <Typography variant="body2" className="event-date">
+                                            {new Date(event.dateOfEvent).toLocaleString()}
+                                        </Typography>
+                                        <Typography variant="body2" className="event-location">
+                                            Адрес: {event.address}
+                                        </Typography>
+                                        <Typography variant="body2" className="event-description">
+                                            {event.description}
+                                        </Typography>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            gap: 1,
+                                            mt: 1,
+                                            justifyContent: 'flex-end'
+                                        }}>
                                             {["UPCOMING"].includes(event.status) && (
-                                                <Box sx={{
-                                                    display: 'flex',
-                                                    gap: 2,
-                                                    marginLeft: 1
-                                                }}>
+                                                <>
+                                                    <IconButton
+                                                        onClick={() => handleEditEvent(event.id)}
+                                                        size="small"
+                                                        sx={{ color: "#6a11cb" }}
+                                                    >
+                                                        <Edit/>
+                                                    </IconButton>
                                                     <CompleteButton
+                                                        size="small"
                                                         onClick={() => handleCompleteEvent(event.id)}
                                                     >
                                                         Завершить
                                                     </CompleteButton>
                                                     <CancelButton
+                                                        size="small"
                                                         onClick={() => handleCancelEvent(event.id)}
                                                     >
                                                         Отменить
                                                     </CancelButton>
-                                                    <IconButton onClick={() => handleEditEvent(event.id)}>
-                                                        <Edit sx={{color: "#6a11cb"}}/>
-                                                    </IconButton>
-                                                </Box>
+                                                </>
                                             )}
                                         </Box>
-                                    </EventPaper>
-                                </Grid>
+                                    </div>
+                                </div>
                             ))}
-                        </Grid>
+                        </div>
                     )}
                 </AccordionDetails>
             </StyledAccordion>

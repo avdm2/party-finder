@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button} from '@mui/material';
-import {CancelButton, SubmitButton} from "../../styles/EventsPage.styles";
+import {CancelButton, SubmitButton} from "../../../styles/EventsPage.styles";
 
 const PromocodeModal = ({
                             open,

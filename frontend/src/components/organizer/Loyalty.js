@@ -15,13 +15,13 @@ import {
     IconButton,
     DialogActions,
 } from '@mui/material';
-import PromocodeItem from '../loyalty/PromocodeItem';
-import PrizeItem from '../loyalty/PrizeItem';
-import PromocodeModal from '../loyalty/PromocodeModal';
-import CreatePrizeModal from '../loyalty/PrizeModal';
+import PromocodeItem from './loyalty/PromocodeItem';
+import PrizeItem from './loyalty/PrizeItem';
+import PromocodeModal from './loyalty/PromocodeModal';
+import CreatePrizeModal from './loyalty/PrizeModal';
 import EmptyState from "../EmptyState";
-import { scrollContainerStyle } from "../loyalty/scrollContainerStyle";
-import QueueModal from "../loyalty/QueueModal";
+import { scrollContainerStyle } from "./loyalty/scrollContainerStyle";
+import QueueModal from "./loyalty/QueueModal";
 import {
     CancelButton, CompleteButton,
     CreateEventButton,
