@@ -7,7 +7,7 @@ import {
     DialogActions,
     Button,
 } from '@mui/material';
-import {CancelButton, SubmitButton} from "../../styles/EventsPage.styles";
+import {CancelButton, SubmitButton} from "../../../styles/EventsPage.styles";
 
 const CreatePrizeModal = ({open, onClose, onCreate, organizerId}) => {
     const [form, setForm] = useState({});

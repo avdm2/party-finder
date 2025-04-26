@@ -280,13 +280,13 @@ const Header = () => {
                                     Мой профиль
                                 </Link>
                             </li>
-                            <li>
-                                <Link to={eventsHandle} className="button-link">
-                                    Поиск мероприятий
-                                </Link>
-                            </li>
                             {role === 'PARTICIPANT' && (
                                 <>
+                                    <li>
+                                        <Link to={eventsHandle} className="button-link">
+                                            Поиск мероприятий
+                                        </Link>
+                                    </li>
                                     <li>
                                         <Link to="/my-events" className="button-link">
                                             Мои мероприятия
@@ -301,6 +301,11 @@ const Header = () => {
                             )}
                             {role === 'ORGANIZER' && (
                                 <>
+                                    <li>
+                                        <Link to={eventsHandle} className="button-link">
+                                            Мои мероприятия
+                                        </Link>
+                                    </li>
                                     <li>
                                         <button onClick={checkUserChannel} className="button-link">
                                             Мой канал

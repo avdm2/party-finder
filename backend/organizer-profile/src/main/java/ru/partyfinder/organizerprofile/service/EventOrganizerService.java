@@ -17,6 +17,7 @@ public class EventOrganizerService {
     private final EventRepository eventRepository;
 
     public UUID createEvent(EventEntity event) {
+        event.setDateOfEvent(event.getDateOfEvent().plusHours(3));
         return eventRepository.save(event).getId();
     }
 
@@ -37,7 +38,8 @@ public class EventOrganizerService {
     }
 
     public EventEntity updateEvent(UUID id, EventEntity event) {
-        eventRepository.updateEvent(id, event.getAddress(), event.getAge(), event.getCapacity(), event.getDateOfEvent(), event.getDescription(), event.getPrice(), event.getStatus(), event.getTitle());
+        eventRepository.updateEvent(id, event.getAddress(), event.getAge(), event.getCapacity(),
+                event.getDateOfEvent().plusHours(3), event.getDescription(), event.getPrice(), event.getStatus(), event.getTitle());
         return getEvent(id);
     }
 }
