@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Avatar, Chip } from '@mui/material';
 import { CalendarToday, LocationOn, People, AttachMoney, Star } from '@mui/icons-material';
-import '../../styles/MyEventsPage.css';
-import { getMyEvents } from '../../api/ApiClientEvent';
+import '../../../styles/MyEventsPage.css';
+import { getMyEvents } from '../../../api/ApiClientEvent';
 
 const MyEventsPage = () => {
     const [events, setEvents] = useState([]);

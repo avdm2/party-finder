@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {getEventById, subscribeToEvent, checkEventSubscription, cancelSubscription} from "../../api/ApiClientEvent";
-import "../../styles/EventPageUser.css";
+import {getEventById, subscribeToEvent, checkEventSubscription, cancelSubscription} from "../../../api/ApiClientEvent";
+import "../../../styles/EventPageUser.css";
 import { Button, Avatar, Chip, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { LocationOn, CalendarToday, People, AttachMoney, Star, EventAvailable } from "@mui/icons-material";
 

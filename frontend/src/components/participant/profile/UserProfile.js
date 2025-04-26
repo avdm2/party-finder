@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfileMe, getProfileByUsername, sendRating, sendConfirmationRequest, confirmProfile } from "../../api/ApiClientProfile";
-import "../../styles/UserProfile.css";
-import createDefaultProfile from '../../utils/base64Util';
+import { getProfileMe, getProfileByUsername, sendRating, sendConfirmationRequest, confirmProfile } from "../../../api/ApiClientProfile";
+import "../../../styles/UserProfile.css";
+import createDefaultProfile from '../../../utils/base64Util';
 import { Button, Avatar, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
-import { createChat } from "../../api/ApiClientChat";
+import { createChat } from "../../../api/ApiClientChat";
 
 let defaultProfileCache = null;
 

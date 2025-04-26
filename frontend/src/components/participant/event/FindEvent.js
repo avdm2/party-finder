@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/FindEvent.css";
-import { fetchEventsRequest } from "../../api/ApiFindEvents";
+import "../../../styles/FindEvent.css";
+import { fetchEventsRequest } from "../../../api/ApiFindEvents";
 import { FiSearch, FiCalendar, FiMapPin, FiDollarSign, FiUsers, FiStar } from "react-icons/fi";
 
 const FindEvent = () => {

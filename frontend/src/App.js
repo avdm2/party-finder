@@ -1,9 +1,9 @@
 import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import CreateProfile from "./components/participant/CreateProfile";
-import UserProfile from "./components/participant/UserProfile";
+import CreateProfile from "./components/participant/profile/CreateProfile";
+import UserProfile from "./components/participant/profile/UserProfile";
 import OrganizerProfile from "./components/organizer/OrganizerProfile";
-import FindEvent from "./components/participant/FindEvent";
+import FindEvent from "./components/participant/event/FindEvent";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Header from "./components/Header";
@@ -15,8 +15,8 @@ import EventsPage from "./components/organizer/Events";
 import ChannelInterface from "./components/organizer/ChannelInterface";
 import Loyalty from "./components/organizer/Loyalty";
 import Chats from "./components/participant/chat/Chats"
-import EventPage from "./components/participant/EventPage";
-import MyEventsPage from "./components/participant/MyEventPage";
+import EventPage from "./components/participant/event/EventPage";
+import MyEventsPage from "./components/participant/event/MyEventPage";
 import Analytics from "./components/organizer/Analytics";
 import LoyaltyClient from "./components/participant/LoyaltyClient";
 
