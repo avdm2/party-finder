@@ -10,6 +10,7 @@ import { createChat } from "../../../api/ApiClientChat";
 let defaultProfileCache = null;
 
 const UserProfile = () => {
+    const [role, setRole] = useState(null);
     const { username } = useParams();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -30,8 +31,10 @@ const UserProfile = () => {
         birthDate: ""
     });
     const navigate = useNavigate();
-
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setRole(payload.roles)
         const fetchProfile = async () => {
             try {
                 let data;
@@ -341,6 +344,10 @@ const UserProfile = () => {
                         <Button variant="contained" color="primary" onClick={handleRateClick}>
                             Оценить
                         </Button>
+                    </>
+                )}
+                {username !== "me" && role === "PARTICIPANT" && (
+                    <>
                         <Button variant="contained" color="secondary" onClick={handleSendMessageClick}>
                             Отправить сообщение
                         </Button>
