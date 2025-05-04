@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.partyfinder.entity.EventClientEntity;
 import ru.partyfinder.entity.EventEntity;
+import ru.partyfinder.entity.Profile;
 import ru.partyfinder.models.dto.SubscribeEventDTO;
 import ru.partyfinder.service.EventClientService;
 
@@ -37,5 +38,10 @@ public class EventClientController {
     public void deleteUserSubscribe(@RequestParam String username,
                                                  @RequestParam UUID eventId) {
         eventClientService.deleteEventSubscribeByClientIdSndEventId(username, eventId);
+    }
+
+    @GetMapping("/getSubscribers")
+    public ResponseEntity<List<Profile>> getSubscribers(@RequestParam String eventId) {
+        return ResponseEntity.ok(eventClientService.getSubscribers(eventId));
     }
 }

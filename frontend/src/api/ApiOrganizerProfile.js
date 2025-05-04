@@ -128,3 +128,24 @@ export async function getOrganizerProfile(username) {
 
     return await response.json();
 }
+
+
+export async function getOrganizerProfileById(id) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.error("Токен отсутствует в localStorage");
+        return null;
+    }
+
+    const response = await fetch(`http://localhost:8722/api/v1/organizer/id/${id}`, {
+        method: "GET",
+        headers: {Authorization: `Bearer ${token}`, "Content-Type": "application/json"},
+    });
+
+    if (!response.ok) {
+        console.error(`Ошибка получения профиля: ${response.status}`);
+        return null;
+    }
+
+    return await response.json();
+}

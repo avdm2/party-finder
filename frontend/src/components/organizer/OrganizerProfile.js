@@ -330,7 +330,9 @@ function OrganizerProfile() {
             alert("Произошла ошибка при отправке фидбека.");
         }
     };
-
+    const handleEventClick = (eventId) => {
+        navigate(`/event/${eventId}`);
+    };
     return (
         <ProfileContainer>
             {profile ? (
@@ -612,6 +614,14 @@ function OrganizerProfile() {
                                                 {event.description}
                                             </Typography>
                                         </div>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={() => handleEventClick(event.id)}
+                                            sx={{ mt: 2 }}
+                                        >
+                                            Подробнее
+                                        </Button>
                                     </div>
                                 ))}
                             </div>

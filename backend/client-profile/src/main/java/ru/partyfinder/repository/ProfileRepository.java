@@ -8,6 +8,7 @@ import ru.partyfinder.entity.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,4 +22,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     boolean existsByUsername(String username);
 
+    @Query("SELECT p FROM Profile p WHERE p.username IN :usernames")
+    List<Profile> findByUsernames(@Param("usernames") List<String> usernames);
 }

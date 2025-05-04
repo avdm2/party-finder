@@ -15,6 +15,7 @@ import ru.partyfinder.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 import ru.partyfinder.repository.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -96,6 +97,10 @@ public class ProfileService {
         return profileRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("Нет такого профиля человека")
         );
+    }
+
+    public List<Profile> getProfilesByUsernames(List<String> usernames) {
+        return profileRepository.findByUsernames(usernames);
     }
 
     public void putNewRating(PutNewRatingDto putNewRatingDto) {

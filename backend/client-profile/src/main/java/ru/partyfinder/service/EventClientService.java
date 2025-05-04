@@ -2,10 +2,13 @@ package ru.partyfinder.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.partyfinder.entity.EventClientEntity;
 import ru.partyfinder.entity.EventEntity;
+import ru.partyfinder.entity.Profile;
 import ru.partyfinder.models.dto.SubscribeEventDTO;
 import ru.partyfinder.repository.EventClientRepository;
 import ru.partyfinder.repository.EventRepository;
@@ -45,7 +48,6 @@ public class EventClientService {
         log.info("В сервисе -> " + subscribeEventDTO.getEventId() + " " + subscribeEventDTO.getUsername());
         UUID newUUID = null;
         if (checkEventForExist(subscribeEventDTO.getEventId()) && checkProfileFotExist(subscribeEventDTO.getUsername())) {
-            log.info("В if");
             EventClientEntity eventClientEntity = new EventClientEntity();
             eventClientEntity.setEventId(subscribeEventDTO.getEventId());
             eventClientEntity.setUsername(subscribeEventDTO.getUsername());
@@ -56,6 +58,11 @@ public class EventClientService {
             throw new IllegalArgumentException("Ошибка во время подписки на мероприятие");
         }
         return newUUID;
+    }
+
+    public List<Profile> getSubscribers(String eventId) {
+        List<String> usernames = eventClientRepository.getSubscribers(UUID.fromString(eventId));
+        return profileService.getProfilesByUsernames(usernames);
     }
 
     public Boolean isAttend(SubscribeEventDTO subscribeEventDTO) {

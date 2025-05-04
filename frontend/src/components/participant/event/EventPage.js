@@ -1,9 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {getEventById, subscribeToEvent, checkEventSubscription, cancelSubscription} from "../../../api/ApiClientEvent";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+    getEventById,
+    subscribeToEvent,
+    checkEventSubscription,
+    cancelSubscription,
+    getEventSubscribers
+} from "../../../api/ApiClientEvent";
 import "../../../styles/EventPageUser.css";
-import { Button, Avatar, Chip, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { LocationOn, CalendarToday, People, AttachMoney, Star, EventAvailable } from "@mui/icons-material";
+import {
+    Button,
+    Avatar,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    CircularProgress
+} from "@mui/material";
+import {
+    LocationOn,
+    CalendarToday,
+    People,
+    AttachMoney,
+    Star,
+    EventAvailable,
+    Group
+} from "@mui/icons-material";
 
 const EventPage = () => {
     const { eventId } = useParams();
@@ -13,6 +40,9 @@ const EventPage = () => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogMessage, setDialogMessage] = useState("");
+    const [isSubscribersDialogOpen, setIsSubscribersDialogOpen] = useState(false);
+    const [subscribers, setSubscribers] = useState([]);
+    const [subscribersLoading, setSubscribersLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,6 +67,26 @@ const EventPage = () => {
 
         fetchEventData();
     }, [eventId]);
+
+    const fetchSubscribers = async () => {
+        try {
+            setSubscribersLoading(true);
+            const token = localStorage.getItem("token");
+            const subscribersData = await getEventSubscribers(eventId, token);
+            setSubscribers(subscribersData);
+        } catch (error) {
+            console.error("Ошибка при загрузке подписчиков:", error);
+            setDialogMessage("Не удалось загрузить список подписчиков");
+            setIsDialogOpen(true);
+        } finally {
+            setSubscribersLoading(false);
+        }
+    };
+
+    const handleShowSubscribers = async () => {
+        await fetchSubscribers();
+        setIsSubscribersDialogOpen(true);
+    };
 
     const handleSubscribe = async () => {
         try {
@@ -66,20 +116,64 @@ const EventPage = () => {
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case "COMPLETED":
-                return "default";
-            case "CANCELLED":
-                return "error";
-            case "ONGOING":
-                return "warning";
-            case "UPCOMING":
-                return "success";
-            default:
-                return "default";
+    const handleUnsubscribe = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            await cancelSubscription(event.id, payload.sub, token);
+
+            setIsSubscribed(false);
+            setDialogMessage("Вы успешно отписались от события!");
+            setIsDialogOpen(true);
+        } catch (error) {
+            console.error("Ошибка при отписке от события:", error);
+            setDialogMessage("Произошла ошибка при отписке от события");
+            setIsDialogOpen(true);
         }
     };
+
+  const handleNavigateToProfile = (clickedUsername) => {
+    setIsSubscribersDialogOpen(false);
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const currentUsername = payload.sub;
+
+        if (currentUsername === clickedUsername) {
+          navigate("/profile/me");
+        } else {
+          navigate(`/profile/${clickedUsername}`);
+        }
+      } catch (error) {
+        console.error("Ошибка при разборе токена:", error);
+        navigate(`/profile/${clickedUsername}`);
+      }
+    } else {
+      navigate(`/profile/${clickedUsername}`);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "COMPLETED":
+        return "default";
+      case "CANCELLED":
+        return "error";
+      case "ONGOING":
+        return "warning";
+      case "UPCOMING":
+        return "success";
+      default:
+        return "default";
+    }
+  };
 
     const getStatusLabel = (status) => {
         switch (status) {
@@ -113,28 +207,6 @@ const EventPage = () => {
             </div>
         );
     }
-
-    const handleUnsubscribe = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate("/login");
-                return;
-            }
-
-            const payload = JSON.parse(atob(token.split(".")[1]));
-            await cancelSubscription(event.id, payload.sub, token);
-
-            setIsSubscribed(false);
-            setDialogMessage("Вы успешно отписались от события!");
-            setIsDialogOpen(true);
-        } catch (error) {
-            console.error("Ошибка при отписке от события:", error);
-            setDialogMessage("Произошла ошибка при отписке от события");
-            setIsDialogOpen(true);
-        }
-    };
-
 
     return (
         <div className="event-container">
@@ -209,22 +281,34 @@ const EventPage = () => {
 
             <div className="event-content">
                 <h3 className="section-title">Описание</h3>
-                <div className="event-description">
-                    {event.description}
-                </div>
+                <div className="event-description">{event.description}</div>
 
                 <h3 className="section-title">Детали события</h3>
                 <div className="event-details-grid">
                     <div className="detail-card">
                         <span className="detail-label">Статус</span>
                         <span className="detail-value">
-                        {getStatusLabel(event.status)}
-                    </span>
+              {getStatusLabel(event.status)}
+            </span>
                     </div>
 
                     <div className="detail-card">
                         <span className="detail-label">Организатор</span>
-                        <span className="detail-value">{event.organizerId}</span>
+                        <span className="detail-value">
+              <Link
+                  to={`/organizer-profile/${event.organizerUsername}`}
+                  style={{
+                      color: "#1976d2",
+                      textDecoration: "none",
+                      fontWeight: 500,
+                      "&:hover": {
+                          textDecoration: "underline"
+                      }
+                  }}
+              >
+                {event.organizerUsername}
+              </Link>
+            </span>
                     </div>
 
                     {event.age && (
@@ -260,14 +344,23 @@ const EventPage = () => {
                             Подписаться
                         </button>
                     )}
+
+                    <button
+                        className="subscribers-btn"
+                        onClick={handleShowSubscribers}
+                    >
+                        <Group fontSize="small" style={{ marginRight: 8 }} />
+                        Подписчики мероприятия
+                    </button>
                 </div>
             </div>
 
-            <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+            <Dialog
+                open={isDialogOpen}
+                onClose={handleCloseDialog}
+            >
                 <DialogTitle>{isSubscribed ? "Успешно" : "Ошибка"}</DialogTitle>
-                <DialogContent>
-                    {dialogMessage}
-                </DialogContent>
+                <DialogContent>{dialogMessage}</DialogContent>
                 <DialogActions>
                     <Button
                         onClick={handleCloseDialog}
@@ -277,6 +370,56 @@ const EventPage = () => {
                             fontWeight: 500
                         }}
                     >
+                        Закрыть
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={isSubscribersDialogOpen}
+                onClose={() => setIsSubscribersDialogOpen(false)}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>Подписчики мероприятия</DialogTitle>
+                <DialogContent>
+                    {subscribersLoading ? (
+                        <div style={{ textAlign: "center", padding: "20px" }}>
+                            <CircularProgress />
+                        </div>
+                    ) : subscribers.length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "20px" }}>
+                            Нет подписчиков
+                        </div>
+                    ) : (
+                        <List>
+                            {subscribers.map((subscriber) => (
+                                <ListItem
+                                    key={subscriber.id}
+                                    button
+                                    onClick={() => handleNavigateToProfile(subscriber.username)}
+
+                                >
+                                    <ListItemAvatar>
+                                        <Avatar
+                                            src={
+                                                subscriber.media?.fileData
+                                                    ? `data:image/jpeg;base64,${subscriber.media.fileData}`
+                                                    : undefined
+                                            }
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={subscriber.username}
+                                        secondary={`${subscriber.name} ${subscriber.surname}`}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsSubscribersDialogOpen(false)}>
                         Закрыть
                     </Button>
                 </DialogActions>

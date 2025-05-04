@@ -19,9 +19,12 @@ import java.util.HashSet;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    private final static String ADMIN_EMAIL = "nikitabysko123@gmail.com";
     private final static String REGISTRATION_COMPLETION_MESSAGE = "Регистрация завершена успешно.";
     private final static String USER_NOT_FOUND = "Пользователь с таким логином не найден.";
     private final static String USER_ALREADY_EXISTS = "Пользователь с таким логином уже существует.";
+
+    private final static String USER_EMAIL_ALREADY_EXISTS = "Пользователь с такой почтой уже существует";
     private final static String REQUIRED_FIELDS_ARE_EMPTY = "Проверьте заполненность всех полей";
 
     private final UserRepository userRepository;
@@ -32,6 +35,10 @@ public class AuthenticationService {
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException(USER_ALREADY_EXISTS);
+        }
+
+        if (request.getEmail().equals(ADMIN_EMAIL) || userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException(USER_EMAIL_ALREADY_EXISTS);
         }
 
         validateFields(request);

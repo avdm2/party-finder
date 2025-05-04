@@ -332,7 +332,7 @@ const Header = () => {
                     )}
                 </ul>
             </nav>
-            {location.pathname !== '/create-profile' && (
+            {location.pathname !== '/create-profile' && isAuthenticated && (
                 <div className="search-bar">
                     <input
                         type="text"

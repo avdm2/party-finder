@@ -333,3 +333,21 @@
     transform: translateY(-3px);
     box-shadow: 0 8px 30px rgba(255, 68, 68, 0.4);
 }
+
+.subscribers-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.subscribers-btn:hover {
+    background-color: #5a6268;
+}

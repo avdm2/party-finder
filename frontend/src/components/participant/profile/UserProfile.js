@@ -38,7 +38,6 @@ const UserProfile = () => {
                 if (username === "me") {
                     data = await getProfileMe();
                     console.log(data);
-                    // Заполняем форму редактирования данными профиля
                     setEditFormData({
                         name: data.name || "",
                         surname: data.surname || "",

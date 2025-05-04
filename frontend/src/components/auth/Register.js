@@ -7,15 +7,45 @@ function Register() {
     const [formData, setFormData] = useState({
         firstname: "", lastname: "", username: "", password: "", email: "", role: "PARTICIPANT"
     });
+    const [errors, setErrors] = useState({
+        email: "",
+        general: ""
+    });
     const navigate = useNavigate();
 
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        if (name === "email") {
+            if (value && !validateEmail(value)) {
+                setErrors({...errors, email: "Некорректный формат email"});
+            } else {
+                setErrors({...errors, email: ""});
+            }
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (await registerUser(formData)) navigate("/login");
+        setErrors({...errors, general: ""});
+
+        if (!validateEmail(formData.email)) {
+            setErrors({...errors, email: "Некорректный формат email"});
+            return;
+        }
+
+        const result = await registerUser(formData);
+        if (result.success) {
+            navigate("/login");
+        } else {
+            setErrors({...errors, general: result.message || "Произошла ошибка при регистрации"});
+        }
     };
 
     return (
@@ -33,6 +63,11 @@ function Register() {
                                 onChange={handleChange}
                                 required
                             />
+                            {key === "email" && errors.email && (
+                                <div style={{color: "red", fontSize: "0.8rem", marginTop: "0.3rem"}}>
+                                    {errors.email}
+                                </div>
+                            )}
                         </div>
                     )
                 ))}
@@ -43,7 +78,24 @@ function Register() {
                         <option value="PARTICIPANT">PARTICIPANT</option>
                     </select>
                 </div>
-                <button className="create-profile-button" type="submit">Зарегистрироваться</button>
+                <button
+                    className="create-profile-button"
+                    type="submit"
+                    disabled={!!errors.email}
+                >
+                    Зарегистрироваться
+                </button>
+
+                {errors.general && (
+                    <div style={{
+                        color: "red",
+                        marginTop: "10px",
+                        textAlign: "center",
+                        fontSize: "0.9rem"
+                    }}>
+                        {errors.general}
+                    </div>
+                )}
             </form>
             <div style={{ marginTop: "10px" }}>
                 <button className="create-profile-button" onClick={() => navigate("/login")}>
@@ -53,4 +105,5 @@ function Register() {
         </div>
     );
 }
+
 export default Register;
