@@ -55,7 +55,6 @@ const CreateProfile = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Проверка телефона
         if (!phone) {
             setPhoneError("Введите номер телефона");
             return;
@@ -64,7 +63,6 @@ const CreateProfile = () => {
             return;
         }
 
-        // Проверка даты рождения
         if (!birthDate) {
             setBirthDateError("Введите дату рождения");
             return;

@@ -103,18 +103,6 @@ public class ChatWebSocketHandler {
             }
         }
     }
-    /*private MessageDTO convertToMessageDTO(Message message, Profile sender, Profile receiver) {
-        MessageDTO dto = new MessageDTO();
-        dto.setId(message.getId());
-        dto.setChatId(message.getChat().getId());
-        dto.setContent(message.getContent());
-        dto.setEncryptedContent(message.getEncryptedContent());
-        dto.setSentTime(message.getSentTime());
-        dto.setSender(convertToProfileDTO(sender));
-        dto.setReceiver(convertToProfileDTO(receiver));
-        dto.setReceiverUsername(receiver.getUsername());
-        return dto;
-    }*/
 
     private ProfileDTO convertToProfileDTO(Profile profile) {
         ProfileDTO dto = new ProfileDTO();

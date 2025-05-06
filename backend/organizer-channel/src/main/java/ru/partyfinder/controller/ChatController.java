@@ -2,16 +2,13 @@ package ru.partyfinder.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import ru.partyfinder.entity.Channel;
 import ru.partyfinder.entity.Message;
 import ru.partyfinder.entity.Subscriber;
 import ru.partyfinder.model.MessageDTO;
+import ru.partyfinder.model.request.SubscriberDTO;
 import ru.partyfinder.service.ChatService;
 
 import java.util.List;
@@ -34,9 +31,9 @@ public class ChatController {
         return ResponseEntity.ok(chatService.findByOwnerUsername(ownerUsername));
     }
 
-    @GetMapping("/subscriber/{subscriberId}")
-    public ResponseEntity<List<Channel>> findAllForSubscriber(@PathVariable UUID subscriberId) {
-        return ResponseEntity.ok(chatService.findAllForSubscriber(subscriberId));
+    @GetMapping("/subscriber/{subscriberUsername}")
+    public ResponseEntity<List<Channel>> findAllForSubscriber(@PathVariable String subscriberUsername) {
+        return ResponseEntity.ok(chatService.findAllForSubscriber(subscriberUsername));
     }
 
     @PostMapping("/send")
@@ -50,13 +47,25 @@ public class ChatController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<Void> subscribe(@RequestBody Subscriber subscriber) {
+    public ResponseEntity<Void> subscribe(@RequestBody SubscriberDTO subscriber) {
         chatService.subscribe(subscriber);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/unsubscribe")
+    @Transactional
+    public ResponseEntity<Void> unsubscribe(@RequestBody SubscriberDTO subscriber) {
+        chatService.unsubscribe(subscriber);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/channel/{channelId}/subscribers")
     public ResponseEntity<List<Subscriber>> findSubscribersByChannel(@PathVariable UUID channelId) {
         return ResponseEntity.ok(chatService.findSubscribersByChannel(channelId));
+    }
+
+    @GetMapping("/is-subscribed/{channelId}/{subscriberUsername}")
+    public ResponseEntity<Boolean> isSubscribed(@PathVariable UUID channelId, @PathVariable String subscriberUsername) {
+        return ResponseEntity.ok(chatService.isSubscribed(channelId, subscriberUsername));
     }
 }

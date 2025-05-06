@@ -4,7 +4,18 @@ import { useAuth } from './auth/AuthContext';
 import '../styles/Header.css';
 import { getProfileByUsernamePaginationClients } from "../api/ApiClientProfile";
 import { getProfileByUsernamePaginationOrganizers } from "../api/ApiOrganizerProfile";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
+    List,
+    ListItem,
+    ListItemText,
+    Typography
+} from "@mui/material";
 
 const Header = () => {
     const { isAuthenticated, role, logout } = useAuth();
@@ -19,6 +30,8 @@ const Header = () => {
     const [channelModalOpen, setChannelModalOpen] = useState(false);
     const [newChannelName, setNewChannelName] = useState('');
     const [profile, setProfile] = useState(null);
+    const [subscriptionsModalOpen, setSubscriptionsModalOpen] = useState(false);
+    const [subscriptions, setSubscriptions] = useState([]);
 
     const handleLogout = () => {
         logout();
@@ -242,6 +255,36 @@ const Header = () => {
         );
     };
 
+    const fetchSubscriptions = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const subscriberUsername = payload.sub;
+            const response = await fetch(`http://localhost:8123/api/chat/subscriber/${subscriberUsername}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setSubscriptions(data);
+            } else {
+                console.error("Ошибка при загрузке подписок:", response.status);
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке подписок:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (role === 'PARTICIPANT') {
+            fetchSubscriptions();
+        }
+    }, [role]);
+
+    const handleSubscriptionClick = (channelId) => {
+        navigate(`/channel/${channelId}`);
+    };
+
     return (
         <header className="site-header">
             <div className="logo">
@@ -296,6 +339,16 @@ const Header = () => {
                                         <Link to="/chat" className="button-link">
                                             Чаты
                                         </Link>
+                                    </li>
+                                    <li>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => setSubscriptionsModalOpen(true)}
+                                            className="button-link"
+                                        >
+                                            Подписки на каналы
+                                        </Button>
                                     </li>
                                 </>
                             )}
@@ -354,27 +407,57 @@ const Header = () => {
                     )}
                 </div>
             )}
-            <Dialog open={channelModalOpen} onClose={() => setChannelModalOpen(false)}>
-                <DialogTitle>Создание канала</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        margin="dense"
-                        id="confirmation-code"
-                        label="Название канала"
-                        name="name"
-                        value={newChannelName}
-                        onChange={(e) => setNewChannelName(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCreateChannel} variant="contained" color="primary">
-                        Создать
-                    </Button>
-                    <Button onClick={() => setChannelModalOpen(false)} variant="outlined" color="secondary">
-                        Отмена
-                    </Button>
-                </DialogActions>
+            <Dialog open={channelModalOpen} onClose={() => setChannelModalOpen(false)} className="modal-overlay">
+                <div className="modal">
+                    <DialogTitle>Создание канала</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            id="confirmation-code"
+                            label="Название канала"
+                            name="name"
+                            value={newChannelName}
+                            onChange={(e) => setNewChannelName(e.target.value)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCreateChannel} variant="contained" color="primary">
+                            Создать
+                        </Button>
+                        <Button onClick={() => setChannelModalOpen(false)} variant="outlined" color="secondary">
+                            Отмена
+                        </Button>
+                    </DialogActions>
+                </div>
+            </Dialog>
+            <Dialog open={subscriptionsModalOpen} onClose={() => setSubscriptionsModalOpen(false)} className="modal-overlay">
+                <div className="subscribers-modal">
+                    <DialogTitle>Подписки на каналы</DialogTitle>
+                    <DialogContent>
+                        {subscriptions.length > 0 ? (
+                            <List>
+                                {subscriptions.map((channel) => (
+                                    <ListItem
+                                        key={channel.id}
+                                        button
+                                        onClick={() => handleSubscriptionClick(channel.id)}
+                                        className="subscribers-modal-item"
+                                    >
+                                        <ListItemText primary={channel.name} />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        ) : (
+                            <Typography variant="body1">Вы не подписаны ни на один канал.</Typography>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setSubscriptionsModalOpen(false)} variant="outlined" color="secondary">
+                            Закрыть
+                        </Button>
+                    </DialogActions>
+                </div>
             </Dialog>
         </header>
     );

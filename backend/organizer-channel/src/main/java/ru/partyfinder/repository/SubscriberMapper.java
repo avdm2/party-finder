@@ -12,4 +12,8 @@ import java.util.UUID;
 public interface SubscriberMapper extends JpaRepository<Subscriber, UUID> {
 
     List<Subscriber> findSubscribersByChannel(Channel channel);
+
+    void deleteByChannelIdAndSubscriberId(UUID channelId, UUID subscriberId);
+
+    boolean existsByChannelIdAndSubscriberId(UUID channelId, UUID subscriberId);
 }

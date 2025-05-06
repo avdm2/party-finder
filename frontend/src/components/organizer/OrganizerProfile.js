@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Typography,
     IconButton,
@@ -9,11 +9,13 @@ import {
     DialogActions,
     Rating,
     Box,
-    CircularProgress, Button, DialogTitle,
+    CircularProgress,
+    Button,
+    DialogTitle,
 } from "@mui/material";
-import {PhotoCamera} from "@mui/icons-material";
-import {sendRating} from "../../api/ApiOrganizerProfile";
-import {getProfileByUsernameOrganizer, getProfileMe} from "../../api/ApiOrganizerProfile";
+import { PhotoCamera } from "@mui/icons-material";
+import { sendRating } from "../../api/ApiOrganizerProfile";
+import { getProfileByUsernameOrganizer, getProfileMe } from "../../api/ApiOrganizerProfile";
 import {
     ProfileContainer,
     StyledAvatar,
@@ -24,14 +26,14 @@ import {
     CancelButton,
     LoadingContainer,
 } from "../../styles/OrganizerProfile.styles.js";
-import {useAuth} from "../auth/AuthContext";
+import { useAuth } from "../auth/AuthContext";
 
 function OrganizerProfile() {
-    const {username} = useParams();
-    const {isAuthenticated, role, logout} = useAuth();
+    const { username } = useParams();
+    const { isAuthenticated, role, logout } = useAuth();
     const [profile, setProfile] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const [formData, setFormData] = useState({name: "", surname: "", birthday: "", username: ""});
+    const [formData, setFormData] = useState({ name: "", surname: "", birthday: "", username: "" });
     const [avatarFile, setAvatarFile] = useState(null);
     const [ratingValue, setRatingValue] = useState(1);
     const [ratingComment, setRatingComment] = useState("");
@@ -44,6 +46,7 @@ function OrganizerProfile() {
     const [completedEvents, setCompletedEvents] = useState([]);
     const [cancelledEvents, setCancelledEvents] = useState([]);
     const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [channel, setChannel] = useState(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -55,7 +58,7 @@ function OrganizerProfile() {
                 try {
                     data = await getProfileMe();
                 } catch (error) {
-                    setFormData((prev) => ({...prev, username: payload.sub}));
+                    setFormData((prev) => ({ ...prev, username: payload.sub }));
                     setModalOpen(true);
                 }
             } else {
@@ -66,9 +69,9 @@ function OrganizerProfile() {
                 if (data.id) {
                     await fetchRating(data.id);
                 }
+                await fetchChannelByUsername(username);
             }
         };
-
         fetchProfile();
     }, [navigate, username]);
 
@@ -101,7 +104,7 @@ function OrganizerProfile() {
                 {
                     method: "POST",
                     body: formData,
-                    headers: {Authorization: `Bearer ${token}`},
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
             if (!response.ok) {
@@ -112,7 +115,7 @@ function OrganizerProfile() {
             }
             const updatedProfile = await getProfileByUsernameOrganizer(profile.username);
             if (updatedProfile.media) {
-                setProfile((prevProfile) => ({...prevProfile, media: updatedProfile.media}));
+                setProfile((prevProfile) => ({ ...prevProfile, media: updatedProfile.media }));
             }
         } catch (error) {
             console.error("Ошибка при загрузке фото:", error);
@@ -127,10 +130,9 @@ function OrganizerProfile() {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
+                    "Content-Type": "application/json",
+                },
             });
-
             if (response.ok) {
                 const data = await response.json();
                 setRating(parseFloat(data).toFixed(1));
@@ -141,17 +143,17 @@ function OrganizerProfile() {
     };
 
     const handleSubmit = async () => {
-        const formattedData = {...formData, birthday: `${formData.birthday}T00:00:00`};
+        const formattedData = { ...formData, birthday: `${formData.birthday}T00:00:00` };
         if (await createOrganizerProfile(formattedData)) {
             const updatedProfile = await getProfileByUsernameOrganizer(formData.username);
             setProfile(updatedProfile);
             setModalOpen(false);
-            navigate("")
+            navigate("");
         }
     };
 
     const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleOpenRatingModal = () => {
@@ -172,17 +174,15 @@ function OrganizerProfile() {
                 const response = await fetch(
                     `http://localhost:8722/api/organizers/event/list/${data.id}`,
                     {
-                        headers: {Authorization: `Bearer ${token}`},
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 if (response.ok) {
                     const data = await response.json();
                     setEvents(data);
-
                     const completed = data.filter((event) => event.status === "COMPLETED");
                     const cancelled = data.filter((event) => event.status === "CANCELLED");
                     const upcoming = data.filter((event) => event.status === "UPCOMING");
-
                     setCompletedEvents(completed);
                     setCancelledEvents(cancelled);
                     setUpcomingEvents(upcoming);
@@ -198,16 +198,14 @@ function OrganizerProfile() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8722/api/v1/event/list/${organizerId}`, {
-                headers: {Authorization: `Bearer ${token}`},
+                headers: { Authorization: `Bearer ${token}` },
             });
             if (response.ok) {
                 const data = await response.json();
                 setEvents(data);
-
                 const completed = data.filter((event) => event.status === "COMPLETED");
                 const cancelled = data.filter((event) => event.status === "CANCELLED");
                 const upcoming = data.filter((event) => event.status === "UPCOMING");
-
                 setCompletedEvents(completed);
                 setCancelledEvents(cancelled);
                 setUpcomingEvents(upcoming);
@@ -253,12 +251,12 @@ function OrganizerProfile() {
     };
 
     const handleFeedbackChange = (e) => {
-        const {name, value} = e.target;
-        setFeedbackFormData((prev) => ({...prev, [name]: value}));
+        const { name, value } = e.target;
+        setFeedbackFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleRateChange = (event, newValue) => {
-        setFeedbackFormData((prev) => ({...prev, rate: newValue}));
+        setFeedbackFormData((prev) => ({ ...prev, rate: newValue }));
     };
 
     const validateForm = () => {
@@ -271,7 +269,6 @@ function OrganizerProfile() {
             peopleInGroup,
             avgSpentTimeInMinutes,
         } = feedbackFormData;
-
         if (avgBill < 0 || avgBill > 1_000_000) {
             newErrors.avgBill = "Значение должно быть от 0 до 1 000 000";
         }
@@ -290,14 +287,12 @@ function OrganizerProfile() {
         if (avgSpentTimeInMinutes < 1 || avgSpentTimeInMinutes > 24 * 60) {
             newErrors.avgSpentTimeInMinutes = "Значение должно быть от 1 до 1440 минут";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmitFeedback = async () => {
         if (!validateForm()) return;
-
         try {
             const token = localStorage.getItem("token");
             const payload = {
@@ -309,7 +304,6 @@ function OrganizerProfile() {
                 peopleInGroup: parseInt(feedbackFormData.peopleInGroup),
                 avgSpentTimeInMinutes: parseInt(feedbackFormData.avgSpentTimeInMinutes),
             };
-
             const response = await fetch("http://localhost:8722/api/organizers/analytics/add-data", {
                 method: "POST",
                 headers: {
@@ -318,7 +312,6 @@ function OrganizerProfile() {
                 },
                 body: JSON.stringify(payload),
             });
-
             if (response.ok) {
                 alert("Фидбек успешно отправлен!");
                 handleCloseFeedbackModal();
@@ -330,9 +323,36 @@ function OrganizerProfile() {
             alert("Произошла ошибка при отправке фидбека.");
         }
     };
+
     const handleEventClick = (eventId) => {
         navigate(`/event/${eventId}`);
     };
+
+    const handleChannelClick = () => {
+        if (channel && channel.id) {
+            navigate(`/channel/${channel.id}`);
+        }
+    };
+
+    const fetchChannelByUsername = async (ownerUsername) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8123/api/chat/owner/${ownerUsername}`, {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setChannel(data);
+            } else {
+                setChannel(null);
+            }
+        } catch (error) {
+            console.error("Ошибка при получении канала:", error);
+            setChannel(null);
+        }
+    };
+
     return (
         <ProfileContainer>
             {profile ? (
@@ -340,42 +360,51 @@ function OrganizerProfile() {
                     <StyledAvatar
                         src={profile.media ? `data:image/jpeg;base64,${profile.media.fileData}` : ""}
                     >
-                        {!profile.media && <PhotoCamera fontSize="large"/>}
+                        {!profile.media && <PhotoCamera fontSize="large" />}
                     </StyledAvatar>
                     {username === "me" && (
-                        <IconButton component="label" sx={{mt: 2}}>
-                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange}/>
-                            <PhotoCamera/>
+                        <IconButton component="label" sx={{ mt: 2 }}>
+                            <input hidden accept="image/*" type="file" onChange={handleAvatarChange} />
+                            <PhotoCamera />
                         </IconButton>
                     )}
-                    <Typography variant="h5" sx={{mt: 2, color: "#2c3e50", fontWeight: 700}}>
+                    <Typography variant="h5" sx={{ mt: 2, color: "#2c3e50", fontWeight: 700 }}>
                         {profile.name} {profile.surname}
                     </Typography>
-                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         Логин: {profile.username ?? "Неизвестно"}
                     </Typography>
-                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         Рейтинг: {rating !== null ? rating : "N/A"}
                     </Typography>
-                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         Дата рождения: {new Date(profile.birthday).toLocaleDateString("ru-RU")}
                     </Typography>
-                    <Typography variant="body2" sx={{color: "#6a11cb", fontWeight: 500, mt: 0}}>
+                    <Typography variant="body2" sx={{ color: "#6a11cb", fontWeight: 500, mt: 0 }}>
                         UUID: {profile.id}
                     </Typography>
                     {username !== "me" && (
-                        <Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
+                        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                            {role === 'PARTICIPANT' && channel && channel.id && (
+                                <GradientButton
+                                    variant="contained"
+                                    onClick={handleChannelClick}
+                                    sx={{ mr: 4 }}
+                                >
+                                    Канал организатора
+                                </GradientButton>
+                            )}
                             <GradientButton
                                 variant="contained"
                                 onClick={handleOpenRatingModal}
-                                sx={{mr: 4}}
+                                sx={{ mr: 4 }}
                             >
                                 Оценить организатора
                             </GradientButton>
                             <GradientButton
                                 variant="contained"
                                 onClick={handleLoyaltyClick}
-                                sx={{ml: 4}}
+                                sx={{ ml: 4 }}
                             >
                                 Лояльность
                             </GradientButton>
@@ -384,10 +413,9 @@ function OrganizerProfile() {
                 </>
             ) : (
                 <LoadingContainer>
-                    <CircularProgress sx={{color: "#6a11cb"}}/>
+                    <CircularProgress sx={{ color: "#6a11cb" }} />
                 </LoadingContainer>
             )}
-
             <StyledDialog open={modalOpen} onClose={() => setModalOpen(false)}>
                 <DialogTitleStyled>Заполните профиль</DialogTitleStyled>
                 <DialogContent>
@@ -397,7 +425,7 @@ function OrganizerProfile() {
                         label="Имя"
                         name="name"
                         onChange={handleChange}
-                        sx={{mb: 2}}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -405,7 +433,7 @@ function OrganizerProfile() {
                         label="Фамилия"
                         name="surname"
                         onChange={handleChange}
-                        sx={{mb: 2}}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -413,8 +441,8 @@ function OrganizerProfile() {
                         type="date"
                         name="birthday"
                         onChange={handleChange}
-                        InputLabelProps={{shrink: true}}
-                        sx={{mb: 2}}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         fullWidth
@@ -422,20 +450,19 @@ function OrganizerProfile() {
                         label="Логин"
                         name="username"
                         value={formData.username}
-                        InputProps={{readOnly: true}}
+                        InputProps={{ readOnly: true }}
                     />
                 </DialogContent>
-                <DialogActions sx={{justifyContent: "center"}}>
+                <DialogActions sx={{ justifyContent: "center" }}>
                     <SubmitButton onClick={handleSubmit}>
                         Сохранить
                     </SubmitButton>
                 </DialogActions>
             </StyledDialog>
-
             <StyledDialog open={isRatingModalOpen} onClose={handleCloseRatingModal}>
                 <DialogTitleStyled>Оцените организатора</DialogTitleStyled>
                 <DialogContent>
-                    <Box sx={{display: "flex", justifyContent: "center", my: 3}}>
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
                         <Rating
                             name="simple-controlled"
                             value={ratingValue}
@@ -475,8 +502,8 @@ function OrganizerProfile() {
                         }}
                     />
                 </DialogContent>
-                <DialogActions sx={{justifyContent: "center"}}>
-                    <CancelButton onClick={handleCloseRatingModal} sx={{mr: 2}}>
+                <DialogActions sx={{ justifyContent: "center" }}>
+                    <CancelButton onClick={handleCloseRatingModal} sx={{ mr: 2 }}>
                         Закрыть
                     </CancelButton>
                     <SubmitButton onClick={handleSubmitRating}>
@@ -485,13 +512,12 @@ function OrganizerProfile() {
                 </DialogActions>
             </StyledDialog>
             {role === 'PARTICIPANT' && (
-                <Box sx={{mt: 4}}>
-                    <Typography variant="h6" sx={{mb: 2}}>
+                <Box sx={{ mt: 4 }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
                         Мероприятия организатора
                     </Typography>
-
                     <Box>
-                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                             Завершенные мероприятия
                         </Typography>
                         {completedEvents.length > 0 ? (
@@ -527,7 +553,7 @@ function OrganizerProfile() {
                                                 variant="contained"
                                                 color="primary"
                                                 size="small"
-                                                sx={{mt: 1}}
+                                                sx={{ mt: 1 }}
                                             >
                                                 Дать фидбек
                                             </Button>
@@ -539,9 +565,8 @@ function OrganizerProfile() {
                             <Typography>Завершенных мероприятий нет.</Typography>
                         )}
                     </Box>
-
-                    <Box sx={{mt: 4}}>
-                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                             Отмененные мероприятия
                         </Typography>
                         {cancelledEvents.length > 0 ? (
@@ -580,9 +605,8 @@ function OrganizerProfile() {
                             <Typography>Отмененных мероприятий нет.</Typography>
                         )}
                     </Box>
-
-                    <Box sx={{mt: 4}}>
-                        <Typography variant="subtitle1" sx={{fontWeight: 600}}>
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                             Предстоящие мероприятия
                         </Typography>
                         {upcomingEvents.length > 0 ? (
@@ -629,14 +653,12 @@ function OrganizerProfile() {
                             <Typography>Предстоящих мероприятий нет.</Typography>
                         )}
                     </Box>
-
                     <Dialog open={feedbackModalOpen} onClose={handleCloseFeedbackModal}>
                         <DialogTitle>Оставить фидбек</DialogTitle>
                         <DialogContent>
                             <Typography variant="h6">{selectedEvent?.title}</Typography>
-
-                            <Box sx={{display: "flex", alignItems: "center", mb: 2}}>
-                                <Typography variant="body1" sx={{mr: 2}}>
+                            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                                <Typography variant="body1" sx={{ mr: 2 }}>
                                     Рейтинг:
                                 </Typography>
                                 <Rating
@@ -658,7 +680,6 @@ function OrganizerProfile() {
                                     }}
                                 />
                             </Box>
-
                             <TextField
                                 fullWidth
                                 margin="dense"
@@ -669,9 +690,8 @@ function OrganizerProfile() {
                                 onChange={handleFeedbackChange}
                                 error={!!errors.avgBill}
                                 helperText={errors.avgBill}
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
-
                             <TextField
                                 fullWidth
                                 margin="dense"
@@ -682,9 +702,8 @@ function OrganizerProfile() {
                                 onChange={handleFeedbackChange}
                                 error={!!errors.avgAge}
                                 helperText={errors.avgAge}
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
-
                             <TextField
                                 fullWidth
                                 margin="dense"
@@ -695,9 +714,8 @@ function OrganizerProfile() {
                                 onChange={handleFeedbackChange}
                                 error={!!errors.avgTravelTimeInMinutes}
                                 helperText={errors.avgTravelTimeInMinutes}
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
-
                             <TextField
                                 fullWidth
                                 margin="dense"
@@ -708,9 +726,8 @@ function OrganizerProfile() {
                                 onChange={handleFeedbackChange}
                                 error={!!errors.peopleInGroup}
                                 helperText={errors.peopleInGroup}
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
-
                             <TextField
                                 fullWidth
                                 margin="dense"
@@ -721,10 +738,9 @@ function OrganizerProfile() {
                                 onChange={handleFeedbackChange}
                                 error={!!errors.avgSpentTimeInMinutes}
                                 helperText={errors.avgSpentTimeInMinutes}
-                                sx={{mb: 2}}
+                                sx={{ mb: 2 }}
                             />
-
-                            <Box sx={{display: "flex", justifyContent: "space-between", mt: 2}}>
+                            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
                                 <Button onClick={handleCloseFeedbackModal} variant="outlined" color="secondary">
                                     Отмена
                                 </Button>
@@ -734,7 +750,8 @@ function OrganizerProfile() {
                             </Box>
                         </DialogContent>
                     </Dialog>
-                </Box>)}
+                </Box>
+            )}
         </ProfileContainer>
     );
 }
@@ -743,7 +760,7 @@ export async function createOrganizerProfile(profileData) {
     const token = localStorage.getItem("token");
     const response = await fetch("http://localhost:8722/api/v1/organizer", {
         method: "POST",
-        headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`},
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(profileData),
     });
     return response.ok;

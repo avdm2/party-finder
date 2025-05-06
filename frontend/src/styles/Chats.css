@@ -43,7 +43,6 @@
     color: #666;
 }
 
-/* Стили для элементов чата */
 .chat-item {
     display: flex;
     padding: 12px;

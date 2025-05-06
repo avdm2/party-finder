@@ -45,31 +45,6 @@ public class MediaService {
         return profile.getMedia();
     }
 
-    /*public void changeMediaByUser(MultipartFile file, String username) {
-        Media newMedia = createNewMedia(file);
-        if (newMedia != null) {
-            Media oldMedia = getMediaByUser(username);
-
-            Profile profile = profileService.getProfileByUsername(username);
-
-            mediaRepository.delete(oldMedia);
-            mediaRepository.save(newMedia);
-            profile.setMedia(newMedia);
-            profileService.saveProfileWithMedia(profile);
-        } else {
-            throw new IllegalArgumentException("Что-то не так с файлом, не смог создать объект");
-        }
-
-    }*/
-   /* public void deleteMediaByUser(MultipartFile file, String username) {
-        Media oldMedia = getMediaByUser(username);
-
-        Profile profile = profileService.getProfileByUsername(username);
-
-        mediaRepository.delete(oldMedia);
-        profile.setMedia(null);
-        profileService.saveProfileWithMedia(profile);
-    }*/
 
     private Media createNewMedia(MultipartFile file) {
         try {

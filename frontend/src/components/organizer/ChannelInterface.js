@@ -11,6 +11,7 @@ import {
     Paper,
     Divider,
 } from '@mui/material';
+import { useAuth } from "../auth/AuthContext";
 
 const ChannelInterface = () => {
     const { channelId } = useParams();
@@ -19,45 +20,97 @@ const ChannelInterface = () => {
     const messagesEndRef = useRef(null);
     const [channelName, setChannelName] = useState('');
     const [subscriberCount, setSubscriberCount] = useState(0);
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const { role } = useAuth();
 
     useEffect(() => {
         const fetchMessages = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const payload = JSON.parse(atob(token.split(".")[1]));
-                const ownerUsername = payload.sub;
+                if (!token) return;
 
-                const channelResponse = await fetch(`http://localhost:8123/api/chat/owner/${ownerUsername}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (channelResponse.ok) {
-                    const channelData = await channelResponse.json();
-                    setChannelName(channelData.name || '');
-                }
-
-                const subscribersResponse = await fetch(`http://localhost:8123/api/chat/channel/${channelId}/subscribers`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (subscribersResponse.ok) {
-                    const subscribers = await subscribersResponse.json();
-                    setSubscriberCount(subscribers.length);
-                }
-
-                const response = await fetch(`http://localhost:8123/api/chat/channel/${channelId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setMessages(data);
+                if (role === 'PARTICIPANT') {
+                    await fetchMessagesForClient();
+                    await checkSubscription();
                 } else {
-                    console.error("Ошибка при загрузке сообщений:", response.status);
+                    const payload = JSON.parse(atob(token.split(".")[1]));
+                    const ownerUsername = payload.sub;
+
+                    const channelResponse = await fetch(`http://localhost:8123/api/chat/owner/${ownerUsername}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (channelResponse.ok) {
+                        const channelData = await channelResponse.json();
+                        setChannelName(channelData.name || '');
+                    }
+
+                    const subscribersResponse = await fetch(`http://localhost:8123/api/chat/channel/${channelId}/subscribers`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (subscribersResponse.ok) {
+                        const subscribers = await subscribersResponse.json();
+                        setSubscriberCount(subscribers.length);
+                    }
+
+                    const response = await fetch(`http://localhost:8123/api/chat/channel/${channelId}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setMessages(data);
+                    } else {
+                        console.error("Ошибка при загрузке сообщений:", response.status);
+                    }
                 }
             } catch (error) {
                 console.error("Ошибка при загрузке сообщений:", error);
             }
         };
         fetchMessages();
-    }, [channelId]);
+    }, [channelId, role]);
+
+    const fetchMessagesForClient = async () => {
+        const token = localStorage.getItem("token");
+        try {
+            const subscribersResponse = await fetch(`http://localhost:8123/api/chat/channel/${channelId}/subscribers`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (subscribersResponse.ok) {
+                const subscribers = await subscribersResponse.json();
+                setSubscriberCount(subscribers.length);
+            }
+
+            const response = await fetch(`http://localhost:8123/api/chat/channel/${channelId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setMessages(data);
+            } else {
+                console.error("Ошибка при загрузке сообщений:", response.status);
+            }
+        } catch (error) {
+            console.error("Ошибка при загрузке сообщений:", error);
+        }
+    };
+
+    const checkSubscription = async () => {
+        const token = localStorage.getItem("token");
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const subscriberUsername = payload.sub;
+
+        try {
+            const response = await fetch(`http://localhost:8123/api/chat/is-subscribed/${channelId}/${subscriberUsername}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setIsSubscribed(data);
+            }
+        } catch (error) {
+            console.error("Ошибка при проверке подписки:", error);
+        }
+    };
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -88,6 +141,60 @@ const ChannelInterface = () => {
             }
         } catch (error) {
             console.error("Ошибка при отправке сообщения:", error);
+        }
+    };
+
+    const handleSubscribe = async () => {
+        const token = localStorage.getItem("token");
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const subscriberUsername = payload.sub;
+
+        try {
+            const response = await fetch(`http://localhost:8123/api/chat/subscribe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ channelId, subscriberUsername }),
+            });
+
+            if (response.ok) {
+                setIsSubscribed(true);
+                alert("Вы успешно подписались на канал.");
+            } else {
+                alert("Ошибка при подписке на канал.");
+            }
+        } catch (error) {
+            console.error("Ошибка при подписке на канал:", error);
+            alert("Произошла ошибка при подписке на канал.");
+        }
+    };
+
+    const handleUnsubscribe = async () => {
+        const token = localStorage.getItem("token");
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const subscriberUsername = payload.sub;
+
+        try {
+            const response = await fetch(`http://localhost:8123/api/chat/unsubscribe`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ channelId, subscriberUsername }),
+            });
+
+            if (response.ok) {
+                setIsSubscribed(false);
+                alert("Вы успешно отписались от канала.");
+            } else {
+                alert("Ошибка при отписке от канала.");
+            }
+        } catch (error) {
+            console.error("Ошибка при отписке от канала:", error);
+            alert("Произошла ошибка при отписке от канала.");
         }
     };
 
@@ -151,24 +258,50 @@ const ChannelInterface = () => {
                 </List>
             </Paper>
 
-            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Введите сообщение..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSendMessage}
-                    disabled={!newMessage.trim()}
-                >
-                    Отправить
-                </Button>
-            </Box>
+            {role === 'PARTICIPANT' && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    {isSubscribed ? (
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleUnsubscribe}
+                            sx={{ mr: 2 }}
+                        >
+                            Отписаться
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubscribe}
+                            sx={{ mr: 2 }}
+                        >
+                            Подписаться
+                        </Button>
+                    )}
+                </Box>
+            )}
+
+            {role !== 'PARTICIPANT' && (
+                <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Введите сообщение..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSendMessage}
+                        disabled={!newMessage.trim()}
+                    >
+                        Отправить
+                    </Button>
+                </Box>
+            )}
         </Box>
     );
 };

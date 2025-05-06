@@ -204,15 +204,6 @@
     border: 1px solid rgba(106, 17, 203, 0.3);
 }
 
-.channel-info {
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(245, 248, 250, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 12px;
-    backdrop-filter: blur(5px);
-}
-
 .subscribers-modal {
     position: fixed;
     top: 50%;
@@ -349,4 +340,14 @@
     cursor: not-allowed;
     background-color: #f8f9fa;
     transform: none !important;
+}
+
+.subscribers-modal-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.subscribers-modal-item:hover {
+    background: rgba(106, 17, 203, 0.1);
+    transform: translateX(5px);
 }

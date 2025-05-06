@@ -355,7 +355,6 @@ const UserProfile = () => {
                 )}
             </div>
 
-            {/* Модальное окно редактирования профиля */}
             <Dialog
                 open={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
@@ -435,7 +434,6 @@ const UserProfile = () => {
                 </DialogActions>
             </Dialog>
 
-            {/* Остальные модальные окна остаются без изменений */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
