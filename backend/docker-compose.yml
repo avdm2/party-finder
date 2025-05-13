@@ -32,35 +32,15 @@ services:
     ports:
       - "8721:8721"
 
-  organizer-profile-service:
+  chat-service:
     depends_on:
       - kafka
       - redis
       - postgres
-    image: partyfinder/organizer-profile:latest
-    container_name: organizer-profile
+    image: partyfinder/chat:latest
+    container_name: chat
     ports:
-      - "8722:8722"
-
-  organizer-channel-service:
-    depends_on:
-      - kafka
-      - redis
-      - postgres
-    image: partyfinder/organizer-channel:latest
-    container_name: organizer-channel
-    ports:
-      - "8123:8123"
-
-  email-service:
-    depends_on:
-      - kafka
-      - redis
-      - postgres
-    image: partyfinder/email:latest
-    container_name: email
-    ports:
-      - "8726:8726"
+      - "8727:8727"
 
   client-profile-service:
     depends_on:
@@ -72,6 +52,16 @@ services:
     ports:
       - "8724:8724"
 
+  email-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/email:latest
+    container_name: email
+    ports:
+      - "8726:8726"
+
   event-service:
     depends_on:
       - kafka
@@ -82,15 +72,15 @@ services:
     ports:
       - "8723:8723"
 
-  rating-system-service:
+  organizer-channel-service:
     depends_on:
       - kafka
       - redis
       - postgres
-    image: partyfinder/rating-system:latest
-    container_name: rating-system
+    image: partyfinder/organizer-channel:latest
+    container_name: organizer-channel
     ports:
-      - "8725:8725"
+      - "8123:8123"
 
   organizer-loyalty-service:
     depends_on:
@@ -102,15 +92,25 @@ services:
     ports:
       - "8711:8711"
 
-  chat-service:
+  organizer-profile-service:
     depends_on:
       - kafka
       - redis
       - postgres
-    image: partyfinder/chat:latest
-    container_name: chat
+    image: partyfinder/organizer-profile:latest
+    container_name: organizer-profile
     ports:
-      - "8727:8727"
+      - "8722:8722"
+
+  rating-system-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/rating-system:latest
+    container_name: rating-system
+    ports:
+      - "8725:8725"
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
