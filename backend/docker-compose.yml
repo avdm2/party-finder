@@ -53,14 +53,14 @@ services:
       - "8123:8123"
 
   email-service:
-     depends_on:
-       - kafka
-       - redis
-       - postgres
-     image: partyfinder/email:latest
-     container_name: email
-     ports:
-       - "8726:8726"
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/email:latest
+    container_name: email
+    ports:
+      - "8726:8726"
 
   client-profile-service:
     depends_on:
@@ -73,34 +73,34 @@ services:
       - "8724:8724"
 
   event-service:
-     depends_on:
-       - kafka
-       - redis
-       - postgres
-     image: partyfinder/event:latest
-     container_name: event
-     ports:
-       - "8723:8723"
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/event:latest
+    container_name: event
+    ports:
+      - "8723:8723"
 
   rating-system-service:
-     depends_on:
-       - kafka
-       - redis
-       - postgres
-     image: partyfinder/rating-system:latest
-     container_name: rating-system
-     ports:
-       - "8725:8725"
+    depends_on:
+      - kafka
+      - redis
+      - postgres
+    image: partyfinder/rating-system:latest
+    container_name: rating-system
+    ports:
+      - "8725:8725"
 
-    organizer-loyalty-service:
-       depends_on:
-       - kafka
-       - redis
-       - postgres
+  organizer-loyalty-service:
+    depends_on:
+      - kafka
+      - redis
+      - postgres
     image: partyfinder/organizer-loyalty:latest
     container_name: organizer-loyalty
-       ports:
-       - "8711:8711"
+    ports:
+      - "8711:8711"
 
   chat-service:
     depends_on:
