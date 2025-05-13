@@ -92,15 +92,15 @@ services:
      ports:
        - "8725:8725"
 
-    #organizer-loyalty-service:
-       #depends_on:
-       #- kafka
-       #- redis
-       #- postgres
-    #image: partyfinder/organizer-loyalty:latest
-    #container_name: organizer-loyalty
-       #ports:
-       #- "8711:8711"
+    organizer-loyalty-service:
+       depends_on:
+       - kafka
+       - redis
+       - postgres
+    image: partyfinder/organizer-loyalty:latest
+    container_name: organizer-loyalty
+       ports:
+       - "8711:8711"
 
   chat-service:
     depends_on:
