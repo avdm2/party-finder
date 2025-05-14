@@ -441,7 +441,10 @@ const Header = () => {
                                     <ListItem
                                         key={channel.id}
                                         button
-                                        onClick={() => handleSubscriptionClick(channel.id)}
+                                        onClick={() => {
+                                            handleSubscriptionClick(channel.id);
+                                            setSubscriptionsModalOpen(false);
+                                        }}
                                         className="subscribers-modal-item"
                                     >
                                         <ListItemText primary={channel.name} />
